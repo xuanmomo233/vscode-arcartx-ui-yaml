@@ -181,13 +181,6 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         }
 
         // 3. 查找匹配配置
-        // 如果当前行是 xxx: 格式（用户正在输入属性值），且 xxx 不在 attributeValueMap 中，
-        // 则不显示结构补全，避免 x: 等无关属性触发 type 等补全
-        const attrValueCheck = linePrefix.match(/(\w+):(\s*)(~?)(\w*)$/);
-        if (attrValueCheck && !attributeValueMap.has(attrValueCheck[1]) && !(attrValueCheck[1] === 'type' && isInTasksContext)) {
-            return [];
-        }
-
         console.log('StructureCompletion: linePrefix =', JSON.stringify(linePrefix));
         console.log('StructureCompletion: currentPath =', currentPath);
 
@@ -203,6 +196,15 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
         // 4.5 如果当前路径以 attribute 结尾，根据控件 type 过滤属性
         let completionsToUse = matchingConfig.completions;
+
+        // 4.6 如果当前已经输入了 key:（用户正在定义控件名/属性名），
+        // 过滤掉 Snippet 类型的控件/UI 模板补全，避免 123: 触发 9sliceTexture 等模板
+        if (linePrefix.match(/\w+:\s*$/)) {
+            completionsToUse = completionsToUse.filter(completion =>
+                completion.kind !== vscode.CompletionItemKind.Snippet
+            );
+        }
+
         if (currentPath[currentPath.length - 1] === 'attribute') {
             const controlType = detectControlType(document, position);
             if (controlType) {
