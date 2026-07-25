@@ -62,11 +62,12 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         const isInTasksContext = currentPath.includes('tasks');
 
         if (lastChar !== '/' && lastChar !== '?') {
-            const attrValueMatch = linePrefix.match(/(\w+):\s*(~?)(\w*)$/);
+            const attrValueMatch = linePrefix.match(/(\w+):(\s*)(~?)(\w*)$/);
             if (attrValueMatch) {
             const attrName = attrValueMatch[1];
-            const tildePrefix = attrValueMatch[2] || '';
-            const partialInput = attrValueMatch[3] || '';
+            const colonSpace = attrValueMatch[2] || '';
+            const tildePrefix = attrValueMatch[3] || '';
+            const partialInput = attrValueMatch[4] || '';
 
             // 属性值补全：输入属性名: 后即显示全部选项，输入部分字符时过滤
             // 在 tasks 上下文中，type 属性使用任务类型值
@@ -99,7 +100,9 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
                     // 智能模板：type 值 + attribute 块
                     if (isControlType && hasSmartTemplate(completion.label)) {
-                        insertText = ' ' + getSmartTypeSnippet(completion.label);
+                        // 冒号后已有空格则不再添加，避免双空格
+                        const leadingSpace = colonSpace.length > 0 ? '' : ' ';
+                        insertText = leadingSpace + getSmartTypeSnippet(completion.label);
                         // 设置 range 替换用户已输入的 partialInput，避免重复
                         const replaceStart = position.translate(0, -partialInput.length);
                         item.range = new vscode.Range(replaceStart, position);
@@ -157,8 +160,6 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                         // 智能模板：type 值 + attribute 块
                         if (isControlType && hasSmartTemplate(completion.label)) {
                             insertText = getSmartTypeSnippet(completion.label);
-                            // 确保 type: 后有空格分隔
-                            insertText = ' ' + insertText;
                         } else if (tildePrefix === '~' && insertText.startsWith('~')) {
                             insertText = insertText.substring(1);
                         }

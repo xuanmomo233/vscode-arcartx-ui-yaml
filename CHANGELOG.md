@@ -2,6 +2,9 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.15]
+- 修复 type: 带空格补全时出现双空格的问题：检测冒号后是否已有空格，仅在无空格时添加
+
 ### [0.0.14]
 - 修复 type: 补全后 type 值与冒号之间仍然缺少空格的问题：使用 CompletionItem.range 替换 partialInput，并在 snippet 前保留空格
 
