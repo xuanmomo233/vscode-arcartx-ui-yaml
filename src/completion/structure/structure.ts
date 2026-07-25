@@ -68,23 +68,24 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
             const tildePrefix = attrValueMatch[2] || '';
             const partialInput = attrValueMatch[3] || '';
 
-            // 只有当有部分输入时才显示补全（过滤模式）
-            // 如果 partialInput 为空，不显示补全，需要用户输入 / 触发
+            // 属性值补全：输入属性名: 后即显示全部选项，输入部分字符时过滤
             // 在 tasks 上下文中，type 属性使用任务类型值
             let valueOptions = attributeValueMap.get(attrName);
             if (attrName === 'type' && isInTasksContext) {
                 valueOptions = task_type_values;
             }
 
-            if (!partialInput || !valueOptions) {
+            if (!valueOptions) {
                 // 跳过，不显示补全
             } else {
-                // partialInput 有值，显示过滤后的补全
-                const filteredOptions = valueOptions.filter(opt => {
-                    const label = opt.label.toLowerCase();
-                    const input = partialInput.toLowerCase();
-                    return label.includes(input);
-                });
+                // partialInput 有值时过滤，为空时显示全部
+                const filteredOptions = partialInput
+                    ? valueOptions.filter(opt => {
+                        const label = opt.label.toLowerCase();
+                        const input = partialInput.toLowerCase();
+                        return label.includes(input);
+                    })
+                    : valueOptions;
 
                 // 检测是否是控件 type 属性（非 tasks 上下文），使用智能模板
                 const isControlType = attrName === 'type' && !isInTasksContext;
