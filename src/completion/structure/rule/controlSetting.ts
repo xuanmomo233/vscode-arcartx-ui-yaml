@@ -55,7 +55,7 @@ export const control_settings = [
     {
         label: 'attribute',
         detail: '控件属性列表',
-        insertText: 'attribute:\n  ',
+        insertText: 'attribute:\n  $0',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             '## 控件属性\n\n' +
@@ -72,7 +72,7 @@ export const control_settings = [
     {
         label: 'children',
         detail: '控件子控件表',
-        insertText: 'children:\n  ',
+        insertText: 'children:\n  $0',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             '## 子控件\n\n' +
@@ -87,7 +87,7 @@ export const control_settings = [
     {
         label: 'action',
         detail: '控件触发器',
-        insertText: 'action:\n  ',
+        insertText: 'action:\n  $0',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             '## 控件触发器\n\n' +
