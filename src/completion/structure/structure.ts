@@ -91,7 +91,9 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                 const isControlType = attrName === 'type' && !isInTasksContext;
 
                 return filteredOptions.map(completion => {
-                    const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
+                    const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
+                    const item = new vscode.CompletionItem(displayLabel, completion.kind || vscode.CompletionItemKind.Property);
+                    item.filterText = completion.label;
                     item.detail = completion.detail;
                     let insertText = completion.insertText;
 
@@ -147,7 +149,9 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                     const isControlType = attrName === 'type' && !isInTasksContext;
 
                     return valueOptions.map(completion => {
-                        const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
+                        const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
+                        const item = new vscode.CompletionItem(displayLabel, completion.kind || vscode.CompletionItemKind.Property);
+                        item.filterText = completion.label;
                         item.detail = completion.detail;
                         let insertText = completion.insertText;
 
@@ -198,7 +202,9 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         }
 
         return completionsToUse.map(completion => {
-            const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
+            const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
+            const item = new vscode.CompletionItem(displayLabel, completion.kind || vscode.CompletionItemKind.Property);
+            item.filterText = completion.label;
             item.detail = completion.detail;
             item.insertText = new vscode.SnippetString(completion.insertText);
             item.documentation = completion.documentation || new vscode.MarkdownString(completion.detail);
