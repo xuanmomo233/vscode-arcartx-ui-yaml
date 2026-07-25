@@ -2,6 +2,9 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.3]
+- 修复控件类型诊断大小写敏感问题（Adaptive 等合法类型误报为无效）
+
 ### [0.0.2]
 - Shimmer → Aria 全面重命名
 - 新增 Hover 悬停文档 Provider
