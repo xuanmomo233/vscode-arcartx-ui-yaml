@@ -8,9 +8,12 @@ const texture = {
         '${1:texture_}:',
         '  type: texture',
         '  attribute:',
-        '    width: ${2:width}',
-        '    height: ${3:height}',
-        '    normal: ~${4:resourcePath}'
+        '    width: ${2:100}',
+        '    height: ${3:100}',
+        '    point: ~${4:middle_center}',
+        '    normal: ~${5:255,255,255,255}',
+        '    hover: ~${6:200,200,200,255}',
+        '    alpha: ${7:1}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -21,8 +24,13 @@ const text = {
         '${1:text_}:',
         '  type: text',
         '  attribute:',
-        '    texts: ~${2:text}',
-        '    fontSize: ${3:32}',
+        '    texts: ~${2:&f文本}',
+        '    fontSize: ${3:49}',
+        '    point: ~${4:top_left}',
+        '    x: ${5:0}',
+        '    y: ${6:0}',
+        '    center: ${7|true,false|}',
+        '    shadow: ${8|true,false|}',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -33,15 +41,16 @@ const _9sliceTexture = {
         '${1:nineSliceTexture_}:',
         '  type: 9sliceTexture',
         '  attribute:',
-        '    width: ${2:width}',
-        '    height: ${3:height}',
-        '    normal: ~${4:resourcePath}',
-        '    textureWidth: ${5:256}',
-        '    textureHeight: ${6:256}',
-        '    left: ${7:16}',
-        '    right: ${8:16}',
-        '    top: ${9:16}',
-        '    bottom: ${10:16}'
+        '    width: ${2:100}',
+        '    height: ${3:100}',
+        '    point: ~${4:middle_center}',
+        '    normal: ~${5:resourcePath}',
+        '    textureWidth: ${6:256}',
+        '    textureHeight: ${7:256}',
+        '    left: ${8:16}',
+        '    right: ${9:16}',
+        '    top: ${10:16}',
+        '    bottom: ${11:16}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -54,8 +63,9 @@ const textInput = {
         '  attribute:',
         '    width: ${2:350}',
         '    height: ${3:28}',
-        '    fontSize: ${4:40}',
-        '    emptyText: ~&a${5:请输入文本}'
+        '    point: ~${4:middle_center}',
+        '    fontSize: ${5:40}',
+        '    emptyText: ~&a${6:请输入文本}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 };
@@ -68,9 +78,10 @@ const passwordInput = {
         '  attribute:',
         '    width: ${2:350}',
         '    height: ${3:28}',
-        '    fontSize: ${4:40}',
-        '    emptyText: ~&a${5:请输入登录密码}',
-        '    passwordChar: ~${6:※}'
+        '    point: ~${4:middle_center}',
+        '    fontSize: ${5:40}',
+        '    emptyText: ~&a${6:请输入登录密码}',
+        '    passwordChar: ~${7:※}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 };
@@ -82,9 +93,10 @@ const entity = {
         '  type: entity',
         '  attribute:',
         '    scale: ${2:5}',
-        '    hideTag: true',
-        '    followMouse: true',
-        '    uuid: ~${3:self} ',
+        '    point: ~${3:middle_center}',
+        '    hideTag: ${4|true,false|}',
+        '    followMouse: ${5|true,false|}',
+        '    uuid: ~${6:self}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -97,10 +109,10 @@ const slot =  {
         '  attribute:',
         '    width: ${2:80}',
         '    height: ${3:80}',
-        '    normal: ~${4:resourcePath}',
-        '    hover: ~${5:resourcePath}',
-        '    itemScale: ${6:0.8}',
-        '    slotType: ~',
+        '    normal: ~${4:inventory/item.png}',
+        '    hover: ~${5:inventory/item_.png}',
+        '    slotType: ~${6|Backpack,Container,Extra,Icon,Hover|}',
+        '    itemScale: ${7:0.8}',
         '    id: ${8:0}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
@@ -113,7 +125,9 @@ const canvas = {
         '  type: canvas',
         '  attribute:',
         '    width: ${2:800}',
-        '    height: ${3:600}'
+        '    height: ${3:600}',
+        '    point: ~${4:middle_center}',
+        '    through: ${5|true,false|}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -126,7 +140,7 @@ const adaptive = {
         '  attribute:',
         '    width: ${2:1920}',
         '    height: ${3:1080}',
-        '    point: ~${4:top_left}'
+        '    point: ~${4:stretch_all}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -139,7 +153,10 @@ const hGrid = {
         '  attribute:',
         '    spaceBetweenX: ${2:10}',
         '    spaceBetweenY: ${3:10}',
-        '    column: ${4:3}'
+        '    column: ${4:3}',
+        '    point: ~${5:top_left}',
+        '    x: ${6:0}',
+        '    y: ${7:0}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -152,7 +169,10 @@ const vGrid = {
         '  attribute:',
         '    spaceBetweenX: ${2:10}',
         '    spaceBetweenY: ${3:10}',
-        '    row: ${4:3}'
+        '    row: ${4:3}',
+        '    point: ~${5:top_left}',
+        '    x: ${6:0}',
+        '    y: ${7:0}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -164,7 +184,10 @@ const hStack = {
         '  type: hStack',
         '  attribute:',
         '    spaceBetween: ${2:10}',
-        '    height: ${3:100}'
+        '    point: ~${3:top_left}',
+        '    x: ${4:0}',
+        '    y: ${5:0}',
+        '    height: ${6:100}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 };
@@ -176,7 +199,10 @@ const vStack = {
         '  type: vStack',
         '  attribute:',
         '    spaceBetween: ${2:10}',
-        '    width: ${3:100}'
+        '    point: ~${3:top_left}',
+        '    x: ${4:0}',
+        '    y: ${5:0}',
+        '    width: ${6:100}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 };
@@ -189,6 +215,7 @@ const scroll_full = {
         '  attribute:',
         '    width: ${2:800}',
         '    height: ${3:500}',
+        '    point: ~${4:middle_center}',
         '  children:',
         '    vButton:',
         '      type: texture',
@@ -221,12 +248,12 @@ const scroll_full = {
         '          self.parent[\'hButton\'].getDragXRatio()',
         '      children:',
         '        container:',
-        '          type: ${4:canvas}',
+        '          type: ${5:canvas}',
         '          attribute:',
-        '            width: ${5:1270}',
-        '            height: ${6:1000}',
+        '            width: ${6:1270}',
+        '            height: ${7:1000}',
         '          children:',
-        '            ${7:# 在这里添加滚动内容}'
+        '            ${8:# 在这里添加滚动内容}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -239,6 +266,7 @@ const scroll_v = {
         '  attribute:',
         '    width: ${2:800}',
         '    height: ${3:500}',
+        '    point: ~${4:middle_center}',
         '  children:',
         '    vButton:',
         '      type: texture',
@@ -260,13 +288,13 @@ const scroll_v = {
         '          self.parent[\'vButton\'].getDragYRatio()',
         '      children:',
         '        container:',
-        '          type: ${4:canvas}',
+        '          type: ${5:canvas}',
         '          attribute:',
         '            width: |',
         '              self.parent.width',
-        '            height: ${5:1000}',
+        '            height: ${6:1000}',
         '          children:',
-        '            ${6:# 在这里添加滚动内容}'
+        '            ${7:# 在这里添加滚动内容}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -279,6 +307,7 @@ const scroll_h = {
         '  attribute:',
         '    width: ${2:800}',
         '    height: ${3:500}',
+        '    point: ~${4:middle_center}',
         '  children:',
         '    hButton:',
         '      type: texture',
@@ -300,13 +329,13 @@ const scroll_h = {
         '          self.parent[\'hButton\'].getDragXRatio()',
         '      children:',
         '        container:',
-        '          type: ${4:canvas}',
+        '          type: ${5:canvas}',
         '          attribute:',
-        '            width: ${5:1000}',
+        '            width: ${6:1000}',
         '            height: |',
         '              self.parent.height',
         '          children:',
-        '            ${6:# 在这里添加滚动内容}'
+        '            ${7:# 在这里添加滚动内容}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -319,11 +348,12 @@ const button = {
         '  attribute:',
         '    width: ${2:100}',
         '    height: ${3:30}',
-        '    normal: ~${4:100,100,100}',
-        '    hover: ~${5:150,150,150}',
+        '    point: ~${4:middle_center}',
+        '    normal: ~${5:100,100,100,255}',
+        '    hover: ~${6:150,150,150,255}',
         '  action:',
         '    click: |-',
-        '      ${6:// 点击事件}'
+        '      ${7:// 点击事件}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -336,13 +366,15 @@ const button_text = {
         '  attribute:',
         '    width: ${2:100}',
         '    height: ${3:30}',
-        '    normal: ~${4:100,100,100}',
-        '    hover: ~${5:150,150,150}',
-        '    texts: ~${6:按钮文字}',
-        '    fontSize: ${7:38}',
+        '    point: ~${4:middle_center}',
+        '    normal: ~${5:100,100,100,255}',
+        '    hover: ~${6:150,150,150,255}',
+        '    texts: ~${7:&0按钮文字}',
+        '    fontSize: ${8:49}',
+        '    center: ${9|true,false|}',
         '  action:',
         '    click: |-',
-        '      ${8:// 点击事件}'
+        '      ${10:// 点击事件}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -413,7 +445,8 @@ const model = {
         '    model: ~${2:modelId}',
         '    animation: ~${3:animation}',
         '    scale: ${4:1}',
-        '    followMouse: ${5:false}'
+        '    point: ~${5:middle_center}',
+        '    followMouse: ${6|true,false|}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -425,7 +458,8 @@ const bossBar = {
         '  type: bossBar',
         '  attribute:',
         '    textures: ~[${2:texture1.png,texture2.png}]',
-        '    transitionTime: ${3:500}'
+        '    transitionTime: ${3:500}',
+        '    point: ~${4:middle_center}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -440,12 +474,13 @@ const compass = {
         '  attribute:',
         '    width: ${2:400}',
         '    height: ${3:400}',
+        '    point: ~${4:middle_center}',
         '    background: ~0,0,0,180',
         '    textColor: ~255,255,255',
         '    tickColor: ~255,255,255',
         '    directionColor: ~255,255,255',
-        '    tickInterval: ${4:5}',
-        '    majorTickInterval: ${5:15}'
+        '    tickInterval: ${5:5}',
+        '    majorTickInterval: ${6:15}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -458,9 +493,9 @@ const progress = {
         '  attribute:',
         '    width: ${2:200}',
         '    height: ${3:20}',
-        '    texture: ~${4:255,255,255}',
-        '    progress: ~${5:0.5}',
-        '    time: ${6:100}',
+        '    point: ~${4:top_left}',
+        '    texture: ~${5:255,255,255,255}',
+        '    progress: ${6:0.5}',
         '    mode: ${7:0}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
@@ -472,7 +507,8 @@ const _import = {
         '${1:import_}:',
         '  type: import',
         '  attribute:',
-        '    node: ~${2:menu.uiId.adaptive.controlName}'
+        '    node: ~${2:menu.uiId.adaptive.controlName}',
+        '    point: ~${3:middle_center}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -498,17 +534,20 @@ const chatTextBox = {
         '${1:chatInput_}:',
         '  type: chatTextBox',
         '  attribute:',
-        '    width: ${2:800}',
-        '    height: ${3:30}',
-        '    fontSize: ${4:20}',
-        '    background: ~0,0,0',
-        '    sendClose: ${5:true}',
+        '    fontSize: ${2:64}',
+        '    background: ~${3:Frosted:30;0,0,0,80}',
+        '    point: ~${4:horizontal_stretch_bottom}',
+        '    height: ${5:45}',
+        '    canLoseFocus: ${6|true,false|}',
         '  children:',
         '    suggestion:',
         '      type: suggestion',
         '      attribute:',
-        '        fontSize: ${6:20}',
-        '        maxShow: ${7:5}'
+        '        up: ${7|true,false|}',
+        '        fontSize: ${8:64}',
+        '        background: ~${9:0,0,0,200}',
+        '        backgroundBorder: ${10:10}',
+        '        maxShow: ${11:5}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -519,10 +558,11 @@ const suggestion = {
         '${1:suggestion_}:',
         '  type: suggestion',
         '  attribute:',
-        '        fontSize: ${1:20}',
-        '        maxShow: ${2:5}',
-        '        textColor: #FFFFFF',
-        '        hoverTextColor: #87CEEB'
+        '    up: ${2|true,false|}',
+        '    fontSize: ${3:64}',
+        '    background: ~${4:0,0,0,200}',
+        '    backgroundBorder: ${5:10}',
+        '    maxShow: ${6:5}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -533,12 +573,12 @@ const chat = {
         '${1:chat_}:',
         '  type: chat',
         '  attribute:',
-        '    width: ${2:600}',
-        '    height: ${3:300}',
-        '    background: ~0,0,0,175',
-        '    border: ${4:5}',
-        '    spaceBetween: ${5:5}',
-        '    showCard: ${6:true}'
+        '    fontSize: ${2:64}',
+        '    background: ~${3:0,0,0,120}',
+        '    point: ~${4:horizontal_stretch_top}',
+        '    height: ${5:495}',
+        '    lineSpace: ${6:10}',
+        '    showCard: ${7|true,false|}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -551,8 +591,9 @@ const bossBars = {
         '${1:bossBars_}:',
         '  type: bossBars',
         '  attribute:',
-        '    spaceBetween: ${1:10}',
-        '    maxSize: ${2:3}'
+        '    spaceBetween: ${2:10}',
+        '    maxSize: ${3:3}',
+        '    point: ~${4:top_left}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
