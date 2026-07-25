@@ -216,7 +216,8 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         // 检测当前是否在块头行（action:/attribute:/children:）
         const blockHeaderMatch = linePrefix.match(/^(\s*)(action|attribute|children):\s*$/);
         const isOnBlockHeader = blockHeaderMatch !== null;
-        const blockChildIndent = isOnBlockHeader ? (currentLineIndent + '  ') : '';
+        // 块头子项缩进使用当前行已有缩进 + 2 空格
+        const blockChildIndent = isOnBlockHeader ? ((blockHeaderMatch[1] || '') + '  ') : '';
 
         return completionsToUse.map(completion => {
             const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
