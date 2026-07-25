@@ -2,6 +2,9 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.11]
+- 修复控件模板中 `${CURRENT_SECONDS_UNIX}` 原样输出的问题：SnippetString API 不支持该变量
+
 ### [0.0.10]
 - 补全列表所有项都显示描述：将 detail 合并到 label 中，不选中也能看清每个选项
 

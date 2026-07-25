@@ -5,7 +5,7 @@ const texture = {
     label: 'texture',
     detail: '创建纹理控件',
     insertText: [
-        '${1:texture_${CURRENT_SECONDS_UNIX}}:',
+        '${1:texture_}:',
         '  type: texture',
         '  attribute:',
         '    width: ${2:width}',
@@ -18,7 +18,7 @@ const text = {
     label: 'text',
     detail: '创建文字控件',
     insertText: [
-        '${1:text_${CURRENT_SECONDS_UNIX}}:',
+        '${1:text_}:',
         '  type: text',
         '  attribute:',
         '    texts: ~${2:text}',
@@ -30,7 +30,7 @@ const _9sliceTexture = {
     label: '9sliceTexture',
     detail: '创建九宫格纹理控件',
     insertText: [
-        '${1:nineSliceTexture_${CURRENT_SECONDS_UNIX}}:',
+        '${1:nineSliceTexture_}:',
         '  type: 9sliceTexture',
         '  attribute:',
         '    width: ${2:width}',
@@ -49,7 +49,7 @@ const textInput = {
     label: 'textInput',
     detail: '创建常规文本输入框控件',
     insertText: [
-        '${1:textInput_${CURRENT_SECONDS_UNIX}}:',
+        '${1:textInput_}:',
         '  type: textbox',
         '  attribute:',
         '    width: ${2:350}',
@@ -63,7 +63,7 @@ const passwordInput = {
     label: 'passwordInput',
     detail: '创建密码输入框控件',
     insertText: [
-        '${1:passwordInput_${CURRENT_SECONDS_UNIX}}:',
+        '${1:passwordInput_}:',
         '  type: textbox',
         '  attribute:',
         '    width: ${2:350}',
@@ -78,7 +78,7 @@ const entity = {
     label: 'entity',
     detail: '创建实体控件',
     insertText: [
-        '${1:entity_${CURRENT_SECONDS_UNIX}}:',
+        '${1:entity_}:',
         '  type: entity',
         '  attribute:',
         '    scale: ${2:5}',
@@ -92,7 +92,7 @@ const slot =  {
     label: 'slot',
     detail: '创建槽位控件',
     insertText: [
-        '${1:slot_${CURRENT_SECONDS_UNIX}}:',
+        '${1:slot_}:',
         '  type: slot',
         '  attribute:',
         '    width: ${2:80}',
@@ -109,7 +109,7 @@ const canvas = {
     label: 'canvas',
     detail: '创建画布控件',
     insertText: [
-        '${1:canvas_${CURRENT_SECONDS_UNIX}}:',
+        '${1:canvas_}:',
         '  type: canvas',
         '  attribute:',
         '    width: ${2:800}',
@@ -121,7 +121,7 @@ const adaptive = {
     label: 'adaptive',
     detail: '创建自适应控件',
     insertText: [
-        '${1:adaptive_${CURRENT_SECONDS_UNIX}}:',
+        '${1:adaptive_}:',
         '  type: adaptive',
         '  attribute:',
         '    width: ${2:1920}',
@@ -134,7 +134,7 @@ const hGrid = {
     label: 'hGrid',
     detail: '创建水平网格控件',
     insertText: [
-        '${1:hGrid_${CURRENT_SECONDS_UNIX}}:',
+        '${1:hGrid_}:',
         '  type: hGrid',
         '  attribute:',
         '    spaceBetweenX: ${2:10}',
@@ -147,7 +147,7 @@ const vGrid = {
     label: 'vGrid',
     detail: '创建垂直网格控件',
     insertText: [
-        '${1:vGrid_${CURRENT_SECONDS_UNIX}}:',
+        '${1:vGrid_}:',
         '  type: vGrid',
         '  attribute:',
         '    spaceBetweenX: ${2:10}',
@@ -160,7 +160,7 @@ const hStack = {
     label: 'hStack',
     detail: '创建水平堆栈控件',
     insertText: [
-        '${1:hStack_${CURRENT_SECONDS_UNIX}}:',
+        '${1:hStack_}:',
         '  type: hStack',
         '  attribute:',
         '    spaceBetween: ${2:10}',
@@ -172,7 +172,7 @@ const vStack = {
     label: 'vStack',
     detail: '创建垂直堆栈控件',
     insertText: [
-        '${1:vStack_${CURRENT_SECONDS_UNIX}}:',
+        '${1:vStack_}:',
         '  type: vStack',
         '  attribute:',
         '    spaceBetween: ${2:10}',
@@ -184,7 +184,7 @@ const scroll_full = {
     label: 'scroll-full',
     detail: '创建完整滚动栏组件(包含垂直、水平滑块)',
     insertText: [
-        '${1:scroll_${CURRENT_SECONDS_UNIX}}:',
+        '${1:scroll_}:',
         '  type: canvas',
         '  attribute:',
         '    width: ${2:800}',
@@ -234,7 +234,7 @@ const scroll_v = {
     label: 'scroll-v',
     detail: '创建完整滚动栏组件(仅垂直滚动)',
     insertText: [
-        '${1:scroll_${CURRENT_SECONDS_UNIX}}:',
+        '${1:scroll_}:',
         '  type: canvas',
         '  attribute:',
         '    width: ${2:800}',
@@ -274,7 +274,7 @@ const scroll_h = {
     label: 'scroll-h',
     detail: '创建完整滚动栏组件(仅水平滚动)',
     insertText: [
-        '${1:scroll_${CURRENT_SECONDS_UNIX}}:',
+        '${1:scroll_}:',
         '  type: canvas',
         '  attribute:',
         '    width: ${2:800}',
@@ -314,7 +314,7 @@ const button = {
     label: 'fast-button',
     detail: '快速创建按钮',
     insertText: [
-        '${1:button_${CURRENT_SECONDS_UNIX}}:',
+        '${1:button_}:',
         '  type: texture',
         '  attribute:',
         '    width: ${2:100}',
@@ -331,7 +331,7 @@ const button_text = {
     label: 'fast-button-text',
     detail: '快速创建按钮(带背景和文字)',
     insertText: [
-        '${1:button_${CURRENT_SECONDS_UNIX}}:',
+        '${1:button_}:',
         '  type: texture',
         '  attribute:',
         '    width: ${2:100}',
@@ -350,7 +350,7 @@ const inv_slots = {
     label: 'fast-inventory-slots',
     detail: '创建背包槽位网格(带自动生成)',
     insertText: [
-        '${1:inventory_slots_${CURRENT_SECONDS_UNIX}}:',
+        '${1:inventory_slots_}:',
         '  type: grid',
         '  attribute:',
         '    spaceBetweenY: ${2:60}',
@@ -379,7 +379,7 @@ const hotbar_slots = {
     label: 'fast-hotbar-slots',
     detail: '创建快捷栏槽位(带自动生成)',
     insertText: [
-        '${1:hotbar_slots_${CURRENT_SECONDS_UNIX}}:',
+        '${1:hotbar_slots_}:',
         '  type: hStack',
         '  attribute:',
         '    spaceBetween: ${2:40}',
@@ -407,7 +407,7 @@ const model = {
     label: 'model',
     detail: '创建模特控件',
     insertText: [
-        '${1:model_${CURRENT_SECONDS_UNIX}}:',
+        '${1:model_}:',
         '  type: model',
         '  attribute:',
         '    model: ~${2:modelId}',
@@ -421,7 +421,7 @@ const bossBar = {
     label: 'bossBar',
     detail: '创建多层血条控件',
     insertText: [
-        '${1:bossBar_${CURRENT_SECONDS_UNIX}}:',
+        '${1:bossBar_}:',
         '  type: bossBar',
         '  attribute:',
         '    textures: ~[${2:texture1.png,texture2.png}]',
@@ -435,7 +435,7 @@ const compass = {
     label: 'compass',
     detail: '创建罗盘控件',
     insertText: [
-        '${1:compass_${CURRENT_SECONDS_UNIX}}:',
+        '${1:compass_}:',
         '  type: compass',
         '  attribute:',
         '    width: ${2:400}',
@@ -453,7 +453,7 @@ const progress = {
     label: 'progress',
     detail: '创建进度条控件',
     insertText: [
-        '${1:progress_${CURRENT_SECONDS_UNIX}}:',
+        '${1:progress_}:',
         '  type: progress',
         '  attribute:',
         '    width: ${2:200}',
@@ -469,7 +469,7 @@ const _import = {
     label: 'import',
     detail: '创建导入器控件',
     insertText: [
-        '${1:import_${CURRENT_SECONDS_UNIX}}:',
+        '${1:import_}:',
         '  type: import',
         '  attribute:',
         '    node: ~${2:menu.uiId.adaptive.controlName}'
@@ -480,7 +480,7 @@ const observer = {
     label: 'observer',
     detail: '创建观察者控件',
     insertText: [
-        '${1:observer_${CURRENT_SECONDS_UNIX}}:',
+        '${1:observer_}:',
         '  type: observer',
         '  attribute:',
         '    maxSize: ${2:32}',
@@ -495,7 +495,7 @@ const chatTextBox = {
     label: 'chatTextBox',
     detail: '创建聊天栏输入框控件',
     insertText: [
-        '${1:chatInput_${CURRENT_SECONDS_UNIX}}:',
+        '${1:chatInput_}:',
         '  type: chatTextBox',
         '  attribute:',
         '    width: ${2:800}',
@@ -516,7 +516,7 @@ const suggestion = {
     label: 'suggestion',
     detail: '创建命令补全器控件',
     insertText: [
-        '${1:suggestion_${CURRENT_SECONDS_UNIX}}:',
+        '${1:suggestion_}:',
         '  type: suggestion',
         '  attribute:',
         '        fontSize: ${1:20}',
@@ -530,7 +530,7 @@ const chat = {
     label: 'chat',
     detail: '创建聊天栏控件',
     insertText: [
-        '${1:chat_${CURRENT_SECONDS_UNIX}}:',
+        '${1:chat_}:',
         '  type: chat',
         '  attribute:',
         '    width: ${2:600}',
@@ -548,7 +548,7 @@ const bossBars = {
     label: 'bossBars',
     detail: '创建血条排列器控件',
     insertText: [
-        '${1:bossBars_${CURRENT_SECONDS_UNIX}}:',
+        '${1:bossBars_}:',
         '  type: bossBars',
         '  attribute:',
         '    spaceBetween: ${1:10}',
