@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { type_values } from '../completion/structure/rule/controlAttributeValue';
 
-const VALID_CONTROL_TYPES = new Set(type_values.map(v => v.label));
+const VALID_CONTROL_TYPES = new Set(type_values.map(v => v.label.toLowerCase()));
 
 export class DiagnosticProvider {
     private diagnosticCollection: vscode.DiagnosticCollection;
@@ -94,7 +94,7 @@ export class DiagnosticProvider {
 
                 if (key === 'type' && value && !value.startsWith('${')) {
                     const typeValue = value.trim().replace(/['"]/g, '');
-                    if (!VALID_CONTROL_TYPES.has(typeValue) && typeValue !== '') {
+                    if (!VALID_CONTROL_TYPES.has(typeValue.toLowerCase()) && typeValue !== '') {
                         diagnostics.push(new vscode.Diagnostic(
                             new vscode.Range(i, line.indexOf(value), i, line.indexOf(value) + value.length),
                             `无效的控件类型: "${typeValue}"`,
