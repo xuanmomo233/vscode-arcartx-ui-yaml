@@ -2,6 +2,9 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.14]
+- 修复 type: 补全后 type 值与冒号之间仍然缺少空格的问题：使用 CompletionItem.range 替换 partialInput，并在 snippet 前保留空格
+
 ### [0.0.13]
 - 修复 hGrid/hStack/vGrid/vStack 等驼峰命名控件无法匹配智能模板的问题：type_templates key 全部改为小写
 - 修复 type: 补全后插入文本与冒号之间缺少空格的问题

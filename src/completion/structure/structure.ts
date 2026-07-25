@@ -99,13 +99,10 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
                     // 智能模板：type 值 + attribute 块
                     if (isControlType && hasSmartTemplate(completion.label)) {
-                        insertText = getSmartTypeSnippet(completion.label);
-                        // 处理 partialInput 前缀替换
-                        if (partialInput && insertText.startsWith(partialInput)) {
-                            insertText = insertText.substring(partialInput.length);
-                        }
-                        // 确保 type: 后有空格分隔
-                        insertText = ' ' + insertText;
+                        insertText = ' ' + getSmartTypeSnippet(completion.label);
+                        // 设置 range 替换用户已输入的 partialInput，避免重复
+                        const replaceStart = position.translate(0, -partialInput.length);
+                        item.range = new vscode.Range(replaceStart, position);
                         item.insertText = new vscode.SnippetString(insertText);
                         item.documentation = completion.documentation;
                         item.sortText = `0${completion.label}`;
