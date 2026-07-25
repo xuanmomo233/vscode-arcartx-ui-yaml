@@ -77,19 +77,14 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
             }
 
             if (!valueOptions) {
-                // 检查是否是块级关键字（action, attribute, children）
-                // 这些关键字输入 key: 后应换行+缩进，而非显示属性值
+                // 无属性值补全的属性分两类：
+                // 1. 块级关键字（action/attribute/children）: 落入 section 3，通过路径匹配显示块内容（触发器/属性/控件模板）
+                // 2. 其他普通属性（x/y/width/123 等）: 直接返回 []，避免无关补全
                 const blockKeys = ['action', 'attribute', 'children'];
-                if (blockKeys.includes(attrName) && !partialInput && !tildePrefix) {
-                    const currentIndent = linePrefix.match(/^\s*/)?.[0] || '';
-                    const item = new vscode.CompletionItem(`换行`, vscode.CompletionItemKind.Keyword);
-                    item.insertText = new vscode.SnippetString(`\n${currentIndent}  `);
-                    item.sortText = '0';
-                    item.detail = `${attrName}: 后换行并缩进`;
-                    return [item];
+                if (!blockKeys.includes(attrName)) {
+                    return [];
                 }
-                // 非块级关键字且无属性值补全，不显示任何补全
-                return [];
+                // blockKeys 落到这里继续执行 section 3
             } else {
                 // partialInput 有值时过滤，为空时显示全部
                 const filteredOptions = partialInput
@@ -218,16 +213,28 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         // 获取当前行缩进，用于调整多行 snippet 的缩进
         const currentLineIndent = currentLine.match(/^\s*/)?.[0] || '';
 
+        // 检测当前是否在块头行（action:/attribute:/children:）
+        const blockHeaderMatch = linePrefix.match(/^(\s*)(action|attribute|children):\s*$/);
+        const isOnBlockHeader = blockHeaderMatch !== null;
+        const blockChildIndent = isOnBlockHeader ? (currentLineIndent + '  ') : '';
+
         return completionsToUse.map(completion => {
             const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
             const item = new vscode.CompletionItem(displayLabel, completion.kind || vscode.CompletionItemKind.Property);
             item.filterText = completion.label;
             item.detail = completion.detail;
+
             // 对含换行的 insertText，在每行缩进前加上当前行缩进
             let insertText = completion.insertText;
-            if (insertText.includes('\n') && currentLineIndent) {
+            if (insertText.includes('\n') && currentLineIndent && !isOnBlockHeader) {
                 insertText = insertText.replace(/\n( +)/g, (_match, spaces) => '\n' + currentLineIndent + spaces);
             }
+
+            // 当前行是块头（如 action:），让子项从下一行开始并加子缩进
+            if (isOnBlockHeader) {
+                insertText = '\n' + insertText.replace(/^/gm, blockChildIndent);
+            }
+
             item.insertText = new vscode.SnippetString(insertText);
             item.documentation = completion.documentation || new vscode.MarkdownString(completion.detail);
 
