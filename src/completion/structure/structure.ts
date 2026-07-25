@@ -4,6 +4,7 @@ import { self_functions } from './rule/uiSelf'
 import { control_self_functions } from './rule/controlSelf'
 import { builtin_functions, builtin_objects } from './rule/ariaBuiltin'
 import { task_type_values } from './rule/uiTaskTypeValues'
+import { getAttributesByType, detectControlType } from './rule/controlTypeAttributes'
 
 export class StructureCompletionProvider implements vscode.CompletionItemProvider {
 
@@ -161,7 +162,16 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         // 4. 处理触发字符（/ 或 ?）
         const isTriggerChar = lastChar === '?' || lastChar === '/';
 
-        return matchingConfig.completions.map(completion => {
+        // 4.5 如果当前路径以 attribute 结尾，根据控件 type 过滤属性
+        let completionsToUse = matchingConfig.completions;
+        if (currentPath[currentPath.length - 1] === 'attribute') {
+            const controlType = detectControlType(document, position);
+            if (controlType) {
+                completionsToUse = getAttributesByType(controlType);
+            }
+        }
+
+        return completionsToUse.map(completion => {
             const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
             item.detail = completion.detail;
             item.insertText = new vscode.SnippetString(completion.insertText);
