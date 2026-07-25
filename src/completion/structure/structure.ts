@@ -181,6 +181,13 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         }
 
         // 3. 查找匹配配置
+        // 如果当前行是 xxx: 格式（用户正在输入属性值），且 xxx 不在 attributeValueMap 中，
+        // 则不显示结构补全，避免 x: 等无关属性触发 type 等补全
+        const attrValueCheck = linePrefix.match(/(\w+):(\s*)(~?)(\w*)$/);
+        if (attrValueCheck && !attributeValueMap.has(attrValueCheck[1]) && !(attrValueCheck[1] === 'type' && isInTasksContext)) {
+            return [];
+        }
+
         console.log('StructureCompletion: linePrefix =', JSON.stringify(linePrefix));
         console.log('StructureCompletion: currentPath =', currentPath);
 
