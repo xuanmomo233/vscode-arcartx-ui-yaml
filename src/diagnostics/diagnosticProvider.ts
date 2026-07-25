@@ -92,7 +92,7 @@ export class DiagnosticProvider {
                 const key = yamlKeyMatch[1];
                 const value = yamlKeyMatch[2];
 
-                if (key === 'type' && value && !value.startsWith('${')) {
+                if (key === 'type' && value && !value.startsWith('${') && isNaN(Number(value.trim().replace(/['"]/g, '')))) {
                     const typeValue = value.trim().replace(/['"]/g, '');
                     if (!VALID_CONTROL_TYPES.has(typeValue.toLowerCase()) && typeValue !== '') {
                         diagnostics.push(new vscode.Diagnostic(
