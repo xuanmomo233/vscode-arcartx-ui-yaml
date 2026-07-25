@@ -13,7 +13,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 列表（控件对象数组）\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.getVisibleChildren()\n' +
             '// 返回: [控件A, 控件B...]\n' +
             '```'
@@ -32,7 +32,7 @@ export const control_self_functions = [
             '- `newName` - 新创建控件的ID\n\n' +
             '**返回值**: 控件对象\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.create(\'模板ID\', \'新控件ID\')\n' +
             '// 返回一个控件对象\n' +
             '```\n\n' +
@@ -59,7 +59,7 @@ export const control_self_functions = [
             '- `newID` - 新控件的ID\n\n' +
             '**返回值**: 新控件对象\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.copy(\'新控件ID\')\n' +
             '// 返回新创建的控件对象\n' +
             '```'
@@ -76,7 +76,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 数字\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.childrenCount()\n' +
             '// 返回: 3\n' +
             '```'
@@ -94,7 +94,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.remove()\n' +
             '```'
         )
@@ -110,7 +110,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.clear()\n' +
             '// 移除所有子控件\n' +
             '```'
@@ -151,7 +151,7 @@ export const control_self_functions = [
             '- `enable` - 是否启用 (true/false)\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.setEnable(false)\n' +
             '```'
         )
@@ -221,7 +221,7 @@ export const control_self_functions = [
             '- `attributeName` - 属性名称\n\n' +
             '**返回值**: 属性值\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.get(\'texts\')\n' +
             '// 获取 texts 属性值\n' +
             '```'
@@ -239,7 +239,7 @@ export const control_self_functions = [
             '- `value` - 新值\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.set(\'texts\', \'新文本\')\n' +
             '// 设置 texts 属性值\n' +
             '```'
@@ -300,7 +300,7 @@ export const control_self_functions = [
             '- `value` - 比率值 (数字类型)\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.setDragXRatio(0.5)\n' +
             '// 设置X轴拖动比例为50%\n' +
             '```'
@@ -317,7 +317,7 @@ export const control_self_functions = [
             '- `value` - 比率值 (数字类型)\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.setDragYRatio(0.5)\n' +
             '// 设置Y轴拖动比例为50%\n' +
             '```'
@@ -359,7 +359,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 数字\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.getStackWidth()\n' +
             '// 返回: 200\n' +
             '```'
@@ -377,7 +377,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 数字\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.getStackHeight()\n' +
             '// 返回: 150\n' +
             '```'
@@ -395,7 +395,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 物品堆对象\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.getSlotItemStack()\n' +
             '// 返回: ItemStack对象\n' +
             '```'
@@ -414,7 +414,7 @@ export const control_self_functions = [
             '- `key` - 物品键 (字符串类型)\n\n' +
             '**返回值**: 数字\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.getItemValueSum("minecraft:iron_ingot")\n' +
             '// 返回: 64\n' +
             '```'
@@ -433,7 +433,7 @@ export const control_self_functions = [
             '- `key` - 键内容 (字符串类型)\n\n' +
             '**返回值**: 字符串\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.getItemText("等级")\n' +
             '// 若lore为"等级: 5"，返回: "5"\n' +
             '```'
@@ -452,7 +452,7 @@ export const control_self_functions = [
             '- `item` - 物品JSON (字符串类型，需要序列化物品)\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.setIconItem(\'{"id": "minecraft:stone","Count":1}\')\n' +
             '```'
         )
@@ -469,7 +469,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 数字\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.getSameCount()\n' +
             '// 返回: 32\n' +
             '```'
@@ -496,7 +496,7 @@ export const control_self_functions = [
             '## 设置文本内容\n\n' +
             '**适用**: Text、TextBox\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.setText(\'新文本\')\n' +
             '```'
         )
@@ -513,7 +513,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 字符串\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.getContent()\n' +
             '// 返回: "用户输入的内容"\n' +
             '```'
@@ -532,7 +532,7 @@ export const control_self_functions = [
             '- `content` - 内容 (字符串类型)\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.setContent("exampleContent")\n' +
             '```'
         )
@@ -550,7 +550,7 @@ export const control_self_functions = [
             '- `text` - 插入的内容 (字符串类型)\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.insert("exampleText")\n' +
             '```'
         )
@@ -568,7 +568,7 @@ export const control_self_functions = [
             '- `value` - 布尔类型 (true表示获取焦点，false表示失去焦点)\n\n' +
             '**返回值**: 无\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.setFocus(true)\n' +
             '// 获取焦点\n' +
             '```'
@@ -586,7 +586,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 布尔值\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.needShowAll()\n' +
             '// 返回: true/false\n' +
             '```'
@@ -603,7 +603,7 @@ export const control_self_functions = [
             '**参数**: 无\n\n' +
             '**返回值**: 布尔值\n\n' +
             '---\n\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'self.isHovered()\n' +
             '// 返回: true/false\n' +
             '```'

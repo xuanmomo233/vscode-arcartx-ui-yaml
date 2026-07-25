@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { completionConfigs, CompletionConfig, attributeValueMap } from './rule'
 import { self_functions } from './rule/uiSelf'
 import { control_self_functions } from './rule/controlSelf'
-import { builtin_functions, builtin_objects } from './rule/shimmerBuiltin'
+import { builtin_functions, builtin_objects } from './rule/ariaBuiltin'
 import { task_type_values } from './rule/uiTaskTypeValues'
 
 export class StructureCompletionProvider implements vscode.CompletionItemProvider {

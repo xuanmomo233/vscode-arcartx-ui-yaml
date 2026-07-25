@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 
-// Shimmer 内置对象函数补全
+// Aria 内置对象函数补全
 export const builtin_functions = [
-    // === Shimer 核心函数 ===
+    // === Aria 核心函数 ===
     {
-        label: 'Shimmer.print()',
+        label: 'Aria.print()',
         detail: '控制台输出（不换行）',
         insertText: 'print(${1:value})',
         kind: vscode.CompletionItemKind.Function,
@@ -16,15 +16,15 @@ export const builtin_functions = [
             '**返回值**: 无\n\n' +
             '---\n\n' +
             '**示例**:\n' +
-            '```shimmer\n' +
-            'Shimmer.print("Hello")\n' +
-            'Shimmer.print(" World")\n' +
+            '```aria\n' +
+            'Aria.print("Hello")\n' +
+            'Aria.print(" World")\n' +
             '```\n' +
             '输出: `Hello World`（不换行）'
         )
     },
     {
-        label: 'Shimmer.println()',
+        label: 'Aria.println()',
         detail: '控制台输出（换行）',
         insertText: 'println(${1:text})',
         kind: vscode.CompletionItemKind.Function,
@@ -36,9 +36,9 @@ export const builtin_functions = [
             '**返回值**: 无\n\n' +
             '---\n\n' +
             '**示例**:\n' +
-            '```shimmer\n' +
-            'Shimmer.println("Hello")\n' +
-            'Shimmer.println("World")\n' +
+            '```aria\n' +
+            'Aria.println("Hello")\n' +
+            'Aria.println("World")\n' +
             '```\n' +
             '输出:\n' +
             '```\n' +
@@ -127,7 +127,7 @@ export const builtin_functions = [
             '**返回值**: 数字\n\n' +
             '---\n\n' +
             '**示例**:\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             '123.456.round()\n' +
             '```\n' +
             '返回: `123`'
@@ -145,7 +145,7 @@ export const builtin_functions = [
             '**返回值**: 数字\n\n' +
             '---\n\n' +
             '**示例**:\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             '123.456.round(2)\n' +
             '```\n' +
             '返回: `123.46`'
@@ -206,7 +206,7 @@ export const builtin_functions = [
             '**返回值**: UUID对象\n\n' +
             '---\n\n' +
             '**示例**:\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'UUID()\n' +
             '```\n' +
             '生成类似: `123e4567-e89b-12d3-a456-426614174000`'
@@ -224,7 +224,7 @@ export const builtin_functions = [
             '**返回值**: UUID对象（字符串无效时生成随机UUID）\n\n' +
             '---\n\n' +
             '**示例**:\n' +
-            '```shimmer\n' +
+            '```aria\n' +
             'UUID(\'123e4567-e89b-12d3-a456-426614174000\')\n' +
             '```'
         )
@@ -438,7 +438,7 @@ export const builtin_functions = [
     { label: 'Entity.getMouseEntityMaxHealth()', detail: '获取鼠标实体最大生命值', insertText: 'getMouseEntityMaxHealth()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取鼠标指向实体的最大生命值**\n\n**参数**: 无\n\n**返回值**: 双精度浮点类型\n\n**示例**: `Entity.getMouseEntityMaxHealth()` → `20.0`') },
     { label: 'Entity.isMouseEntityAdyeshach()', detail: '是否为Adyeshach实体', insertText: 'isMouseEntityAdyeshach()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**检查鼠标指向的实体是否为Adyeshach实体**\n\n**参数**: 无\n\n**返回值**: 布尔类型\n\n**示例**: `Entity.isMouseEntityAdyeshach()` → `true`') },
     // === Fog 雾效 ===
-    { label: 'Fog.setup()', detail: '设置雾效', insertText: 'setup(${1:r}, ${2:g}, ${3:b}, ${4:start}, ${5:end})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**设置雾效参数**\n\n**参数**:\n- r (整数，红色分量0-255)\n- g (整数，绿色分量0-255)\n- b (整数，蓝色分量0-255)\n- start (浮点数，雾效起始距离)\n- end (浮点数，雾效结束距离)\n\n**返回值**: 无\n\n**示例**:\n```shimmer\n// 设置白色雾效，从5个方块开始，延伸到20个方块\nFog.setup(255, 255, 255, 5.0, 20.0)\n// 设置红色雾效，从2个方块开始，延伸到15个方块\nFog.setup(255, 0, 0, 2.0, 15.0)\n```') },
+    { label: 'Fog.setup()', detail: '设置雾效', insertText: 'setup(${1:r}, ${2:g}, ${3:b}, ${4:start}, ${5:end})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**设置雾效参数**\n\n**参数**:\n- r (整数，红色分量0-255)\n- g (整数，绿色分量0-255)\n- b (整数，蓝色分量0-255)\n- start (浮点数，雾效起始距离)\n- end (浮点数，雾效结束距离)\n\n**返回值**: 无\n\n**示例**:\n```aria\n// 设置白色雾效，从5个方块开始，延伸到20个方块\nFog.setup(255, 255, 255, 5.0, 20.0)\n// 设置红色雾效，从2个方块开始，延伸到15个方块\nFog.setup(255, 0, 0, 2.0, 15.0)\n```') },
     { label: 'Fog.clear()', detail: '清除雾效', insertText: 'clear()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**清除当前雾效设置**\n\n**参数**: 无\n\n**返回值**: 无\n\n**注意**: 清除雾效后将恢复到游戏默认的环境效果') },
     // === Game 游戏 ===
     { label: 'Game.options()', detail: '打开游戏选项', insertText: 'options()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**打开游戏选项界面**\n\n**参数**: 无\n\n**返回值**: 无') },
@@ -462,7 +462,7 @@ export const builtin_functions = [
     { label: 'Name.getEntityName()', detail: '获取实体名称', insertText: 'getEntityName(${1:uuid})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**根据UUID获取实体名称**\n\n**参数**: uuid (字符串类型，实体的UUID)\n\n**返回值**: 字符串类型\n\n**示例**: `Name.getEntityName("550e8400-e29b-41d4-a716-446655440000")` → `"Steve"`') },
     { label: 'Name.getBlockName()', detail: '获取方块名称', insertText: 'getBlockName(${1:x}, ${2:y}, ${3:z})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取指定坐标方块的名称**\n\n**参数**: x, y, z (整数类型，坐标)\n\n**返回值**: 字符串类型\n\n**示例**: `Name.getBlockName(0, 64, 0)` → `"Stone"`') },
     // === Packet 数据包 ===
-    { label: 'Packet.send()', detail: '发送数据包', insertText: 'send(${1:type}, ${2:data})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**发送自定义网络数据包**\n\n**参数**:\n- type (字符串类型，数据包类型)\n- data (可变参数，数据包内容，可以是字符串或字符串列表)\n\n**返回值**: 无\n\n**示例**:\n```shimmer\n// 发送无数据的数据包\nPacket.send("test")\n// 发送单个数据的数据包\nPacket.send("test", "data")\n// 发送多个数据的数据包\nPacket.send("test", "data1", "data2", "data3")\n```') },
+    { label: 'Packet.send()', detail: '发送数据包', insertText: 'send(${1:type}, ${2:data})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**发送自定义网络数据包**\n\n**参数**:\n- type (字符串类型，数据包类型)\n- data (可变参数，数据包内容，可以是字符串或字符串列表)\n\n**返回值**: 无\n\n**示例**:\n```aria\n// 发送无数据的数据包\nPacket.send("test")\n// 发送单个数据的数据包\nPacket.send("test", "data")\n// 发送多个数据的数据包\nPacket.send("test", "data1", "data2", "data3")\n```') },
     // === Placeholder 占位符 ===
     { label: 'Placeholder.parse()', detail: '解析占位符', insertText: 'parse(${1:placeholder})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**解析服务器变量占位符**\n\n**参数**: placeholder (字符串类型，变量占位符)\n\n**返回值**: 字符串类型（解析后的变量值）\n\n**注意**: 如果变量不存在，将返回空字符串\n\n**示例**: `Placeholder.parse("%player_name%")` → `"Steve"`') },
     // === Player 玩家 ===
@@ -493,8 +493,8 @@ export const builtin_functions = [
     // === Screen 屏幕 ===
     { label: 'Screen.getWidth()', detail: '获取窗口宽度', insertText: 'getWidth()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取游戏窗口的宽度**\n\n**参数**: 无\n\n**返回值**: 双精度浮点数类型') },
     { label: 'Screen.getHeight()', detail: '获取窗口高度', insertText: 'getHeight()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取游戏窗口的高度**\n\n**参数**: 无\n\n**返回值**: 双精度浮点数类型') },
-    { label: 'Screen.open()', detail: '打开UI', insertText: 'open(${1:name})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**打开指定ID的UI**\n\n**参数**: name (字符串类型，ID)\n\n**返回值**: 无\n\n**示例**:\n```shimmer\nScreen.open("settings")  // 使用默认命名空间\n```') },
-    { label: 'Screen.close()', detail: '关闭界面', insertText: 'close(${1:name})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**关闭当前或指定的菜单界面**\n\n**参数**: name (字符串类型，可选，ID)\n\n**返回值**: 无\n\n**示例**:\n```shimmer\nScreen.close()  // 关闭当前界面\nScreen.close("settings")  // 关闭指定UI\n```') },
+    { label: 'Screen.open()', detail: '打开UI', insertText: 'open(${1:name})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**打开指定ID的UI**\n\n**参数**: name (字符串类型，ID)\n\n**返回值**: 无\n\n**示例**:\n```aria\nScreen.open("settings")  // 使用默认命名空间\n```') },
+    { label: 'Screen.close()', detail: '关闭界面', insertText: 'close(${1:name})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**关闭当前或指定的菜单界面**\n\n**参数**: name (字符串类型，可选，ID)\n\n**返回值**: 无\n\n**示例**:\n```aria\nScreen.close()  // 关闭当前界面\nScreen.close("settings")  // 关闭指定UI\n```') },
     // === Shader 着色器 ===
     { label: 'Shader.start()', detail: '启动着色器', insertText: 'start(${1:shaderName})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**启动指定的着色器效果**\n\n**参数**: shaderName (字符串类型，着色器名称)\n\n**返回值**: 无\n\n**注意**: 所有着色器操作都在游戏主线程同步执行\n\n**示例**: `Shader.start("blur")`') },
     { label: 'Shader.update()', detail: '更新着色器', insertText: 'update(${1:shaderName}, ${2:value})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**更新指定着色器的参数值**\n\n**参数**:\n- shaderName (字符串类型，着色器名称)\n- value (浮点数类型，着色器参数值)\n\n**返回值**: 无\n\n**示例**: `Shader.update("blur", 0.5)`') },
@@ -512,7 +512,7 @@ export const builtin_functions = [
     { label: 'Thread.sleep()', detail: '线程休眠', insertText: 'sleep(${1:time})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**使当前线程暂停执行指定的毫秒数**\n\n**参数**: time (整数类型，暂停时间，单位为毫秒)\n\n**返回值**: 整数类型（始终返回0）\n\n**注意**:\n- 如果传入的时间小于或等于0，将自动调整为1毫秒\n- 该方法会阻塞当前线程的执行\n- 通常用于实现定时或延迟操作\n\n**示例**: `Thread.sleep(1000)` // 暂停1秒') },
     // === Time 时间 ===
     { label: 'Time.currentTime()', detail: '获取时间戳', insertText: 'currentTime()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取当前时间戳（毫秒）**\n\n**参数**: 无\n\n**返回值**: 长整型数字（毫秒时间戳）\n\n**示例**: `Time.currentTime()` → `1707051600000`') },
-    { label: 'Time.currentTimeFormat()', detail: '格式化时间', insertText: 'currentTimeFormat(${1:timestamp}, ${2:format})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**格式化时间戳为可读字符串**\n\n**参数**:\n- timestamp (长整型数字，可选，毫秒时间戳)\n- format (字符串类型，可选，时间格式模板)\n\n**返回值**: 字符串类型（格式化后的时间字符串）\n\n**默认格式**: "yyyy-MM-dd HH:mm:ss"\n\n**示例**:\n```shimmer\nTime.currentTimeFormat()              // "2024-02-04 20:00:00"\nTime.currentTimeFormat(1707051600000)  // "2024-02-04 20:00:00"\nTime.currentTimeFormat(1707051600000, "MM-dd HH:mm")  // "02-04 20:00"\n```') },
+    { label: 'Time.currentTimeFormat()', detail: '格式化时间', insertText: 'currentTimeFormat(${1:timestamp}, ${2:format})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**格式化时间戳为可读字符串**\n\n**参数**:\n- timestamp (长整型数字，可选，毫秒时间戳)\n- format (字符串类型，可选，时间格式模板)\n\n**返回值**: 字符串类型（格式化后的时间字符串）\n\n**默认格式**: "yyyy-MM-dd HH:mm:ss"\n\n**示例**:\n```aria\nTime.currentTimeFormat()              // "2024-02-04 20:00:00"\nTime.currentTimeFormat(1707051600000)  // "2024-02-04 20:00:00"\nTime.currentTimeFormat(1707051600000, "MM-dd HH:mm")  // "02-04 20:00"\n```') },
     // === Web 网页 ===
     { label: 'Web.open()', detail: '打开网页', insertText: 'open(${1:url})', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**在默认浏览器中打开指定URL**\n\n**参数**: url (字符串类型，网页地址)\n\n**返回值**: 无\n\n**注意**:\n- URL必须以"https://"或"http://"开头\n- 不符合要求的URL将被忽略且不会打开\n- 该功能会调用系统默认浏览器打开链接\n\n**示例**: `Web.open("https://example.com")`') },
     // === Mouse 鼠标 ===
@@ -589,7 +589,7 @@ export const builtin_functions = [
 
 // 支持的对象名称列表
 export const builtin_objects = [
-    'Shimmer', 'Math', 'String', 'Number', 'List', 'Map', 'UUID',
+    'Aria', 'Math', 'String', 'Number', 'List', 'Map', 'UUID',
     // 动画插值
     'Lerp', 'Back', 'Bezier', 'Bounce', 'CircX', 'CircY', 'Elastic', 'Expo', 'Q2', 'Q3', 'Q4', 'Q5',
     'Sine', 'Smooth', 'Spring', 'Fade', 'TwoLerp', 'Blink', 'Breathe', 'Pulse', 'Shake', 'Swing', 'Wave', 'Slide',

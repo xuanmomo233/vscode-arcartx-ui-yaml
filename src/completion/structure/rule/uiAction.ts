@@ -11,7 +11,7 @@ export const ui_actions = [
             `当用户按下键盘上的任意键时触发。\n\n` +
             `**获取按键**: \`self.currentKeyPress\`\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `keyPress: |-\n` +
             `  if self.currentKeyPress == 'A' {\n` +
             `    // 按下A键时的逻辑\n` +
@@ -29,7 +29,7 @@ export const ui_actions = [
             `当用户释放键盘上的任意键时触发。\n\n` +
             `**获取按键**: \`self.currentKeyReleased\`\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `keyRelease: |-\n` +
             `  if self.currentKeyReleased == 'ESC' {\n` +
             `    // 释放ESC键时的逻辑\n` +
@@ -49,7 +49,7 @@ export const ui_actions = [
             `- 正数: 向上滚动\n` +
             `- 负数: 向下滚动\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `wheel: |-\n` +
             `  if self.wheelValue > 0 {\n` +
             `    // 向上滚动\n` +
@@ -69,7 +69,7 @@ export const ui_actions = [
             `当接收到聊天消息时触发。\n\n` +
             `**获取消息**: \`Chat.getEventMessage()\`\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `message: |-\n` +
             `  val msg = Chat.getEventMessage()\n` +
             `  // 处理消息内容\n` +

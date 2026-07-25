@@ -1,17 +1,17 @@
 {
   "函数: 打印并换行": {
-    "prefix": ["println", "Shimmer.println"],
+    "prefix": ["println", "Aria.println"],
     "body": [
-      "Shimmer.println(\"${1:text}\")"
+      "println(${1:text})"
     ],
-    "description": "打印文本并换行"
+    "description": "全局函数：输出内容到控制台并自动换行。参数可为任意类型（字符串、数字、布尔等）。"
   },
   "函数: 打印": {
-    "prefix": ["print", "Shimmer.print"],
+    "prefix": ["print", "Aria.print"],
     "body": [
-      "Shimmer.print(\"${1:text}\")"
+      "print(${1:value})"
     ],
-    "description": "打印文本"
+    "description": "全局函数：输出内容到控制台，不自动换行。多次调用会紧挨着输出。参数可为任意类型。"
   },
   "函数: 数学绝对值": {
     "prefix": ["Math.abs", "abs"],

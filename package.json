@@ -1,8 +1,8 @@
 {
-  "name": "arcartx-shimmer-ui",
-  "displayName": "ArcartX Shimmer UI",
+  "name": "arcartx-aria-ui",
+  "displayName": "ArcartX Aria UI",
   "icon": "icons/project.png",
-  "description": "ArcartX 界面配置开发工具，基于 YAML 语法，支持 Shimmer 高亮补全、ArcartX UI 结构补全。",
+  "description": "ArcartX 界面配置开发工具，基于 YAML 语法，支持 Aria 高亮补全、ArcartX UI 结构补全。",
   "version": "0.0.2",
   "publisher": "ArcartXProject",
   "author": {
@@ -52,19 +52,19 @@
     "snippets": [
       {
         "language": "arcartx-ui-yaml",
-        "path": "./snippets/shimmer-base.json"
+        "path": "./snippets/aria-base.json"
       },
       {
         "language": "arcartx-ui-yaml",
-        "path": "./snippets/shimmer-function.json"
+        "path": "./snippets/aria-function.json"
       },
       {
         "language": "arcartx-ui-yaml",
-        "path": "./snippets/shimmer-animation.json"
+        "path": "./snippets/aria-animation.json"
       },
       {
         "language": "arcartx-ui-yaml",
-        "path": "./snippets/shimmer-function-arcartx.json"
+        "path": "./snippets/aria-function-arcartx.json"
       }
     ],
     "configurationDefaults": {
@@ -76,9 +76,9 @@
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
-            "name": "Shimmer Normal",
+            "name": "Aria Normal",
             "scope": [
-              "entity.name.identifier.shimmer"
+              "entity.name.identifier.aria"
             ],
             "settings": {
               "foreground": "#D7D7DA",
@@ -86,10 +86,10 @@
             }
           },
           {
-            "name": "Shimmer Comments",
+            "name": "Aria Comments",
             "scope": [
-              "comment.line.double-slash.shimmer",
-              "comment.block.shimmer"
+              "comment.line.double-slash.aria",
+              "comment.block.aria"
             ],
             "settings": {
               "foreground": "#66747F",
@@ -97,11 +97,11 @@
             }
           },
           {
-            "name": "Shimmer Strings",
+            "name": "Aria Strings",
             "scope": [
-              "string.quoted.single.shimmer",
-              "string.quoted.double.shimmer",
-              "string.quoted.triple.shimmer"
+              "string.quoted.single.aria",
+              "string.quoted.double.aria",
+              "string.quoted.triple.aria"
             ],
             "settings": {
               "foreground": "#8FBC8F",
@@ -109,19 +109,19 @@
             }
           },
           {
-            "name": "Shimmer String Escapes",
-            "scope": "constant.character.escape.shimmer",
+            "name": "Aria String Escapes",
+            "scope": "constant.character.escape.aria",
             "settings": {
               "foreground": "#FAFAD2",
               "fontStyle": "italic"
             }
           },
           {
-            "name": "Shimmer Numbers",
+            "name": "Aria Numbers",
             "scope": [
-              "constant.numeric.integer.shimmer",
-              "constant.numeric.float.shimmer",
-              "constant.numeric.hex.shimmer"
+              "constant.numeric.integer.aria",
+              "constant.numeric.float.aria",
+              "constant.numeric.hex.aria"
             ],
             "settings": {
               "foreground": "#CE9178",
@@ -129,18 +129,18 @@
             }
           },
           {
-            "name": "Shimmer Control Keywords",
-            "scope": "keyword.control.shimmer",
+            "name": "Aria Control Keywords",
+            "scope": "keyword.control.aria",
             "settings": {
               "foreground": "#7B68EE",
               "fontStyle": "italic"
             }
           },
           {
-            "name": "Shimmer Storage Types",
+            "name": "Aria Storage Types",
             "scope": [
-              "storage.type.shimmer",
-              "variable.other.args.shimmer"
+              "storage.type.aria",
+              "variable.other.args.aria"
             ],
             "settings": {
               "foreground": "#C586C0",
@@ -148,9 +148,9 @@
             }
           },
           {
-            "name": "Shimmer Variables and Booleans",
+            "name": "Aria Variables and Booleans",
             "scope": [
-              "constant.language.boolean.shimmer"
+              "constant.language.boolean.aria"
             ],
             "settings": {
               "foreground": "#9CDCFE",
@@ -158,29 +158,29 @@
             }
           },
           {
-            "name": "Shimmer Classes",
-            "scope": "support.class.shimmer",
+            "name": "Aria Classes",
+            "scope": "support.class.aria",
             "settings": {
               "foreground": "#D16969",
               "fontStyle": "italic"
             }
           },
           {
-            "name": "Shimmer Functions",
-            "scope": "support.function.shimmer",
+            "name": "Aria Functions",
+            "scope": "support.function.aria",
             "settings": {
               "foreground": "#D7BA7D",
               "fontStyle": "italic"
             }
           },
           {
-            "name": "Shimmer Operators",
+            "name": "Aria Operators",
             "scope": [
-              "keyword.operator.assignment.shimmer",
-              "keyword.operator.arithmetic.shimmer",
-              "keyword.operator.logical.shimmer",
-              "keyword.operator.comparison.shimmer",
-              "keyword.operator.other.shimmer"
+              "keyword.operator.assignment.aria",
+              "keyword.operator.arithmetic.aria",
+              "keyword.operator.logical.aria",
+              "keyword.operator.comparison.aria",
+              "keyword.operator.other.aria"
             ],
             "settings": {
               "foreground": "#BEBEBE",
@@ -188,11 +188,11 @@
             }
           },
           {
-            "name": "Shimmer Invalid Syntax",
+            "name": "Aria Invalid Syntax",
             "scope": [
-              "invalid.illegal.args-empty-brackets.shimmer",
-              "invalid.illegal.args-incomplete.shimmer",
-              "invalid.illegal.args-without-index.shimmer"
+              "invalid.illegal.args-empty-brackets.aria",
+              "invalid.illegal.args-incomplete.aria",
+              "invalid.illegal.args-without-index.aria"
             ],
             "settings": {
               "foreground": "#F44747",

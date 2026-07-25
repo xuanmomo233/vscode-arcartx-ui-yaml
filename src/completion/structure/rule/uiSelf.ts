@@ -13,7 +13,7 @@ export const self_functions = [
             `**参数**: 无\n` +
             `**返回值**: 数字类型\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.childrenCount()\n` +
             `\`\`\``
         )
@@ -28,7 +28,7 @@ export const self_functions = [
             `**参数**: 无\n` +
             `**返回值**: 无\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.close()\n` +
             `\`\`\``
         )
@@ -43,7 +43,7 @@ export const self_functions = [
             `**参数**: 无\n` +
             `**返回值**: 字符串类型\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.getID()  // 返回: "exampleUI"\n` +
             `\`\`\``
         )
@@ -60,7 +60,7 @@ export const self_functions = [
             `- \`value\`: 元数据值（可选，不包含则只匹配键）\n\n` +
             `**返回值**: 无\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.removeControlWithMeta("exampleKey", "exampleValue")\n` +
             `\`\`\``
         )
@@ -77,7 +77,7 @@ export const self_functions = [
             `- \`value\`: 元数据值（可选）\n\n` +
             `**返回值**: 列表（控件对象数组）\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.getControlWithMeta("exampleKey", "exampleValue")\n` +
             `// 返回: [控件对象A, 控件对象B...]\n` +
             `\`\`\``
@@ -96,7 +96,7 @@ export const self_functions = [
             `**返回值**: 物品堆（为空时返回空气）\n\n` +
             `**适用**: 仅Menu类型\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.getSlotItemStack('xxx', "Extra")\n` +
             `\`\`\``
         )
@@ -113,7 +113,7 @@ export const self_functions = [
             `**返回值**: 字符串类型\n\n` +
             `**适用**: 仅Menu类型\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.getOriginalName()  // 返回: "原版UI名称"\n` +
             `\`\`\``
         )
@@ -133,7 +133,7 @@ export const self_functions = [
             `PICKUP, QUICK_MOVE, SWAP, CLONE, THROW, QUICK_CRAFT, PICKUP_ALL\n\n` +
             `**适用**: 仅Menu类型\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.clickSlot(0, 0, "PICKUP")\n` +
             `\`\`\``
         )
@@ -163,7 +163,7 @@ export const self_functions = [
             `- \`actionName\`: 触发器名称\n\n` +
             `**返回值**: 无\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.delayAction(1000, 'click')  // 1秒后触发click事件\n` +
             `\`\`\``
         )
@@ -180,7 +180,7 @@ export const self_functions = [
             `**返回值**: 滚动栏控件列表\n\n` +
             `**适用**: 仅Menu类型\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.getHoverScroll()  // 返回: []\n` +
             `\`\`\``
         )
@@ -198,7 +198,7 @@ export const self_functions = [
             `- \`newName\`: 新创建控件的ID\n\n` +
             `**返回值**: 控件对象\n\n` +
             `---\n\n` +
-            `\`\`\`shimmer\n` +
+            `\`\`\`aria\n` +
             `self.create('我是一个模板', '新控件名称')\n` +
             `\`\`\`\n\n` +
             `对应的 template 配置:\n` +

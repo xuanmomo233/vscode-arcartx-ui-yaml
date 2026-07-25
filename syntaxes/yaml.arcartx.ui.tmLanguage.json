@@ -143,9 +143,9 @@
                 {
                     "begin": "^([ ]+)(?! )",
                     "end": "^(?!\\1|\\s*$)",
-                    "name": "entity.name.identifier.shimmer",
+                    "name": "entity.name.identifier.aria",
                     "patterns": [
-                        { "include": "#shimmer" }
+                        { "include": "#aria" }
                     ]
                 }
             ]
@@ -614,222 +614,222 @@
                 }
             ]
         },
-        "shimmer": {
+        "aria": {
             "patterns": [
                 {
-                    "include": "#shimmer-comments"
+                    "include": "#aria-comments"
                 },
                 {
-                    "include": "#shimmer-strings"
+                    "include": "#aria-strings"
                 },
                 {
-                    "include": "#shimmer-numbers"
+                    "include": "#aria-numbers"
                 },
                 {
-                    "include": "#shimmer-keywords"
+                    "include": "#aria-keywords"
                 },
                 {
-                    "include": "#shimmer-variables"
+                    "include": "#aria-variables"
                 },
                 {
-                    "include": "#shimmer-functions"
+                    "include": "#aria-functions"
                 },
                 {
-                    "include": "#shimmer-operators"
+                    "include": "#aria-operators"
                 }
             ]
         },
-        "shimmer-comments": {
+        "aria-comments": {
             "patterns": [
                 {
-                    "name": "comment.line.double-slash.shimmer",
+                    "name": "comment.line.double-slash.aria",
                     "match": "//.*$"
                 },
                 {
-                    "name": "comment.block.shimmer",
+                    "name": "comment.block.aria",
                     "begin": "/\\*",
                     "end": "\\*/"
                 }
             ]
         },
-        "shimmer-strings": {
+        "aria-strings": {
             "patterns": [
                 {
-                    "name": "string.quoted.single.shimmer",
+                    "name": "string.quoted.single.aria",
                     "begin": "'",
                     "end": "'",
                     "patterns": [
                         {
-                            "name": "constant.character.escape.shimmer",
+                            "name": "constant.character.escape.aria",
                             "match": "\\\\."
                         }
                     ]
                 },
                 {
-                    "name": "string.quoted.double.shimmer",
+                    "name": "string.quoted.double.aria",
                     "begin": "\"",
                     "end": "\"",
                     "patterns": [
                         {
-                            "name": "constant.character.escape.shimmer",
+                            "name": "constant.character.escape.aria",
                             "match": "\\\\."
                         },
                         {
-                            "include": "#shimmer-string-interpolation"
+                            "include": "#aria-string-interpolation"
                         }
                     ]
                 },
                 {
-                    "name": "string.quoted.triple.shimmer",
+                    "name": "string.quoted.triple.aria",
                     "begin": "\"\"\"",
                     "end": "\"\"\"",
                     "patterns": [
                         {
-                            "include": "#shimmer-string-interpolation"
+                            "include": "#aria-string-interpolation"
                         }
                     ]
                 }
             ]
         },
-        "shimmer-string-interpolation": {
+        "aria-string-interpolation": {
             "patterns": [
                 {
-                    "name": "meta.embedded.expression.shimmer",
+                    "name": "meta.embedded.expression.aria",
                     "begin": "\\{",
                     "end": "\\}",
                     "patterns": [
                         {
-                            "include": "#shimmer-strings"
+                            "include": "#aria-strings"
                         },
                         {
-                            "include": "#shimmer-numbers"
+                            "include": "#aria-numbers"
                         },
                         {
-                            "include": "#shimmer-variables"
+                            "include": "#aria-variables"
                         },
                         {
-                            "include": "#shimmer-functions"
+                            "include": "#aria-functions"
                         },
                         {
-                            "include": "#shimmer-operators"
+                            "include": "#aria-operators"
                         }
                     ]
                 }
             ]
         },
-        "shimmer-numbers": {
+        "aria-numbers": {
             "patterns": [
                 {
-                    "name": "constant.numeric.float.shimmer",
+                    "name": "constant.numeric.float.aria",
                     "match": "\\b\\d*\\.\\d+([eE][-+]?\\d+)?\\b"
                 },
                 {
-                    "name": "constant.numeric.hex.shimmer",
+                    "name": "constant.numeric.hex.aria",
                     "match": "\\b0[xX][0-9a-fA-F]+\\b"
                 },
                 {
-                    "name": "constant.numeric.integer.shimmer",
+                    "name": "constant.numeric.integer.aria",
                     "match": "\\b\\d+\\b"
                 }
             ]
         },
-        "shimmer-variables": {
+        "aria-variables": {
             "patterns": [
                 {
-                    "name": "storage.type.shimmer",
+                    "name": "storage.type.aria",
                     "match": "\\b(var|val|global|client|server)\\b|(?<![.])\\bself\\b"
                 },
                 {
                     "match": "\\bargs\\[([^\\]]+)\\]",
                     "captures": {
                         "0": {
-                            "name": "variable.other.args.shimmer"
+                            "name": "variable.other.args.aria"
                         },
                         "1": {
                             "patterns": [
                                 {
-                                    "include": "#shimmer-comments"
+                                    "include": "#aria-comments"
                                 },
                                 {
-                                    "include": "#shimmer-strings"
+                                    "include": "#aria-strings"
                                 },
                                 {
-                                    "include": "#shimmer-numbers"
+                                    "include": "#aria-numbers"
                                 },
                                 {
-                                    "include": "#shimmer-keywords"
+                                    "include": "#aria-keywords"
                                 },
                                 {
-                                    "include": "#shimmer-variables"
+                                    "include": "#aria-variables"
                                 },
                                 {
-                                    "include": "#shimmer-functions"
+                                    "include": "#aria-functions"
                                 },
                                 {
-                                    "include": "#shimmer-operators"
+                                    "include": "#aria-operators"
                                 }
                             ]
                         }
                     }
                 },
                 {
-                    "name": "invalid.illegal.args-empty-brackets.shimmer",
+                    "name": "invalid.illegal.args-empty-brackets.aria",
                     "match": "\\bargs\\[\\s*\\]"
                 },
                 {
-                    "name": "invalid.illegal.args-incomplete.shimmer",
+                    "name": "invalid.illegal.args-incomplete.aria",
                     "match": "\\bargs\\[([^\\]]*)$"
                 },
                 {
-                    "name": "invalid.illegal.args-without-index.shimmer",
+                    "name": "invalid.illegal.args-without-index.aria",
                     "match": "\\bargs\\b(?!\\[)"
                 },
                 {
-                    "name": "constant.language.boolean.shimmer",
+                    "name": "constant.language.boolean.aria",
                     "match": "\\b(true|false)\\b"
                 }
             ]
         },
-        "shimmer-keywords": {
+        "aria-keywords": {
             "patterns": [
                 {
-                    "name": "keyword.control.shimmer",
+                    "name": "keyword.control.aria",
                     "match": "\\b(if|else|elif|for|in|while|switch|case|async|break|next|return)\\b"
                 }
             ]
         },
-        "shimmer-functions": {
+        "aria-functions": {
             "patterns": [
                 {
-                    "name": "support.class.shimmer",
-                    "match": "\\b(Shimmer|Math|Player|Cast|Chat|Display|Entity|Fog|Game|Keyboard|Message|Name|Packet|Placeholder|Potion|Screen|Shader|Skybox|Sound|Thread|Time|Web|Mouse|Camera)\\b"
+                    "name": "support.class.aria",
+                    "match": "\\b(Aria|Math|Player|Cast|Chat|Display|Entity|Fog|Game|Keyboard|Message|Name|Packet|Placeholder|Potion|Screen|Shader|Skybox|Sound|Thread|Time|Web|Mouse|Camera)\\b"
                 },
                 {
-                    "name": "support.function.shimmer",
+                    "name": "support.function.aria",
                     "match": "\\b(range|Lerp|Back|Bezier|Bounce|CircX|CircY|Elastic|Expo|Q2|Q3|Q4|Q5|Sine|Smooth|Spring|Fade|TwoLerp|Blink)\\b"
                 }
             ]
         },
-        "shimmer-operators": {
+        "aria-operators": {
             "patterns": [
                 {
-                    "name": "keyword.operator.assignment.shimmer",
+                    "name": "keyword.operator.assignment.aria",
                     "match": "(=|\\*=|/=|%=|\\+=|-=|~=)"
                 },
                 {
-                    "name": "keyword.operator.arithmetic.shimmer",
+                    "name": "keyword.operator.arithmetic.aria",
                     "match": "(\\+|-|\\*|/|%|\\+\\+|--)"
                 },
                 {
-                    "name": "keyword.operator.logical.shimmer",
+                    "name": "keyword.operator.logical.aria",
                     "match": "(&&|\\|\\||!)"
                 },
                 {
-                    "name": "keyword.operator.comparison.shimmer",
+                    "name": "keyword.operator.comparison.aria",
                     "match": "(==|!=|<|>|<=|>=|~~)"
                 },
                 {
-                    "name": "keyword.operator.other.shimmer",
+                    "name": "keyword.operator.other.aria",
                     "match": "(\\.|,|\\?|:)"
                 }
             ]
