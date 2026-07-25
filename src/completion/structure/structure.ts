@@ -214,10 +214,9 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         const currentLineIndent = currentLine.match(/^\s*/)?.[0] || '';
 
         // 检测当前是否在块头行（action:/attribute:/children:）
-        const blockHeaderMatch = linePrefix.match(/^(\s*)(action|attribute|children):\s*$/);
-        const isOnBlockHeader = blockHeaderMatch !== null;
-        // 块头子项缩进使用当前行已有缩进 + 2 空格
-        const blockChildIndent = isOnBlockHeader ? ((blockHeaderMatch[1] || '') + '  ') : '';
+        const isOnBlockHeader = linePrefix.match(/^(\s*)(action|attribute|children):\s*$/) !== null;
+        // 块头子项统一缩进 2 空格（VSCode 会在新行自动继承父级缩进）
+        const blockChildIndent = isOnBlockHeader ? '  ' : '';
 
         return completionsToUse.map(completion => {
             const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
