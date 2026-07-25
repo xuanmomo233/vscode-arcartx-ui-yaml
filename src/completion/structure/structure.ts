@@ -390,13 +390,24 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
         if (prefixMatches.length > 0) {
             // 选择最佳匹配项：
-            // 1. 优先选择路径更长的
-            // 2. 长度相同时，优先选择非通配符更多的（更精确）
+            // 1. 优先选择末尾段非通配符且精确匹配当前路径末尾段的配置
+            // 2. 其次选择路径更长的
+            // 3. 长度相同时，优先选择非通配符更多的（更精确）
+            const currentLast = currentPath[currentPath.length - 1];
             const bestMatch = prefixMatches.reduce((best, current) => {
+                const currentLastExact = current.path[current.path.length - 1] !== '*' &&
+                    current.path[current.path.length - 1] === currentLast;
+                const bestLastExact = best.path[best.path.length - 1] !== '*' &&
+                    best.path[best.path.length - 1] === currentLast;
+
+                // 末尾精确匹配优先
+                if (currentLastExact && !bestLastExact) return current;
+                if (!currentLastExact && bestLastExact) return best;
+
+                // 都精确或都不精确，用长度和非通配符数量比较
                 if (current.path.length > best.path.length) {
                     return current;
                 } else if (current.path.length === best.path.length) {
-                    // 长度相同，选择非通配符更多的
                     const currentNonWildcards = current.path.filter(p => p !== '*').length;
                     const bestNonWildcards = best.path.filter(p => p !== '*').length;
                     return currentNonWildcards > bestNonWildcards ? current : best;

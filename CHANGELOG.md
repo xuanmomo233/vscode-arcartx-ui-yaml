@@ -2,6 +2,11 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.22]
+- 修复 `action:` / `attribute:` / `children:` 输入冒号后显示错误补全列表的根因：
+  - `findMatchingConfig` 的 tie-breaking 逻辑未优先末尾段精确匹配，导致 `['controls', '*']` 错误胜过 `['*', 'action']`
+  - 现在 `action:` 正确显示触发器列表（`click`、`hover` 等），`attribute:` 正确显示属性列表，`children:` 正确显示控件模板
+
 ### [0.0.21]
 - 统一补全缩进逻辑：
   - `getSmartTypeSnippet` 新增 `baseIndent` 参数，`type:` 智能模板的 `attribute` 块跟随当前行缩进
