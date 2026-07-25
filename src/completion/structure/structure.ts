@@ -110,7 +110,8 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                     if (isControlType && hasSmartTemplate(completion.label)) {
                         // 冒号后已有空格则不再添加，避免双空格
                         const leadingSpace = colonSpace.length > 0 ? '' : ' ';
-                        insertText = leadingSpace + getSmartTypeSnippet(completion.label, currentLineIndent);
+                        // baseIndent 传空串：VSCode auto-indent 会自动补基础缩进
+                        insertText = leadingSpace + getSmartTypeSnippet(completion.label);
                         // 设置 range 替换用户已输入的 partialInput，避免重复
                         const replaceStart = position.translate(0, -partialInput.length);
                         item.range = new vscode.Range(replaceStart, position);
@@ -167,7 +168,8 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
                         // 智能模板：type 值 + attribute 块
                         if (isControlType && hasSmartTemplate(completion.label)) {
-                            insertText = getSmartTypeSnippet(completion.label, currentLineIndent);
+                            // baseIndent 传空串：VSCode auto-indent 会自动补基础缩进
+                            insertText = getSmartTypeSnippet(completion.label);
                         } else if (tildePrefix === '~' && insertText.startsWith('~')) {
                             insertText = insertText.substring(1);
                         }
@@ -213,8 +215,8 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
         // 检测当前是否在块头行（action:/attribute:/children:）
         const isOnBlockHeader = linePrefix.match(/^(\s*)(action|attribute|children):\s*$/) !== null;
-        // 块头子项缩进：当前行缩进 + 2 空格（顶层即 2 空格）
-        const blockChildIndent = isOnBlockHeader ? (currentLineIndent + '  ') : '';
+        // 块头子项缩进：仅 2 空格相对缩进，VSCode auto-indent 会自动补上当前行的基础缩进
+        const blockChildIndent = isOnBlockHeader ? '  ' : '';
 
         return completionsToUse.map(completion => {
             const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
@@ -222,11 +224,9 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
             item.filterText = completion.label;
             item.detail = completion.detail;
 
-            // 对含换行的 insertText，在非块头行给每行补上当前行缩进
+            // 对含换行的 insertText，不再手动添加 currentLineIndent
+            // VSCode auto-indent 会自动为新行补上当前行的基础缩进
             let insertText = completion.insertText;
-            if (insertText.includes('\n') && currentLineIndent && !isOnBlockHeader) {
-                insertText = insertText.replace(/\n( +)/g, (_match, spaces) => '\n' + currentLineIndent + spaces);
-            }
 
             // 当前行是块头（如 action:），让子项从下一行开始并加子缩进
             if (isOnBlockHeader) {

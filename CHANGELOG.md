@@ -2,6 +2,12 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.23]
+- 修复缩进翻倍问题（根因：VSCode auto-indent 自动为新行补基础缩进，代码又手动加了 currentLineIndent）：
+  - `blockChildIndent` 从 `currentLineIndent + '  '` 改为仅 `'  '`（相对缩进）
+  - 非块头行多行 snippet 不再手动添加 `currentLineIndent`
+  - `getSmartTypeSnippet` 的 `baseIndent` 参数传空串，依赖 VSCode auto-indent
+
 ### [0.0.22]
 - 修复 `action:` / `attribute:` / `children:` 输入冒号后显示错误补全列表的根因：
   - `findMatchingConfig` 的 tie-breaking 逻辑未优先末尾段精确匹配，导致 `['controls', '*']` 错误胜过 `['*', 'action']`
