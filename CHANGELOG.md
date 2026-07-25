@@ -2,6 +2,10 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.13]
+- 修复 hGrid/hStack/vGrid/vStack 等驼峰命名控件无法匹配智能模板的问题：type_templates key 全部改为小写
+- 修复 type: 补全后插入文本与冒号之间缺少空格的问题
+
 ### [0.0.12]
 - 重写所有控件智能模板：基于真实 UI 文件常用写法，使用真实默认值而非占位符
 - 模板新增常用通用属性（point、x、y、alpha、through 等），不再仅包含专属属性

@@ -104,6 +104,8 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                         if (partialInput && insertText.startsWith(partialInput)) {
                             insertText = insertText.substring(partialInput.length);
                         }
+                        // 确保 type: 后有空格分隔
+                        insertText = ' ' + insertText;
                         item.insertText = new vscode.SnippetString(insertText);
                         item.documentation = completion.documentation;
                         item.sortText = `0${completion.label}`;
@@ -158,6 +160,8 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                         // 智能模板：type 值 + attribute 块
                         if (isControlType && hasSmartTemplate(completion.label)) {
                             insertText = getSmartTypeSnippet(completion.label);
+                            // 确保 type: 后有空格分隔
+                            insertText = ' ' + insertText;
                         } else if (tildePrefix === '~' && insertText.startsWith('~')) {
                             insertText = insertText.substring(1);
                         }

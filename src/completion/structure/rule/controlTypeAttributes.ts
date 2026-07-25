@@ -143,7 +143,7 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'center', snippet: '${6|true,false|}' },
         { label: 'shadow', snippet: '${7|true,false|}' },
     ],
-    '9sliceTexture': [
+    '9slicetexture': [
         { label: 'width', snippet: '${1:100}' },
         { label: 'height', snippet: '${2:100}' },
         { label: 'point', snippet: '~${3:middle_center}' },
@@ -155,14 +155,14 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'top', snippet: '${9:16}' },
         { label: 'bottom', snippet: '${10:16}' },
     ],
-    textBox: [
+    textbox: [
         { label: 'width', snippet: '${1:350}' },
         { label: 'height', snippet: '${2:28}' },
         { label: 'point', snippet: '~${3:middle_center}' },
         { label: 'fontSize', snippet: '${4:40}' },
         { label: 'emptyText', snippet: "~&a${5:请输入文本}" },
     ],
-    chatTextBox: [
+    chattextbox: [
         { label: 'fontSize', snippet: '${1:64}' },
         { label: 'background', snippet: '~${2:Frosted:30;0,0,0,80}' },
         { label: 'point', snippet: '~${3:horizontal_stretch_bottom}' },
@@ -196,7 +196,7 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'height', snippet: '${2:1080}' },
         { label: 'point', snippet: '~${3:stretch_all}' },
     ],
-    hGrid: [
+    hgrid: [
         { label: 'spaceBetweenX', snippet: '${1:10}' },
         { label: 'spaceBetweenY', snippet: '${2:10}' },
         { label: 'column', snippet: '${3:3}' },
@@ -204,7 +204,7 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'x', snippet: '${5:0}' },
         { label: 'y', snippet: '${6:0}' },
     ],
-    vGrid: [
+    vgrid: [
         { label: 'spaceBetweenX', snippet: '${1:10}' },
         { label: 'spaceBetweenY', snippet: '${2:10}' },
         { label: 'row', snippet: '${3:3}' },
@@ -212,14 +212,14 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'x', snippet: '${5:0}' },
         { label: 'y', snippet: '${6:0}' },
     ],
-    hStack: [
+    hstack: [
         { label: 'spaceBetween', snippet: '${1:10}' },
         { label: 'point', snippet: '~${2:top_left}' },
         { label: 'x', snippet: '${3:0}' },
         { label: 'y', snippet: '${4:0}' },
         { label: 'height', snippet: '${5:100}' },
     ],
-    vStack: [
+    vstack: [
         { label: 'spaceBetween', snippet: '${1:10}' },
         { label: 'point', snippet: '~${2:top_left}' },
         { label: 'x', snippet: '${3:0}' },
@@ -242,7 +242,7 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'point', snippet: '~${4:middle_center}' },
         { label: 'followMouse', snippet: '${5|true,false|}' },
     ],
-    bossBar: [
+    bossbar: [
         { label: 'textures', snippet: '~[${1:texture1.png,texture2.png}]' },
         { label: 'transitionTime', snippet: '${2:500}' },
         { label: 'point', snippet: '~${3:middle_center}' },
@@ -287,7 +287,7 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'backgroundBorder', snippet: '${4:10}' },
         { label: 'maxShow', snippet: '${5:5}' },
     ],
-    bossBars: [
+    bossbars: [
         { label: 'spaceBetween', snippet: '${1:10}' },
         { label: 'maxSize', snippet: '${2:3}' },
         { label: 'point', snippet: '~${3:top_left}' },
