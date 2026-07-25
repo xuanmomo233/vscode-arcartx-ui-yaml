@@ -2,6 +2,12 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.21]
+- 统一补全缩进逻辑：
+  - `getSmartTypeSnippet` 新增 `baseIndent` 参数，`type:` 智能模板的 `attribute` 块跟随当前行缩进
+  - `structure.ts` 顶部统一计算 `currentLineIndent`，section 2、2.5、3 共用
+  - `action:` / `attribute:` / `children:` 块头子项缩进恢复为 `当前行缩进 + 2 空格`
+
 ### [0.0.20]
 - 修复 `action:` 子项触发器缩进过宽问题，改为固定 2 空格缩进
 
