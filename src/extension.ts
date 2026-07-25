@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
     const structureCompletionProvider = vscode.languages.registerCompletionItemProvider(
         'arcartx-ui-yaml',
         new StructureCompletionProvider(),
-        '?', '/', '.'
+        '?', '/', '.', ':'
     );
 
     const variableCompletionProvider = vscode.languages.registerCompletionItemProvider(
