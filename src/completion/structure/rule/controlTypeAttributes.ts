@@ -266,23 +266,20 @@ const type_templates: Record<string, PropTemplate[]> = {
  * @param baseIndent type 行的缩进字符串（如 "  " 或 "    "）
  * @returns SnippetString 内容
  */
-export function getSmartTypeSnippet(type: string, baseIndent: string): string {
+export function getSmartTypeSnippet(type: string): string {
     const template = type_templates[type.toLowerCase()];
     if (!template || template.length === 0) {
         // 无专属属性的控件（canvas/adaptive），只生成空 attribute 块
         if (type_templates[type.toLowerCase()] && type_templates[type.toLowerCase()].length === 0) {
-            return `${type}\n${baseIndent}attribute:\n${baseIndent}  `;
+            return `${type}\nattribute:\n  `;
         }
         return type;
     }
 
-    const attrIndent = baseIndent;
-    const propIndent = baseIndent + '  ';
-
     const lines: string[] = [type];
-    lines.push(`${attrIndent}attribute:`);
+    lines.push('attribute:');
     for (const prop of template) {
-        lines.push(`${propIndent}${prop.label}: ${prop.snippet}`);
+        lines.push(`  ${prop.label}: ${prop.snippet}`);
     }
 
     return lines.join('\n');
