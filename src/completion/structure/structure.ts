@@ -4,7 +4,7 @@ import { self_functions } from './rule/uiSelf'
 import { control_self_functions } from './rule/controlSelf'
 import { builtin_functions, builtin_objects } from './rule/ariaBuiltin'
 import { task_type_values } from './rule/uiTaskTypeValues'
-import { getAttributesByType, detectControlType } from './rule/controlTypeAttributes'
+import { getAttributesByType, detectControlType, getSmartTypeSnippet, hasSmartTemplate } from './rule/controlTypeAttributes'
 
 export class StructureCompletionProvider implements vscode.CompletionItemProvider {
 
@@ -86,10 +86,28 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                     return label.includes(input);
                 });
 
+                // 检测是否是控件 type 属性（非 tasks 上下文），使用智能模板
+                const isControlType = attrName === 'type' && !isInTasksContext;
+
                 return filteredOptions.map(completion => {
                     const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
                     item.detail = completion.detail;
                     let insertText = completion.insertText;
+
+                    // 智能模板：type 值 + attribute 块
+                    if (isControlType && hasSmartTemplate(completion.label)) {
+                        const baseIndent = currentLineText.match(/^(\s*)/)?.[1] || '';
+                        insertText = getSmartTypeSnippet(completion.label, baseIndent);
+                        // 处理 partialInput 前缀替换
+                        if (partialInput && insertText.startsWith(partialInput)) {
+                            insertText = insertText.substring(partialInput.length);
+                        }
+                        item.insertText = new vscode.SnippetString(insertText);
+                        item.documentation = completion.documentation;
+                        item.sortText = `0${completion.label}`;
+                        return item;
+                    }
+
                     if (tildePrefix === '~' && insertText.startsWith('~')) {
                         insertText = insertText.substring(1);
                     }
@@ -125,13 +143,22 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                 }
 
                 if (valueOptions && valueOptions.length > 0) {
+                    // 检测是否是控件 type 属性（非 tasks 上下文），使用智能模板
+                    const isControlType = attrName === 'type' && !isInTasksContext;
+
                     return valueOptions.map(completion => {
                         const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
                         item.detail = completion.detail;
                         let insertText = completion.insertText;
-                        if (tildePrefix === '~' && insertText.startsWith('~')) {
+
+                        // 智能模板：type 值 + attribute 块
+                        if (isControlType && hasSmartTemplate(completion.label)) {
+                            const baseIndent = currentLineText.match(/^(\s*)/)?.[1] || '';
+                            insertText = getSmartTypeSnippet(completion.label, baseIndent);
+                        } else if (tildePrefix === '~' && insertText.startsWith('~')) {
                             insertText = insertText.substring(1);
                         }
+
                         item.insertText = new vscode.SnippetString(insertText);
                         item.documentation = completion.documentation;
                         item.filterText = lastChar + completion.label;
@@ -428,19 +455,8 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                 configIndex--;
                 currentIndex--;
             } else {
-                // 不匹配，但配置路径可能有剩余通配符可以跳过当前路径的这些段
-                // 检查配置路径剩余部分是否都是通配符
-                let allWildcards = true;
-                for (let i = 0; i <= configIndex; i++) {
-                    if (configPath[i] !== '*') {
-                        allWildcards = false;
-                        break;
-                    }
-                }
-                // 如果剩余配置都是通配符，则匹配成功
-                if (allWildcards) {
-                    return true;
-                }
+                // 不匹配，直接返回 false
+                // 不再使用 "剩余全通配符" 捷径，因为它会导致 ['*', 'action'] 错误匹配 ['...', 'action', 'click']
                 return false;
             }
         }

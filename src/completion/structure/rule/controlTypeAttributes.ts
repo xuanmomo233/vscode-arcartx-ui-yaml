@@ -116,3 +116,181 @@ function getIndentLevel(line: string): number {
     }
     return indent;
 }
+
+// ========== 智能类型模板 ==========
+// 每种控件类型选择后自动生成的属性块模板
+// 属性顺序：先通用(width/height/point)，再专属
+interface PropTemplate {
+    label: string;
+    snippet: string; // snippet placeholder value
+}
+
+const type_templates: Record<string, PropTemplate[]> = {
+    texture: [
+        { label: 'width', snippet: '${1:width}' },
+        { label: 'height', snippet: '${2:height}' },
+        { label: 'normal', snippet: '~${3:resourcePath}' },
+        { label: 'hover', snippet: '~${4:resourcePath}' },
+    ],
+    text: [
+        { label: 'texts', snippet: "~${1:text}" },
+        { label: 'fontSize', snippet: '${2:32}' },
+        { label: 'shadow', snippet: '${3|true,false|}' },
+    ],
+    '9sliceTexture': [
+        { label: 'width', snippet: '${1:width}' },
+        { label: 'height', snippet: '${2:height}' },
+        { label: 'normal', snippet: '~${3:resourcePath}' },
+        { label: 'textureWidth', snippet: '${4:256}' },
+        { label: 'textureHeight', snippet: '${5:256}' },
+        { label: 'left', snippet: '${6:16}' },
+        { label: 'right', snippet: '${7:16}' },
+        { label: 'top', snippet: '${8:16}' },
+        { label: 'bottom', snippet: '${9:16}' },
+    ],
+    textBox: [
+        { label: 'width', snippet: '${1:350}' },
+        { label: 'height', snippet: '${2:28}' },
+        { label: 'fontSize', snippet: '${3:40}' },
+        { label: 'emptyText', snippet: "~&a${4:请输入文本}" },
+    ],
+    chatTextBox: [
+        { label: 'width', snippet: '${1:800}' },
+        { label: 'height', snippet: '${2:30}' },
+        { label: 'fontSize', snippet: '${3:20}' },
+        { label: 'background', snippet: '~${4:0,0,0}' },
+        { label: 'sendClose', snippet: '${5|true,false|}' },
+    ],
+    entity: [
+        { label: 'scale', snippet: '${1:5}' },
+        { label: 'hideTag', snippet: '${2|true,false|}' },
+        { label: 'followMouse', snippet: '${3|true,false|}' },
+        { label: 'uuid', snippet: '~${4:self}' },
+    ],
+    slot: [
+        { label: 'width', snippet: '${1:80}' },
+        { label: 'height', snippet: '${2:80}' },
+        { label: 'normal', snippet: '~${3:resourcePath}' },
+        { label: 'hover', snippet: '~${4:resourcePath}' },
+        { label: 'itemScale', snippet: '${5:0.8}' },
+        { label: 'slotType', snippet: '${6|~Backpack,~Container,~Extra,~Icon,~Hover|}' },
+        { label: 'id', snippet: '${7:0}' },
+    ],
+    canvas: [
+        { label: 'width', snippet: '${1:800}' },
+        { label: 'height', snippet: '${2:600}' },
+    ],
+    adaptive: [
+        { label: 'width', snippet: '${1:1920}' },
+        { label: 'height', snippet: '${2:1080}' },
+        { label: 'point', snippet: '~${3:top_left}' },
+    ],
+    hGrid: [
+        { label: 'spaceBetweenX', snippet: '${1:10}' },
+        { label: 'spaceBetweenY', snippet: '${2:10}' },
+        { label: 'column', snippet: '${3:3}' },
+    ],
+    vGrid: [
+        { label: 'spaceBetweenX', snippet: '${1:10}' },
+        { label: 'spaceBetweenY', snippet: '${2:10}' },
+        { label: 'row', snippet: '${3:3}' },
+    ],
+    hStack: [
+        { label: 'spaceBetween', snippet: '${1:10}' },
+        { label: 'height', snippet: '${2:100}' },
+    ],
+    vStack: [
+        { label: 'spaceBetween', snippet: '${1:10}' },
+        { label: 'width', snippet: '${2:100}' },
+    ],
+    scroll: [
+        { label: 'moveX', snippet: '${1:0}' },
+        { label: 'moveY', snippet: '${2:0}' },
+    ],
+    model: [
+        { label: 'model', snippet: '~${1:modelId}' },
+        { label: 'animation', snippet: '~${2:animation}' },
+        { label: 'scale', snippet: '${3:1}' },
+        { label: 'followMouse', snippet: '${4|true,false|}' },
+    ],
+    bossBar: [
+        { label: 'textures', snippet: '~[${1:texture1.png,texture2.png}]' },
+        { label: 'transitionTime', snippet: '${2:500}' },
+    ],
+    compass: [
+        { label: 'width', snippet: '${1:400}' },
+        { label: 'height', snippet: '${2:400}' },
+        { label: 'background', snippet: '~${3:0,0,0,180}' },
+        { label: 'tickInterval', snippet: '${4:5}' },
+        { label: 'majorTickInterval', snippet: '${5:15}' },
+    ],
+    progress: [
+        { label: 'width', snippet: '${1:200}' },
+        { label: 'height', snippet: '${2:20}' },
+        { label: 'texture', snippet: '~${3:255,255,255}' },
+        { label: 'progress', snippet: '~${4:0.5}' },
+        { label: 'time', snippet: '${5:100}' },
+        { label: 'mode', snippet: '${6:0}' },
+    ],
+    import: [
+        { label: 'node', snippet: '~${1:menu.uiId.adaptive.controlName}' },
+    ],
+    observer: [
+        { label: 'maxSize', snippet: '${1:32}' },
+        { label: 'subscribe', snippet: '~${2:global.dictVar}' },
+        { label: 'target', snippet: 'val.${3:targetControl}' },
+    ],
+    chat: [
+        { label: 'width', snippet: '${1:600}' },
+        { label: 'height', snippet: '${2:300}' },
+        { label: 'background', snippet: '~${3:0,0,0,175}' },
+        { label: 'border', snippet: '${4:5}' },
+        { label: 'spaceBetween', snippet: '${5:5}' },
+        { label: 'showCard', snippet: '${6|true,false|}' },
+    ],
+    suggestion: [
+        { label: 'fontSize', snippet: '${1:20}' },
+        { label: 'maxShow', snippet: '${2:5}' },
+        { label: 'textColor', snippet: '${3:#FFFFFF}' },
+        { label: 'hoverTextColor', snippet: '${4:#87CEEB}' },
+    ],
+    bossBars: [
+        { label: 'spaceBetween', snippet: '${1:10}' },
+        { label: 'maxSize', snippet: '${2:3}' },
+    ],
+};
+
+/**
+ * 生成智能类型 snippet：type 值 + attribute 块 + 预填属性
+ * @param type 控件类型名
+ * @param baseIndent type 行的缩进字符串（如 "  " 或 "    "）
+ * @returns SnippetString 内容
+ */
+export function getSmartTypeSnippet(type: string, baseIndent: string): string {
+    const template = type_templates[type.toLowerCase()];
+    if (!template || template.length === 0) {
+        // 无专属属性的控件（canvas/adaptive），只生成空 attribute 块
+        if (type_templates[type.toLowerCase()] && type_templates[type.toLowerCase()].length === 0) {
+            return `${type}\n${baseIndent}attribute:\n${baseIndent}  `;
+        }
+        return type;
+    }
+
+    const attrIndent = baseIndent;
+    const propIndent = baseIndent + '  ';
+
+    const lines: string[] = [type];
+    lines.push(`${attrIndent}attribute:`);
+    for (const prop of template) {
+        lines.push(`${propIndent}${prop.label}: ${prop.snippet}`);
+    }
+
+    return lines.join('\n');
+}
+
+/**
+ * 判断某个类型是否有智能模板
+ */
+export function hasSmartTemplate(type: string): boolean {
+    return type_templates.hasOwnProperty(type.toLowerCase());
+}

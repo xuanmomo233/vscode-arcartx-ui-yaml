@@ -4,6 +4,8 @@ import {ui_options} from "./rule/ui";
 import {ui_actions} from "./rule/uiAction";
 import {packetHandler_options} from "./rule/uiPacketHandler";
 import {self_functions} from "./rule/uiSelf";
+import {control_self_functions} from "./rule/controlSelf";
+import {builtin_functions} from "./rule/ariaBuiltin";
 import {controls} from "./rule/control";
 import {control_attribute} from "./rule/controlAttribute";
 import {control_actions} from "./rule/controlAction";
@@ -60,8 +62,6 @@ const ui_level: CompletionConfig[] = [
     { path: ['ui', 'match'], completions: match_values },
     { path: ['ui', 'action'], completions: ui_actions },
     { path: ['ui', 'packetHandler'], completions: packetHandler_options },
-    { path: ['ui', 'action', '*'], completions: self_functions },
-    { path: ['ui', 'packetHandler', '*'], completions: self_functions },
 ];
 
 // ========== controls 级别配置 ==========
@@ -95,13 +95,16 @@ const attribute_level: CompletionConfig[] = [
 
 // ========== 触发器配置 ==========
 const action_level: CompletionConfig[] = [
-    // 以 action 结尾的路径
+    // 控件 action 触发器列表（通配符匹配所有以 action 结尾的路径）
+    // UI action 由 ui_level 中的精确匹配 ['ui', 'action'] 处理
     { path: ['*', 'action'], completions: control_actions },
-    { path: ['ui', '*', 'action'], completions: control_actions },
 
-    // 触发器脚本内容（self 函数）
-    { path: ['*', 'action', '*'], completions: self_functions },
-    { path: ['ui', '*', 'action', '*'], completions: self_functions },
+    // UI 触发器内部 — UI self 函数 + Aria 内置函数
+    { path: ['ui', 'action', '*'], completions: [...self_functions, ...builtin_functions] },
+    { path: ['ui', 'packetHandler', '*'], completions: [...self_functions, ...builtin_functions] },
+
+    // 控件触发器内部 — 控件 self 函数 + Aria 内置函数
+    { path: ['*', 'action', '*'], completions: [...control_self_functions, ...builtin_functions] },
 ];
 
 // ========== UI 定时任务配置 ==========
