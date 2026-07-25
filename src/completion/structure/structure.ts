@@ -96,7 +96,7 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
                     // 智能模板：type 值 + attribute 块
                     if (isControlType && hasSmartTemplate(completion.label)) {
-                        const baseIndent = currentLineText.match(/^(\s*)/)?.[1] || '';
+                        const baseIndent = currentLine.match(/^(\s*)/)?.[1] || '';
                         insertText = getSmartTypeSnippet(completion.label, baseIndent);
                         // 处理 partialInput 前缀替换
                         if (partialInput && insertText.startsWith(partialInput)) {
@@ -153,7 +153,7 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
                         // 智能模板：type 值 + attribute 块
                         if (isControlType && hasSmartTemplate(completion.label)) {
-                            const baseIndent = currentLineText.match(/^(\s*)/)?.[1] || '';
+                            const baseIndent = currentLine.match(/^(\s*)/)?.[1] || '';
                             insertText = getSmartTypeSnippet(completion.label, baseIndent);
                         } else if (tildePrefix === '~' && insertText.startsWith('~')) {
                             insertText = insertText.substring(1);
