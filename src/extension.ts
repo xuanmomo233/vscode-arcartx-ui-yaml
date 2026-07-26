@@ -6,6 +6,8 @@ import { HoverProvider } from './hover/hoverProvider';
 import { SignatureHelpProvider } from './signature/signatureHelpProvider';
 import { DiagnosticProvider } from './diagnostics/diagnosticProvider';
 import { DefinitionProvider } from './definition/definitionProvider';
+import { ColorDecorator } from './decorator/colorDecorator';
+import { ColorPickerCommand } from './decorator/colorPicker';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -45,6 +47,10 @@ export function activate(context: vscode.ExtensionContext) {
         new DefinitionProvider()
     );
 
+    const colorDecorator = new ColorDecorator(context);
+
+    const colorPickerCommand = ColorPickerCommand.register(context);
+
     context.subscriptions.push(
         structureCompletionProvider,
         variableCompletionProvider,
@@ -52,6 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
         hoverProvider,
         signatureHelpProvider,
         definitionProvider,
+        colorPickerCommand,
     );
 }
 
