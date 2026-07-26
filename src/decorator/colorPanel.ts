@@ -826,8 +826,13 @@ function updateGradient() {
     const hex2NoA = rgbToHex(r2, g2, b2);
     const textGrad = '§~' + hex1NoA + '-' + hex2NoA;
     document.getElementById('gradTextOutput').value = textGrad;
-    document.getElementById('gradTextPreviewContent').textContent = textGrad + '渐变文字示例§r';
-    document.getElementById('gradTextPreviewContent').style.color = '#' + hex1NoA;
+    const previewEl = document.getElementById('gradTextPreviewContent');
+    previewEl.textContent = '渐变文字示例';
+    previewEl.style.background = 'linear-gradient(90deg, #' + hex1NoA + ', #' + hex2NoA + ')';
+    previewEl.style.webkitBackgroundClip = 'text';
+    previewEl.style.backgroundClip = 'text';
+    previewEl.style.webkitTextFillColor = 'transparent';
+    previewEl.style.color = 'transparent';
 }
 
 ['rSlider3a', 'gSlider3a', 'bSlider3a', 'aSlider3a',

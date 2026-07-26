@@ -3,7 +3,7 @@
   "displayName": "ArcartX Aria UI",
   "icon": "icons/project.png",
   "description": "ArcartX UI 开发工具 — YAML + Aria 脚本混合语法高亮、上下文感知结构补全（控件模板/属性/触发器）、智能类型模板、Aria 函数补全、悬停文档、签名提示、代码诊断、跳转定义。",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "publisher": "ArcartXProject",
   "author": {
     "name": "17Artist,MayIHaveK"
