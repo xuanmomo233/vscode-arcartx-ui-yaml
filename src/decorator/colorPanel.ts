@@ -78,6 +78,27 @@ export class ColorPanelProvider implements vscode.WebviewViewProvider {
                 });
                 break;
             }
+            case 'getCustomTemplates': {
+                const templates = this.context.globalState.get<{ label: string; detail: string; insertText: string }[]>('customTemplates', []);
+                this.view?.webview.postMessage({ command: 'customTemplates', templates });
+                break;
+            }
+            case 'addCustomTemplate': {
+                const templates = this.context.globalState.get<{ label: string; detail: string; insertText: string }[]>('customTemplates', []);
+                templates.push({ label: message.label, detail: message.detail, insertText: message.insertText });
+                this.context.globalState.update('customTemplates', templates);
+                this.view?.webview.postMessage({ command: 'customTemplates', templates });
+                vscode.window.showInformationMessage(`模板 "${message.label}" 已添加`);
+                break;
+            }
+            case 'deleteCustomTemplate': {
+                const templates = this.context.globalState.get<{ label: string; detail: string; insertText: string }[]>('customTemplates', []);
+                const filtered = templates.filter(t => t.label !== message.label);
+                this.context.globalState.update('customTemplates', filtered);
+                this.view?.webview.postMessage({ command: 'customTemplates', templates: filtered });
+                vscode.window.showInformationMessage(`模板 "${message.label}" 已删除`);
+                break;
+            }
         }
     }
 
@@ -331,6 +352,7 @@ select {
     <div class="tab" data-tab="controls">控件</div>
     <div class="tab" data-tab="effects">特效</div>
     <div class="tab" data-tab="ui">UI模板</div>
+    <div class="tab" data-tab="custom">自定义</div>
 </div>
 
 <!-- Tab 1: RGBA 色块 -->
@@ -612,6 +634,21 @@ select {
 <!-- Tab 7: UI 模板 -->
 <div id="tab-ui" class="tab-content">
     <div class="template-list" id="uiList"></div>
+</div>
+
+<!-- Tab 8: 自定义模板 -->
+<div id="tab-custom" class="tab-content">
+    <div class="section">
+        <div class="section-title">添加模板</div>
+        <input type="text" id="customLabel" placeholder="模板名称" style="width:100%;margin-bottom:4px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-input-border);padding:4px;border-radius:3px;">
+        <input type="text" id="customDetail" placeholder="描述（可选）" style="width:100%;margin-bottom:4px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-input-border);padding:4px;border-radius:3px;">
+        <textarea id="customContent" placeholder="模板内容（多行 YAML）..." rows="6" style="width:100%;margin-bottom:4px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-input-border);padding:4px;border-radius:3px;font-family:var(--vscode-editor-font-family);font-size:11px;resize:vertical;"></textarea>
+        <button class="btn btn-sm" id="addCustomBtn" style="width:100%;">添加模板</button>
+    </div>
+    <div class="section">
+        <div class="section-title">已保存的模板</div>
+        <div class="template-list" id="customList"></div>
+    </div>
 </div>
 
 <script>
@@ -969,6 +1006,66 @@ effectTemplates.forEach(t => effectList.appendChild(makeTemplateItem(t)));
 const uiTemplates = ${JSON.stringify(uiTemplates)};
 const uiList = document.getElementById('uiList');
 uiTemplates.forEach(t => uiList.appendChild(makeTemplateItem(t)));
+
+// ===== Tab 8: 自定义模板 =====
+function makeCustomTemplateItem(t) {
+    const item = document.createElement('div');
+    item.className = 'template-item';
+    item.innerHTML = '<div class="template-item-label">' + t.label + '</div>' +
+        '<div class="template-item-detail">' + (t.detail || '') + '</div>' +
+        '<div class="template-item-actions">' +
+        '<button class="btn btn-sm">复制</button>' +
+        '<button class="btn btn-sm">插入</button>' +
+        '<button class="btn btn-sm">预览</button>' +
+        '<button class="btn btn-sm" style="color:var(--vscode-errorForeground)">删除</button></div>' +
+        '<div class="template-item-preview" style="display:none"></div>';
+    const btns = item.querySelectorAll('button');
+    btns[0].addEventListener('click', () => copyRaw(t.insertText));
+    btns[1].addEventListener('click', () => insertRaw(t.insertText));
+    btns[2].addEventListener('click', () => {
+        const pre = item.querySelector('.template-item-preview');
+        if (pre.style.display === 'none') { pre.textContent = t.insertText; pre.style.display = 'block'; btns[2].textContent = '隐藏'; }
+        else { pre.style.display = 'none'; btns[2].textContent = '预览'; }
+    });
+    btns[3].addEventListener('click', () => {
+        vscode.postMessage({ command: 'deleteCustomTemplate', label: t.label });
+    });
+    return item;
+}
+
+function renderCustomTemplates(templates) {
+    const list = document.getElementById('customList');
+    list.innerHTML = '';
+    if (templates.length === 0) {
+        list.innerHTML = '<div style="color:var(--vscode-descriptionForeground);font-size:11px;padding:8px;">暂无自定义模板</div>';
+        return;
+    }
+    templates.forEach(t => list.appendChild(makeCustomTemplateItem(t)));
+}
+
+// 监听扩展返回的自定义模板数据
+window.addEventListener('message', (e) => {
+    const msg = e.data;
+    if (msg.command === 'customTemplates') {
+        renderCustomTemplates(msg.templates);
+    }
+});
+
+// 添加模板按钮
+document.getElementById('addCustomBtn').addEventListener('click', () => {
+    const label = document.getElementById('customLabel').value.trim();
+    const detail = document.getElementById('customDetail').value.trim();
+    const content = document.getElementById('customContent').value;
+    if (!label) { alert('请输入模板名称'); return; }
+    if (!content) { alert('请输入模板内容'); return; }
+    vscode.postMessage({ command: 'addCustomTemplate', label, detail, insertText: content });
+    document.getElementById('customLabel').value = '';
+    document.getElementById('customDetail').value = '';
+    document.getElementById('customContent').value = '';
+});
+
+// 请求已保存的自定义模板
+vscode.postMessage({ command: 'getCustomTemplates' });
 
 // 初始化
 updateRgba();
