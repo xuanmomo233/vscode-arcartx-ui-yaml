@@ -2,6 +2,14 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.32]
+- 对照知识文档和避坑指南全面优化：
+  - **属性补全修正**：`shape`/`radius`/`shadow` 移为公共属性（所有控件可用）
+  - **补充缺失属性**：`textures`/`transitionTime`(BossBar)、`autoScale`(Adaptive)、`itemEffect`(Slot)、`up`/`maxShow`/`backgroundBorder`/`hoverTextColor`(Suggestion)、`waypointIconWidth`/`waypointIconHeight`/`wayOffsetY`(Compass)
+  - **类型属性映射修正**：Texture 增加 `loop`、Model 增加 `showType`、Chat 增加 `keep`、Adaptive 增加 `autoScale`、Slot 增加 `itemEffect`
+  - **新增 `~` 前缀缺失诊断**：自动检测颜色值、资源路径、锚点枚举、slotType/shape/showType/alignment 枚举、`&` 颜色码文本缺少 `~` 前缀的情况，给出修正建议
+  - **新增 `range()` 浮点数陷阱诊断**：检测 `for(i in range(...))` 中 `i + ''` 不带 `.round` 的常见错误
+
 ### [0.0.31]
 - 修复 `effect:` 不会自动触发补全的问题：将 `effect` 加入 `blockKeys` 和 `isOnBlockHeader` 检测
 

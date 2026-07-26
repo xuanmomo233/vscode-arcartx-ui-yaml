@@ -583,17 +583,88 @@ export const control_attribute = [
         insertText: 'waypointFontSize: ${1:32}',
         kind: vscode.CompletionItemKind.Property
     },
-    // ========== 图形效果 ==========
+    // ========== 公共图形属性 ==========
     {
         label: 'shape',
-        detail: '形状类型[默认: rect] - rect / round_rect / circle (图形效果)',
+        detail: '形状类型[默认: rect] - rect / round_rect / circle (公共属性)',
         insertText: 'shape: ~${1|rect,round_rect,circle|}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'radius',
-        detail: '圆角半径[默认: 5] - round_rect 时生效 (图形效果)',
+        detail: '圆角半径[默认: 5] - round_rect 时生效 (公共属性)',
         insertText: 'radius: ${1:5}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== BossBar 独有 ==========
+    {
+        label: 'textures',
+        detail: '血条纹理列表 (BossBar独有) - 格式: ~[tex1.png,tex2.png]',
+        insertText: 'textures: ~[${1:texture1.png,texture2.png}]',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'transitionTime',
+        detail: '血条切换过渡时间[默认: 500] - 毫秒 (BossBar独有)',
+        insertText: 'transitionTime: ${1:500}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Adaptive 独有 ==========
+    {
+        label: 'autoScale',
+        detail: '是否启用等比缩放[默认: false] - true时整树等比缩放到设计分辨率 (Adaptive独有)',
+        insertText: 'autoScale: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Slot 补充 ==========
+    {
+        label: 'itemEffect',
+        detail: '物品效果配置文件名 (Slot独有) - 填写 ItemEffect 配置文件名',
+        insertText: 'itemEffect: ~${1:effectName}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Suggestion 独有 ==========
+    {
+        label: 'up',
+        detail: '是否向上展开[默认: false] (Suggestion独有)',
+        insertText: 'up: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'maxShow',
+        detail: '最大显示数量[默认: 5] (Suggestion独有)',
+        insertText: 'maxShow: ${1:5}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'backgroundBorder',
+        detail: '背景边框宽度[默认: 0] (Suggestion独有)',
+        insertText: 'backgroundBorder: ${1:0}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'hoverTextColor',
+        detail: '悬停文字颜色[默认: ~255,255,255] (Suggestion独有)',
+        insertText: 'hoverTextColor: ~${1:255,255,255}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Compass 补充 ==========
+    {
+        label: 'waypointIconWidth',
+        detail: '路标图标宽度[默认: 16] (Compass独有)',
+        insertText: 'waypointIconWidth: ${1:16}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'waypointIconHeight',
+        detail: '路标图标高度[默认: 16] (Compass独有)',
+        insertText: 'waypointIconHeight: ${1:16}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'wayOffsetY',
+        detail: '路标Y轴偏移[默认: 0] (Compass独有)',
+        insertText: 'wayOffsetY: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
 ]

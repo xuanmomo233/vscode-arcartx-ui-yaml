@@ -6,6 +6,7 @@ const common_attr_labels = new Set([
     'enable', 'visible', 'limitControl', 'width', 'height', 'x', 'y',
     'scale', 'alpha', 'point', 'rotate', 'middleScale', 'through',
     'minDragX', 'minDragY', 'maxDragX', 'maxDragY', 'tip',
+    'shape', 'radius', 'shadow',
 ]);
 
 // 文本相关属性 — texture、text、9sliceTexture 等含有 texts 的控件
@@ -15,27 +16,27 @@ const text_attr_labels = new Set([
 
 // 每种控件类型的专属属性（不含通用属性）
 const type_specific_attrs: Record<string, string[]> = {
-    texture: ['normal', 'hover', ...text_attr_labels],
-    text: ['shadow', ...text_attr_labels],
+    texture: ['normal', 'hover', 'loop', ...text_attr_labels],
+    text: [...text_attr_labels],
     '9sliceTexture': ['normal', 'hover', 'left', 'right', 'top', 'bottom', 'textureWidth', 'textureHeight', ...text_attr_labels],
     entity: ['uuid', 'hideTag', 'followMouse'],
-    slot: ['normal', 'hover', 'slotType', 'id', 'itemScale', 'lock', 'cooldown', 'overwriteText'],
+    slot: ['normal', 'hover', 'slotType', 'id', 'itemScale', 'lock', 'cooldown', 'overwriteText', 'itemEffect'],
     textBox: ['length', 'allowNewLine', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'passwordChar', 'inputPattern', 'textColor', 'uneditableTextColor', ...text_attr_labels],
     chatTextBox: ['length', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'sendClose', ...text_attr_labels],
     canvas: [],
-    adaptive: [],
+    adaptive: ['autoScale'],
     hGrid: ['spaceBetweenX', 'spaceBetweenY', 'column'],
     vGrid: ['spaceBetweenX', 'spaceBetweenY', 'row'],
     hStack: ['spaceBetween', 'maxSize'],
     vStack: ['spaceBetween', 'maxSize'],
     scroll: ['moveX', 'moveY'],
-    model: ['model', 'animation', 'followMouse'],
+    model: ['model', 'animation', 'followMouse', 'showType'],
     bossBar: ['textures', 'transitionTime'],
     compass: ['background', 'textColor', 'tickColor', 'directionColor', 'tickInterval', 'majorTickInterval', 'showWaypoints', 'waypointFontSize', 'waypointIconWidth', 'waypointIconHeight', 'wayOffsetY'],
     progress: ['texture', 'progress', 'time', 'mode'],
     import: ['node'],
     observer: ['maxSize', 'subscribe', 'target'],
-    chat: ['border', 'spaceBetween', 'background', 'filter', 'showCard', 'exclude'],
+    chat: ['border', 'spaceBetween', 'background', 'filter', 'showCard', 'exclude', 'keep'],
     suggestion: ['background', 'radius', 'spaceBetween', 'backgroundBorder', 'up', 'maxShow', 'textColor', 'hoverTextColor', ...text_attr_labels],
     bossBars: ['spaceBetween', 'maxSize'],
 };
