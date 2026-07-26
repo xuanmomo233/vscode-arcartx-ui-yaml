@@ -695,7 +695,7 @@ function initColorPicker(canvasId, hueCanvasId, onPick) {
         const rect = canvas.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width;
         const y = (e.clientY - rect.top) / rect.height;
-        const s = (1 - x) * 100;
+        const s = x * 100;
         const v = (1 - y) * 100;
         const [r, g, b] = hsvToRgb(currentHue, s, v);
         onPick(r, g, b);
