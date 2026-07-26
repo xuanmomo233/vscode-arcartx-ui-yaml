@@ -871,6 +871,14 @@ function copyText(inputId) {
 function insertRaw(text) { vscode.postMessage({ command: 'insertText', text }); }
 function copyRaw(text) { vscode.postMessage({ command: 'copyToClipboard', text }); }
 
+function stripSnippetSyntax(text) {
+    return text
+        .replace(/\$\{(\d+):([^}]*)\}/g, '$2')
+        .replace(/\$\{(\d+)\|([^|}]*)\|[^}]*\}/g, '$2')
+        .replace(/\$\{(\d+)\}/g, '')
+        .replace(/\$\d+/g, '');
+}
+
 function makeTemplateItem(t) {
     const item = document.createElement('div');
     item.className = 'template-item';
@@ -882,11 +890,11 @@ function makeTemplateItem(t) {
         '<button class="btn btn-sm">预览</button></div>' +
         '<div class="template-item-preview" style="display:none"></div>';
     const btns = item.querySelectorAll('button');
-    btns[0].addEventListener('click', () => copyRaw(t.insertText));
+    btns[0].addEventListener('click', () => copyRaw(stripSnippetSyntax(t.insertText)));
     btns[1].addEventListener('click', () => insertRaw(t.insertText));
     btns[2].addEventListener('click', () => {
         const pre = item.querySelector('.template-item-preview');
-        if (pre.style.display === 'none') { pre.textContent = t.insertText; pre.style.display = 'block'; btns[2].textContent = '隐藏'; }
+        if (pre.style.display === 'none') { pre.textContent = stripSnippetSyntax(t.insertText); pre.style.display = 'block'; btns[2].textContent = '隐藏'; }
         else { pre.style.display = 'none'; btns[2].textContent = '预览'; }
     });
     return item;
