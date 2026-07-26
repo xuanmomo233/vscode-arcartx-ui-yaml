@@ -213,6 +213,40 @@ export const self_functions = [
         )
     },
 
+    {
+        label: 'slotCount()',
+        detail: '获取容器槽位总数 [仅Menu]',
+        insertText: 'slotCount()',
+        kind: vscode.CompletionItemKind.Function,
+        documentation: new vscode.MarkdownString(
+            `**获取容器槽位总数**\n\n` +
+            `获取当前 Menu 的容器槽位总数。\n\n` +
+            `**参数**: 无\n` +
+            `**返回值**: 数字类型\n\n` +
+            `**适用**: 仅Menu类型\n\n` +
+            `---\n\n` +
+            `\`\`\`aria\n` +
+            `self.slotCount()\n` +
+            `\`\`\``
+        )
+    },
+    {
+        label: 'get(index)',
+        detail: '通过索引获取顶层控件',
+        insertText: 'get(${1:index})',
+        kind: vscode.CompletionItemKind.Function,
+        documentation: new vscode.MarkdownString(
+            `**通过索引获取顶层控件**\n\n` +
+            `**参数**:\n` +
+            `- \`index\`: 控件索引 (数字类型)\n\n` +
+            `**返回值**: 控件对象 (找不到时返回 null)\n\n` +
+            `---\n\n` +
+            `\`\`\`aria\n` +
+            `self.get(0)\n` +
+            `\`\`\``
+        )
+    },
+
     // === 变量（属性） ===
     {
         label: 'itemSize',

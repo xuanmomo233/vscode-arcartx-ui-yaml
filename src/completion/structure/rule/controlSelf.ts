@@ -117,156 +117,7 @@ export const control_self_functions = [
         )
     },
 
-    // === 状态操作 ===
-    {
-        label: 'getVisible()',
-        detail: '获取控件可见状态',
-        insertText: 'getVisible()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取可见状态\n\n' +
-            '**参数**: 无\n\n' +
-            '**返回值**: 布尔值'
-        )
-    },
-    {
-        label: 'getEnable()',
-        detail: '获取控件启用状态',
-        insertText: 'getEnable()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取启用状态\n\n' +
-            '**参数**: 无\n\n' +
-            '**返回值**: 布尔值'
-        )
-    },
-    {
-        label: 'setEnable()',
-        detail: '设置控件启用状态',
-        insertText: 'setEnable(${1:true})',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 设置启用状态\n\n' +
-            '**参数**:\n' +
-            '- `enable` - 是否启用 (true/false)\n\n' +
-            '**返回值**: 无\n\n' +
-            '---\n\n' +
-            '```aria\n' +
-            'self.setEnable(false)\n' +
-            '```'
-        )
-    },
-
-    // === 位置和尺寸 ===
-    {
-        label: 'getX()',
-        detail: '获取X坐标',
-        insertText: 'getX()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取X坐标\n\n' +
-            '**返回值**: 数字'
-        )
-    },
-    {
-        label: 'getY()',
-        detail: '获取Y坐标',
-        insertText: 'getY()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取Y坐标\n\n' +
-            '**返回值**: 数字'
-        )
-    },
-    {
-        label: 'getWidth()',
-        detail: '获取宽度',
-        insertText: 'getWidth()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取宽度\n\n' +
-            '**返回值**: 数字'
-        )
-    },
-    {
-        label: 'getHeight()',
-        detail: '获取高度',
-        insertText: 'getHeight()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取高度\n\n' +
-            '**返回值**: 数字'
-        )
-    },
-    {
-        label: 'getPoint()',
-        detail: '获取锚点位置',
-        insertText: 'getPoint()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取锚点位置\n\n' +
-            '**返回值**: 字符串'
-        )
-    },
-
-    // === 属性访问 ===
-    {
-        label: 'get()',
-        detail: '获取控件属性值',
-        insertText: 'get(${1:attributeName})',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取属性值\n\n' +
-            '**参数**:\n' +
-            '- `attributeName` - 属性名称\n\n' +
-            '**返回值**: 属性值\n\n' +
-            '---\n\n' +
-            '```aria\n' +
-            'self.get(\'texts\')\n' +
-            '// 获取 texts 属性值\n' +
-            '```'
-        )
-    },
-    {
-        label: 'set()',
-        detail: '设置控件属性值',
-        insertText: 'set(${1:attributeName}, ${2:value})',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 设置属性值\n\n' +
-            '**参数**:\n' +
-            '- `attributeName` - 属性名称\n' +
-            '- `value` - 新值\n\n' +
-            '**返回值**: 无\n\n' +
-            '---\n\n' +
-            '```aria\n' +
-            'self.set(\'texts\', \'新文本\')\n' +
-            '// 设置 texts 属性值\n' +
-            '```'
-        )
-    },
-
     // === 拖拽相关 ===
-    {
-        label: 'getDragX()',
-        detail: '获取拖拽X偏移',
-        insertText: 'getDragX()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取拖拽X偏移\n\n' +
-            '**返回值**: 数字'
-        )
-    },
-    {
-        label: 'getDragY()',
-        detail: '获取拖拽Y偏移',
-        insertText: 'getDragY()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取拖拽Y偏移\n\n' +
-            '**返回值**: 数字'
-        )
-    },
     {
         label: 'getDragXRatio()',
         detail: '获取拖拽X比例 (0-1)',
@@ -326,23 +177,71 @@ export const control_self_functions = [
 
     // === 父子访问 ===
     {
-        label: 'getParent()',
-        detail: '获取父控件',
-        insertText: 'getParent()',
+        label: 'parent()',
+        detail: '获取控件父级',
+        insertText: 'parent()',
         kind: vscode.CompletionItemKind.Function,
         documentation: new vscode.MarkdownString(
-            '## 获取父控件\n\n' +
-            '**返回值**: 控件对象'
+            '## 获取控件父级\n\n' +
+            '获取控件父级（如果是顶层控件返回的是UI对象）。\n\n' +
+            '**参数**: 无\n\n' +
+            '**返回值**: UI 或 控件\n\n' +
+            '---\n\n' +
+            '```aria\n' +
+            'self.parent()\n' +
+            '// 返回父控件对象\n' +
+            '```'
         )
     },
     {
-        label: 'getRoot()',
-        detail: '获取根控件',
-        insertText: 'getRoot()',
+        label: 'get(index)',
+        detail: '通过索引获取子控件',
+        insertText: 'get(${1:index})',
         kind: vscode.CompletionItemKind.Function,
         documentation: new vscode.MarkdownString(
-            '## 获取根控件\n\n' +
-            '**返回值**: 控件对象'
+            '## 通过索引获取子控件\n\n' +
+            '**参数**:\n' +
+            '- `index` - 子控件索引 (数字类型)\n\n' +
+            '**返回值**: 控件对象\n\n' +
+            '---\n\n' +
+            '```aria\n' +
+            'self.get(0)\n' +
+            '// 返回第一个子控件\n' +
+            '```'
+        )
+    },
+    {
+        label: 'send()',
+        detail: '发送聊天栏输入框内容 (ChatBox)',
+        insertText: 'send()',
+        kind: vscode.CompletionItemKind.Function,
+        documentation: new vscode.MarkdownString(
+            '## 发送聊天栏内容\n\n' +
+            '发送聊天栏输入框的内容。\n\n' +
+            '**适用**: ChatBox\n\n' +
+            '**参数**: 无\n\n' +
+            '**返回值**: 无\n\n' +
+            '---\n\n' +
+            '```aria\n' +
+            'self.send()\n' +
+            '```'
+        )
+    },
+    {
+        label: 'replay()',
+        detail: '重新播放GIF (TextView)',
+        insertText: 'replay()',
+        kind: vscode.CompletionItemKind.Function,
+        documentation: new vscode.MarkdownString(
+            '## 重新播放GIF\n\n' +
+            '重新播放gif动画。\n\n' +
+            '**适用**: TextView\n\n' +
+            '**参数**: 无\n\n' +
+            '**返回值**: 无\n\n' +
+            '---\n\n' +
+            '```aria\n' +
+            'self.replay()\n' +
+            '```'
         )
     },
 
@@ -440,9 +339,9 @@ export const control_self_functions = [
         )
     },
     {
-        label: 'setIconItem()',
+        label: 'setItemIcon(item)',
         detail: '设置图标物品 (Slot Icon)',
-        insertText: 'setIconItem(${1:item})',
+        insertText: 'setItemIcon(${1:item})',
         kind: vscode.CompletionItemKind.Function,
         documentation: new vscode.MarkdownString(
             '## 设置图标物品\n\n' +
@@ -453,7 +352,7 @@ export const control_self_functions = [
             '**返回值**: 无\n\n' +
             '---\n\n' +
             '```aria\n' +
-            'self.setIconItem(\'{"id": "minecraft:stone","Count":1}\')\n' +
+            'self.setItemIcon(\'{"id": "minecraft:stone","Count":1}\')\n' +
             '```'
         )
     },
@@ -472,32 +371,6 @@ export const control_self_functions = [
             '```aria\n' +
             'self.getSameCount()\n' +
             '// 返回: 32\n' +
-            '```'
-        )
-    },
-    {
-        label: 'getText()',
-        detail: '获取文本内容 (Text/TextBox)',
-        insertText: 'getText()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取文本内容\n\n' +
-            '获取 Text 或 TextBox 控件的文本内容。\n\n' +
-            '**适用**: Text、TextBox\n\n' +
-            '**返回值**: 字符串'
-        )
-    },
-    {
-        label: 'setText()',
-        detail: '设置文本内容 (Text/TextBox)',
-        insertText: 'setText(${1:text})',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 设置文本内容\n\n' +
-            '**适用**: Text、TextBox\n\n' +
-            '---\n\n' +
-            '```aria\n' +
-            'self.setText(\'新文本\')\n' +
             '```'
         )
     },
@@ -607,17 +480,6 @@ export const control_self_functions = [
             'self.isHovered()\n' +
             '// 返回: true/false\n' +
             '```'
-        )
-    },
-    {
-        label: 'getItem()',
-        detail: '获取槽位物品 (Slot)',
-        insertText: 'getItem()',
-        kind: vscode.CompletionItemKind.Function,
-        documentation: new vscode.MarkdownString(
-            '## 获取槽位物品\n\n' +
-            '**适用**: Slot\n\n' +
-            '**返回值**: 物品堆对象'
         )
     },
 ];
