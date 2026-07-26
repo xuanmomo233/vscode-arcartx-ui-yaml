@@ -121,11 +121,19 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                         return item;
                     }
 
-                    if (tildePrefix === '~' && insertText.startsWith('~')) {
+                    // 冒号后无空格时，给 insertText 前面补空格
+                    if (colonSpace.length === 0 && !insertText.startsWith(' ')) {
+                        insertText = ' ' + insertText;
+                    }
+                    if (tildePrefix === '~' && insertText.startsWith(' ~')) {
+                        insertText = insertText.substring(2);
+                    } else if (tildePrefix === '~' && insertText.startsWith('~')) {
                         insertText = insertText.substring(1);
                     }
                     if (partialInput && insertText.startsWith('~' + partialInput)) {
                         insertText = '~' + insertText.substring(partialInput.length + 1);
+                    } else if (partialInput && insertText.startsWith(' ~' + partialInput)) {
+                        insertText = ' ~' + insertText.substring(partialInput.length + 2);
                     } else if (partialInput && insertText.startsWith(partialInput)) {
                         insertText = insertText.substring(partialInput.length);
                     }
@@ -143,9 +151,10 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         if (lastChar === '/' || lastChar === '?') {
             // 修改正则：匹配属性名、可选的 ~ 前缀、以及触发字符前的内容
             // 例如: point: ~/ -> attrName=point, tildePrefix=~
-            const attrMatch = linePrefix.match(/(\w+):\s*(~?|)[\w|/|?]*$/);
+            const attrMatch = linePrefix.match(/(\w+):(\s*)(~?|)[\w|/|?]*$/);
             if (attrMatch) {
                 const attrName = attrMatch[1];
+                const colonSpace = attrMatch[2] || '';
                 // 检查是否有 ~ 前缀（通过检查 linePrefix 中是否包含 ~）
                 const tildeMatch = linePrefix.match(/(\w+):\s*(~)/);
                 const tildePrefix = tildeMatch ? tildeMatch[2] : '';
@@ -172,6 +181,11 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                             insertText = getSmartTypeSnippet(completion.label);
                         } else if (tildePrefix === '~' && insertText.startsWith('~')) {
                             insertText = insertText.substring(1);
+                        }
+
+                        // 冒号后无空格时，给 insertText 前面补空格
+                        if (colonSpace.length === 0 && !insertText.startsWith(' ')) {
+                            insertText = ' ' + insertText;
                         }
 
                         item.insertText = new vscode.SnippetString(insertText);

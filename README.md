@@ -1,6 +1,6 @@
 # ArcartX Aria UI
 
-![Version](https://img.shields.io/badge/version-0.0.66-blue.svg)
+![Version](https://img.shields.io/badge/version-0.0.67-blue.svg)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)
 ![VSCode](https://img.shields.io/badge/VSCode-%3E%3D1.100.0-007ACC.svg)
 
