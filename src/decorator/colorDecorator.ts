@@ -1,16 +1,18 @@
 import * as vscode from 'vscode';
 
 /**
- * 颜色装饰器 — 在 ~R,G,B 或 ~R,G,B,A 值旁显示颜色色块
+ * 颜色装饰器 — 在 ~R,G,B,A 值旁显示色块，§#RRGGBB 文字着色，§~RRGGBB-RRGGBB 渐变色块
  */
 export class ColorDecorator {
-    private decorationType: vscode.TextEditorDecorationType;
+    private swatchType: vscode.TextEditorDecorationType;
+    private textColorType: vscode.TextEditorDecorationType;
+    private gradientType: vscode.TextEditorDecorationType;
     private activeEditor: vscode.TextEditor | undefined;
     private updateTimeout: NodeJS.Timeout | undefined;
     private _enabled: boolean = true;
 
     constructor(context: vscode.ExtensionContext) {
-        this.decorationType = vscode.window.createTextEditorDecorationType({
+        this.swatchType = vscode.window.createTextEditorDecorationType({
             before: {
                 contentText: ' ',
                 border: '1px solid #888',
@@ -19,8 +21,23 @@ export class ColorDecorator {
                 margin: '0 4px 0 0',
             },
         });
+        this.textColorType = vscode.window.createTextEditorDecorationType({
+            after: {
+                contentText: ' ',
+                width: '0',
+            },
+        });
+        this.gradientType = vscode.window.createTextEditorDecorationType({
+            before: {
+                contentText: ' ',
+                border: '1px solid #555',
+                width: '14px',
+                height: '14px',
+                margin: '0 6px 0 0',
+            },
+        });
 
-        context.subscriptions.push(this.decorationType);
+        context.subscriptions.push(this.swatchType, this.textColorType, this.gradientType);
 
         // 监听编辑器切换
         vscode.window.onDidChangeActiveTextEditor(editor => {
@@ -64,7 +81,9 @@ export class ColorDecorator {
 
     private clearDecorations() {
         if (this.activeEditor) {
-            this.activeEditor.setDecorations(this.decorationType, []);
+            this.activeEditor.setDecorations(this.swatchType, []);
+            this.activeEditor.setDecorations(this.textColorType, []);
+            this.activeEditor.setDecorations(this.gradientType, []);
         }
     }
 
@@ -72,9 +91,11 @@ export class ColorDecorator {
         if (!this.activeEditor || !this._enabled) return;
         const editor = this.activeEditor;
         const text = editor.document.getText();
-        const decorations: vscode.DecorationOptions[] = [];
+        const swatchDecorations: vscode.DecorationOptions[] = [];
+        const textColorDecorations: vscode.DecorationOptions[] = [];
+        const gradientDecorations: vscode.DecorationOptions[] = [];
 
-        // 匹配 ~R,G,B 或 ~R,G,B,A（允许空格）
+        // 1. 匹配 ~R,G,B 或 ~R,G,B,A（允许空格）— 显示色块
         const colorRegex = /~(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(\d{1,3}))?/g;
         let match: RegExpExecArray | null;
 
@@ -83,19 +104,15 @@ export class ColorDecorator {
             const g = parseInt(match[2]);
             const b = parseInt(match[3]);
             const a = match[4] !== undefined ? parseInt(match[4]) : 255;
-
-            // 验证范围
             if (r > 255 || g > 255 || b > 255 || a > 255) continue;
 
             const startPos = editor.document.positionAt(match.index);
             const endPos = editor.document.positionAt(match.index + match[0].length);
             const range = new vscode.Range(startPos, endPos);
-
-            // 棋盘格背景色（用于透明度可视化）
             const alphaHex = Math.round(a / 255 * 255).toString(16).padStart(2, '0');
             const colorHex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}${alphaHex}`;
 
-            decorations.push({
+            swatchDecorations.push({
                 range,
                 renderOptions: {
                     before: {
@@ -110,6 +127,68 @@ export class ColorDecorator {
             });
         }
 
-        editor.setDecorations(this.decorationType, decorations);
+        // 2. 匹配 §#RRGGBB — 文字本身着色 + 后置色点
+        const textColorRegex = /§#([0-9A-Fa-f]{6})/g;
+        while ((match = textColorRegex.exec(text)) !== null) {
+            const hex = match[1];
+            const startPos = editor.document.positionAt(match.index);
+            const endPos = editor.document.positionAt(match.index + match[0].length);
+            const range = new vscode.Range(startPos, endPos);
+
+            textColorDecorations.push({
+                range,
+                renderOptions: {
+                    before: {
+                        backgroundColor: `#${hex}`,
+                        contentText: ' ',
+                        border: '1px solid #555',
+                        width: '10px',
+                        height: '10px',
+                        margin: '0 4px 0 0',
+                    },
+                    after: {
+                        contentText: '●',
+                        color: `#${hex}`,
+                        margin: '0 0 0 2px',
+                    },
+                },
+            });
+        }
+
+        // 3. 匹配 §~RRGGBB-RRGGBB — 渐变色双色块
+        const gradientRegex = /§~([0-9A-Fa-f]{6})-([0-9A-Fa-f]{6})/g;
+        while ((match = gradientRegex.exec(text)) !== null) {
+            const hex1 = match[1];
+            const hex2 = match[2];
+            const startPos = editor.document.positionAt(match.index);
+            const endPos = editor.document.positionAt(match.index + match[0].length);
+            const range = new vscode.Range(startPos, endPos);
+
+            gradientDecorations.push({
+                range,
+                renderOptions: {
+                    before: {
+                        backgroundColor: `#${hex1}`,
+                        contentText: ' ',
+                        border: '1px solid #555',
+                        width: '14px',
+                        height: '14px',
+                        margin: '0 6px 0 0',
+                    },
+                    after: {
+                        backgroundColor: `#${hex2}`,
+                        contentText: ' ',
+                        border: '1px solid #555',
+                        width: '14px',
+                        height: '14px',
+                        margin: '0 0 0 4px',
+                    },
+                },
+            });
+        }
+
+        editor.setDecorations(this.swatchType, swatchDecorations);
+        editor.setDecorations(this.textColorType, textColorDecorations);
+        editor.setDecorations(this.gradientType, gradientDecorations);
     }
 }

@@ -578,8 +578,13 @@ select {
         </div>
         <div class="output-group">
             <div class="output-label">文字渐变预览</div>
+            <input type="text" id="gradTextInput" placeholder="输入要预览的文字..." value="渐变文字示例" style="width:100%;margin-bottom:4px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-input-border);padding:4px;border-radius:3px;">
             <div class="preview-box" id="gradTextPreview" style="background:#1e1e1e">
-                <span class="preview-text" id="gradTextPreviewContent" style="font-size:18px;">渐变文字示例§r</span>
+                <span class="preview-text" id="gradTextPreviewContent" style="font-size:18px;">渐变文字示例</span>
+            </div>
+            <div class="output-row" style="margin-top:4px;">
+                <button class="btn btn-sm" id="gradTextInsertBtn">插入带格式文字</button>
+                <button class="btn btn-sm" id="gradTextCopyBtn">复制带格式文字</button>
             </div>
         </div>
     </div>
@@ -828,14 +833,35 @@ function updateGradient() {
     const hex2NoA = rgbToHex(r2, g2, b2);
     const textGrad = '§~' + hex1NoA + '-' + hex2NoA;
     document.getElementById('gradTextOutput').value = textGrad;
-    const previewEl = document.getElementById('gradTextPreviewContent');
-    previewEl.textContent = '渐变文字示例';
-    previewEl.style.background = 'linear-gradient(90deg, #' + hex1NoA + ', #' + hex2NoA + ')';
-    previewEl.style.webkitBackgroundClip = 'text';
-    previewEl.style.backgroundClip = 'text';
-    previewEl.style.webkitTextFillColor = 'transparent';
-    previewEl.style.color = 'transparent';
+    updateGradTextPreview();
 }
+
+function updateGradTextPreview() {
+    const textGrad = document.getElementById('gradTextOutput').value;
+    const inputText = document.getElementById('gradTextInput').value || '渐变文字示例';
+    const previewEl = document.getElementById('gradTextPreviewContent');
+    previewEl.textContent = inputText;
+    const m = textGrad.match(/§~([0-9A-Fa-f]{6})-([0-9A-Fa-f]{6})/);
+    if (m) {
+        previewEl.style.background = 'linear-gradient(90deg, #' + m[1] + ', #' + m[2] + ')';
+        previewEl.style.webkitBackgroundClip = 'text';
+        previewEl.style.backgroundClip = 'text';
+        previewEl.style.webkitTextFillColor = 'transparent';
+        previewEl.style.color = 'transparent';
+    }
+}
+
+document.getElementById('gradTextInput').addEventListener('input', updateGradTextPreview);
+document.getElementById('gradTextInsertBtn').addEventListener('click', () => {
+    const textGrad = document.getElementById('gradTextOutput').value;
+    const inputText = document.getElementById('gradTextInput').value || '';
+    vscode.postMessage({ command: 'insertText', text: textGrad + inputText + '§r' });
+});
+document.getElementById('gradTextCopyBtn').addEventListener('click', () => {
+    const textGrad = document.getElementById('gradTextOutput').value;
+    const inputText = document.getElementById('gradTextInput').value || '';
+    vscode.postMessage({ command: 'copyToClipboard', text: textGrad + inputText + '§r' });
+});
 
 ['rSlider3a', 'gSlider3a', 'bSlider3a', 'aSlider3a',
  'rSlider3b', 'gSlider3b', 'bSlider3b', 'aSlider3b',
