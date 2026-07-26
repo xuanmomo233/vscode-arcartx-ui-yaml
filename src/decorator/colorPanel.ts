@@ -99,6 +99,12 @@ export class ColorPanelProvider implements vscode.WebviewViewProvider {
                 vscode.window.showInformationMessage(`模板 "${message.label}" 已删除`);
                 break;
             }
+            case 'setTitle': {
+                if (this.view) {
+                    this.view.title = message.title;
+                }
+                break;
+            }
         }
     }
 
@@ -754,14 +760,27 @@ function initColorPicker(canvasId, hueCanvasId, onPick) {
 }
 
 // ===== Tab 切换 =====
+const tabTitles = {
+    'rgba': 'RGBA 色块',
+    'text': '文字颜色',
+    'gradient': '渐变色',
+    'colors': '色板',
+    'controls': '控件模板',
+    'effects': '特效模板',
+    'ui': 'UI 模板',
+    'custom': '自定义模板',
+};
 document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        vscode.postMessage({ command: 'setTitle', title: tabTitles[tab.dataset.tab] || '工具箱' });
     });
 });
+// 初始化标题
+vscode.postMessage({ command: 'setTitle', title: tabTitles['rgba'] });
 
 // ===== Tab 1: RGBA =====
 function updateRgba() {
