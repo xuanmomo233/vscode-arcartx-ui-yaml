@@ -45,7 +45,7 @@ export class ColorPickerCommand {
             { label: '$(paintcan) 深灰', description: '~64,64,64,255', color: [64, 64, 64, 255] },
             { label: '$(paintcan) 半透明黑', description: '~0,0,0,120', color: [0, 0, 0, 120] },
             { label: '$(paintcan) 半透明白', description: '~255,255,255,120', color: [255, 255, 255, 120] },
-            { label: '$(paintcan) 浅蓝', description: '~110,230,80,255', color: [110, 230, 80, 255] },
+            { label: '$(paintcan) 浅蓝', description: '~135,206,235,255', color: [135, 206, 235, 255] },
         ];
 
         const selected = await vscode.window.showQuickPick(presetItems, {

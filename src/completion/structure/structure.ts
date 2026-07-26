@@ -191,11 +191,7 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         }
 
         // 3. 查找匹配配置
-        console.log('StructureCompletion: linePrefix =', JSON.stringify(linePrefix));
-        console.log('StructureCompletion: currentPath =', currentPath);
-
         const matchingConfig = this.findMatchingConfig(currentPath);
-        console.log('StructureCompletion: matchingConfig =', matchingConfig ? matchingConfig.path : null);
 
         if (!matchingConfig) {
             return [];
@@ -267,8 +263,6 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         } else {
             currentIndent = this.getIndentLevel(currentLineText);
         }
-        console.log('getCurrentPath: currentIndent =', currentIndent, 'currentLineText =', JSON.stringify(currentLineText));
-
         // 检测当前行是否在属性值行（key: value 中的 value 部分）
         const currentLineTrimmed = currentLineText.trim();
         if (currentLineTrimmed.includes(':')) {
@@ -306,7 +300,6 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                             currentBlockKey = key;
                             blockLineNum = lineNum;
                             currentIndent = lineIndent;  // 更新缩进，避免重复添加
-                            console.log('getCurrentPath: found block =', key, 'at line', lineNum, 'new currentIndent =', currentIndent);
                         }
                     }
                     break;
@@ -316,8 +309,6 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                 path.unshift(currentBlockKey);
             }
         }
-
-        console.log('getCurrentPath: after block detection, path =', path, 'currentIndent =', currentIndent, 'blockLineNum =', blockLineNum);
 
         // 向上遍历，构建路径（跳过已处理的块行）
         for (let lineNum = position.line - 1; lineNum >= 0; lineNum--) {
@@ -342,14 +333,12 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
                 // 只有缩进更小的才是父级，缩进相同的是同级，不应该加入路径
                 if (lineIndent < currentIndent) {
-                    console.log('getCurrentPath: adding to path (smaller indent):', key, 'lineIndent =', lineIndent, 'currentIndent =', currentIndent);
                     path.unshift(key);
                     currentIndent = lineIndent;
                 }
             }
         }
 
-        console.log('getCurrentPath: final path =', path);
         return path;
     }
 
@@ -368,16 +357,12 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
      * 支持智能前缀匹配：如果配置路径是当前路径的前缀，则匹配成功
      */
     private findMatchingConfig(currentPath: string[]): CompletionConfig | undefined {
-        console.log('findMatchingConfig: currentPath =', currentPath);
-        console.log('findMatchingConfig: completionConfigs.length =', completionConfigs.length);
-
         // 1. 首先尝试精确匹配
         const exactMatch = completionConfigs.find(config => {
             if (config.path.length !== currentPath.length) return false;
             return config.path.every((pathPart, index) => pathPart === currentPath[index]);
         });
         if (exactMatch) {
-            console.log('findMatchingConfig: exactMatch found, path =', exactMatch.path);
             return exactMatch;
         }
 
@@ -414,24 +399,13 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                 }
                 return best;
             });
-            console.log('findMatchingConfig: prefixMatch found, path =', bestMatch.path);
             return bestMatch;
         }
 
         // 3. 尝试通配符匹配（仅用于没有通过前缀匹配的配置）
-        console.log('findMatchingConfig: trying wildcard match...');
         const wildcardMatch = completionConfigs.find(config => {
-            const matches = this.isWildcardMatch(config.path, currentPath);
-            if (config.path.includes('*')) {
-                console.log('  wildcard check:', config.path, '->', matches);
-            }
-            return matches;
+            return this.isWildcardMatch(config.path, currentPath);
         });
-        if (wildcardMatch) {
-            console.log('findMatchingConfig: wildcardMatch found, path =', wildcardMatch.path);
-        } else {
-            console.log('findMatchingConfig: no match found!');
-        }
         return wildcardMatch;
     }
 

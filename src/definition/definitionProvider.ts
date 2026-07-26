@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 
 export class DefinitionProvider implements vscode.DefinitionProvider {
-    provideDefinition(
+    async provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position,
         token: vscode.CancellationToken
-    ): vscode.ProviderResult<vscode.Definition> {
+    ): Promise<vscode.Definition | undefined> {
         const range = document.getWordRangeAtPosition(position, /[\w.]+/);
         if (!range) return undefined;
 
@@ -34,7 +34,7 @@ export class DefinitionProvider implements vscode.DefinitionProvider {
         const screenOpenMatch = line.match(/Screen\.open\(\s*['"]([^'"]+)['"]/);
         if (screenOpenMatch) {
             const uiId = screenOpenMatch[1];
-            return this.findUiDefinition(document, uiId);
+            return await this.findUiDefinition(document, uiId);
         }
 
         return undefined;
@@ -94,15 +94,17 @@ export class DefinitionProvider implements vscode.DefinitionProvider {
         return undefined;
     }
 
-    private findUiDefinition(
+    private async findUiDefinition(
         document: vscode.TextDocument,
         uiId: string
-    ): vscode.Location[] | undefined {
+    ): Promise<vscode.Location[] | undefined> {
         const results: vscode.Location[] = [];
-        const files = vscode.workspace.textDocuments.filter(
+
+        // 先搜索已打开的文档
+        const openDocs = vscode.workspace.textDocuments.filter(
             doc => doc.languageId === 'arcartx-ui-yaml'
         );
-        for (const doc of files) {
+        for (const doc of openDocs) {
             const lines = doc.getText().split('\n');
             for (let i = 0; i < lines.length; i++) {
                 const trimmed = lines[i].trim();
@@ -111,6 +113,26 @@ export class DefinitionProvider implements vscode.DefinitionProvider {
                 }
             }
         }
+
+        // 再搜索工作区中未打开的 .arx 文件
+        const uris = await vscode.workspace.findFiles('**/*.arx', '**/node_modules/**');
+        for (const uri of uris) {
+            // 跳过已打开的文档（上面已处理）
+            if (openDocs.some(doc => doc.uri.toString() === uri.toString())) continue;
+            try {
+                const doc = await vscode.workspace.openTextDocument(uri);
+                const lines = doc.getText().split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                    const trimmed = lines[i].trim();
+                    if (trimmed.endsWith(':') && trimmed.replace(':', '').trim() === uiId) {
+                        results.push(new vscode.Location(uri, new vscode.Position(i, 0)));
+                    }
+                }
+            } catch {
+                // 忽略无法打开的文件
+            }
+        }
+
         return results.length > 0 ? results : undefined;
     }
 

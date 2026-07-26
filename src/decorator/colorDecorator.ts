@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 /**
- * 颜色装饰器 — 在 ~R,G,B,A 值旁显示色块，§#RRGGBB 文字着色，§~RRGGBB-RRGGBB 渐变色块
+ * 颜色装饰器 — ~R,G,B,A 色块 / §#RRGGBB 文字着色 / §~RRGGBB-RRGGBB 渐变逐字插值着色
  */
 export class ColorDecorator {
     private swatchType: vscode.TextEditorDecorationType;
@@ -79,8 +79,11 @@ export class ColorDecorator {
         const editor = this.activeEditor;
         const text = editor.document.getText();
 
-        // 销毁上一轮的动态装饰类型
-        this.dynamicTypes.forEach(t => t.dispose());
+        // 清空上一轮的动态装饰（先 setDecorations([]) 再 dispose，避免残留）
+        this.dynamicTypes.forEach(t => {
+            editor.setDecorations(t, []);
+            t.dispose();
+        });
         this.dynamicTypes = [];
 
         const swatchDecorations: vscode.DecorationOptions[] = [];
@@ -118,6 +121,8 @@ export class ColorDecorator {
         }
 
         // 2. 匹配 §#RRGGBB — 只着色后续文字，不着色颜色码本身
+        // 按颜色批量分组，同一颜色的所有 range 共享一个 decorationType
+        const textColorMap = new Map<string, vscode.Range[]>();
         const textColorRegex = /§#([0-9A-Fa-f]{6})/g;
         while ((match = textColorRegex.exec(text)) !== null) {
             const hex = match[1].toUpperCase();
@@ -149,17 +154,25 @@ export class ColorDecorator {
                 },
             });
 
-            // 文字部分：着色
+            // 文字部分：按颜色批量分组着色（同一颜色的所有 range 共享一个 decorationType）
             if (textEnd > textStart) {
-                const type = vscode.window.createTextEditorDecorationType({
-                    color: `#${hex}`,
-                });
-                this.dynamicTypes.push(type);
-                editor.setDecorations(type, [new vscode.Range(editor.document.positionAt(textStart), editor.document.positionAt(textEnd))]);
+                if (!textColorMap.has(hex)) {
+                    textColorMap.set(hex, []);
+                }
+                textColorMap.get(hex)!.push(new vscode.Range(editor.document.positionAt(textStart), editor.document.positionAt(textEnd)));
             }
+        }
+        for (const [hex, ranges] of textColorMap) {
+            const type = vscode.window.createTextEditorDecorationType({
+                color: `#${hex}`,
+            });
+            this.dynamicTypes.push(type);
+            editor.setDecorations(type, ranges);
         }
 
         // 3. 匹配 §~RRGGBB-RRGGBB — 逐字线性插值着色
+        // 优化：按颜色批量分组，相同颜色的字符共享一个 decorationType
+        const gradientColorMap = new Map<string, vscode.Range[]>();
         const gradientRegex = /§~([0-9A-Fa-f]{6})-([0-9A-Fa-f]{6})/g;
         while ((match = gradientRegex.exec(text)) !== null) {
             const hex1 = match[1].toUpperCase();
@@ -182,7 +195,6 @@ export class ColorDecorator {
             }
             const textContent = afterCode.substring(0, endRel);
             const textStart = codeEnd;
-            const textEnd = codeEnd + endRel;
 
             // 颜色码部分：显示双色块
             swatchDecorations.push({
@@ -207,8 +219,10 @@ export class ColorDecorator {
                 },
             });
 
-            // 逐字插值着色
-            const charCount = [...textContent].length;
+            // 逐字插值着色 — 按颜色分组批量装饰
+            const chars = [...textContent];
+            const charCount = chars.length;
+            let charOffset = 0;
             for (let i = 0; i < charCount; i++) {
                 const t = charCount > 1 ? i / (charCount - 1) : 0;
                 const r = Math.round(r1 + (r2 - r1) * t);
@@ -216,21 +230,22 @@ export class ColorDecorator {
                 const b = Math.round(b1 + (b2 - b1) * t);
                 const charHex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 
-                // 计算第 i 个字符在原文中的偏移
-                const chars = [...textContent];
-                let charStartRel = 0;
-                for (let j = 0; j < i; j++) charStartRel += chars[j].length;
-                const charEndRel = charStartRel + chars[i].length;
+                const charStart = textStart + charOffset;
+                const charEnd = textStart + charOffset + chars[i].length;
+                charOffset += chars[i].length;
 
-                const charStart = textStart + charStartRel;
-                const charEnd = textStart + charEndRel;
-
-                const type = vscode.window.createTextEditorDecorationType({
-                    color: charHex,
-                });
-                this.dynamicTypes.push(type);
-                editor.setDecorations(type, [new vscode.Range(editor.document.positionAt(charStart), editor.document.positionAt(charEnd))]);
+                if (!gradientColorMap.has(charHex)) {
+                    gradientColorMap.set(charHex, []);
+                }
+                gradientColorMap.get(charHex)!.push(new vscode.Range(editor.document.positionAt(charStart), editor.document.positionAt(charEnd)));
             }
+        }
+        for (const [charHex, ranges] of gradientColorMap) {
+            const type = vscode.window.createTextEditorDecorationType({
+                color: charHex,
+            });
+            this.dynamicTypes.push(type);
+            editor.setDecorations(type, ranges);
         }
 
         editor.setDecorations(this.swatchType, swatchDecorations);

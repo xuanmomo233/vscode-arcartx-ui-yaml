@@ -3,6 +3,7 @@ import { builtin_functions } from '../completion/structure/rule/ariaBuiltin';
 import { type_values, point_values, slotType_values, shape_values, alignment_values, showType_values, progress_mode_values } from '../completion/structure/rule/controlAttributeValue';
 import { control_attribute } from '../completion/structure/rule/controlAttribute';
 import { control_actions } from '../completion/structure/rule/controlAction';
+import { control_effects } from '../completion/structure/rule/controlEffect';
 import { control_settings } from '../completion/structure/rule/controlSetting';
 import { ui_actions } from '../completion/structure/rule/uiAction';
 import { ui_options } from '../completion/structure/rule/ui';
@@ -37,6 +38,7 @@ export class HoverProvider implements vscode.HoverProvider {
             ...control_attribute,
             ...control_settings,
             ...control_actions,
+            ...control_effects,
             ...ui_actions,
             ...ui_options,
             ...packetHandler_options,
