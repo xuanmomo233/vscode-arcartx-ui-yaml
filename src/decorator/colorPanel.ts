@@ -82,6 +82,35 @@ export class ColorPanelProvider implements vscode.WebviewViewProvider {
     }
 
     private getHtml(webview: vscode.Webview): string {
+        const controlTemplates = controls.map(c => ({ label: c.label, detail: c.detail, insertText: c.insertText }));
+        const effectTemplates = control_effects.map(e => ({ label: e.label, detail: e.detail, insertText: e.insertText }));
+        const uiTemplates = [
+            { label: 'ui-full', detail: '完整UI配置模板(含所有配置项)', insertText: root.ui_full.insertText },
+            { label: 'ui-base', detail: 'UI基础设定', insertText: root.ui_base.insertText },
+            { label: 'controls-empty', detail: '空控件列表', insertText: root.controls_empty.insertText },
+            { label: 'controls-with-adaptive', detail: '自适应布局控件结构', insertText: root.controls_with_adaptive.insertText },
+            { label: 'tip-base', detail: '基础Tip配置模板', insertText: root.tips_base.insertText },
+            { label: 'tip-adaptive', detail: '自适应Tip配置模板', insertText: root.tips_adaptive.insertText },
+            { label: 'entity-model', detail: '实体模型渲染配置', insertText: root.entity_model_base.insertText },
+        ];
+        const presetColors = [
+            { name: '白色', rgba: '255,255,255,255', hex: '#FFFFFF' },
+            { name: '黑色', rgba: '0,0,0,255', hex: '#000000' },
+            { name: '红色', rgba: '255,0,0,255', hex: '#FF0000' },
+            { name: '绿色', rgba: '0,255,0,255', hex: '#00FF00' },
+            { name: '蓝色', rgba: '0,0,255,255', hex: '#0000FF' },
+            { name: '黄色', rgba: '255,255,0,255', hex: '#FFFF00' },
+            { name: '青色', rgba: '0,255,255,255', hex: '#00FFFF' },
+            { name: '紫色', rgba: '255,0,255,255', hex: '#FF00FF' },
+            { name: '橙色', rgba: '255,165,0,255', hex: '#FFA500' },
+            { name: '浅灰', rgba: '192,192,192,255', hex: '#C0C0C0' },
+            { name: '灰色', rgba: '128,128,128,255', hex: '#808080' },
+            { name: '深灰', rgba: '64,64,64,255', hex: '#404040' },
+            { name: '半透明黑', rgba: '0,0,0,120', hex: '#00000078' },
+            { name: '半透明白', rgba: '255,255,255,120', hex: '#FFFFFF78' },
+            { name: '半透明黑80', rgba: '0,0,0,80', hex: '#00000050' },
+            { name: '浅蓝绿', rgba: '110,230,80,255', hex: '#6EE650' },
+        ];
         return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -833,6 +862,72 @@ function copyText(inputId) {
     const val = document.getElementById(inputId).value;
     vscode.postMessage({ command: 'copyToClipboard', text: val });
 }
+
+function insertRaw(text) { vscode.postMessage({ command: 'insertText', text }); }
+function copyRaw(text) { vscode.postMessage({ command: 'copyToClipboard', text }); }
+
+function makeTemplateItem(t) {
+    const item = document.createElement('div');
+    item.className = 'template-item';
+    item.innerHTML = '<div class="template-item-label">' + t.label + '</div>' +
+        '<div class="template-item-detail">' + t.detail + '</div>' +
+        '<div class="template-item-actions">' +
+        '<button class="btn btn-sm">复制</button>' +
+        '<button class="btn btn-sm">插入</button>' +
+        '<button class="btn btn-sm">预览</button></div>' +
+        '<div class="template-item-preview" style="display:none"></div>';
+    const btns = item.querySelectorAll('button');
+    btns[0].addEventListener('click', () => copyRaw(t.insertText));
+    btns[1].addEventListener('click', () => insertRaw(t.insertText));
+    btns[2].addEventListener('click', () => {
+        const pre = item.querySelector('.template-item-preview');
+        if (pre.style.display === 'none') { pre.textContent = t.insertText; pre.style.display = 'block'; btns[2].textContent = '隐藏'; }
+        else { pre.style.display = 'none'; btns[2].textContent = '预览'; }
+    });
+    return item;
+}
+
+// ===== Tab 4: 色板 =====
+const presetColors = ${JSON.stringify(presetColors)};
+const colorGrid = document.getElementById('colorGrid');
+presetColors.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'color-card';
+    card.innerHTML = '<div class="color-swatch" style="background:' + c.hex + '"></div>' +
+        '<div class="color-card-info"><div class="color-card-name">' + c.name + '</div>' +
+        '<div class="color-card-value">~' + c.rgba + '</div></div>';
+    card.addEventListener('click', () => {
+        const parts = c.rgba.split(',');
+        document.getElementById('rSlider').value = parts[0];
+        document.getElementById('gSlider').value = parts[1];
+        document.getElementById('bSlider').value = parts[2];
+        document.getElementById('aSlider').value = parts[3];
+        updateRgba();
+        document.querySelector('[data-tab="rgba"]').click();
+    });
+    colorGrid.appendChild(card);
+});
+
+// ===== Tab 5: 控件模板 =====
+const controlTemplates = ${JSON.stringify(controlTemplates)};
+function renderControls(filter) {
+    const list = document.getElementById('controlList');
+    list.innerHTML = '';
+    controlTemplates.filter(t => !filter || t.label.toLowerCase().includes(filter.toLowerCase()) || t.detail.includes(filter))
+        .forEach(t => list.appendChild(makeTemplateItem(t)));
+}
+renderControls('');
+document.getElementById('controlSearch').addEventListener('input', (e) => renderControls(e.target.value));
+
+// ===== Tab 6: 特效模板 =====
+const effectTemplates = ${JSON.stringify(effectTemplates)};
+const effectList = document.getElementById('effectList');
+effectTemplates.forEach(t => effectList.appendChild(makeTemplateItem(t)));
+
+// ===== Tab 7: UI 模板 =====
+const uiTemplates = ${JSON.stringify(uiTemplates)};
+const uiList = document.getElementById('uiList');
+uiTemplates.forEach(t => uiList.appendChild(makeTemplateItem(t)));
 
 // 初始化
 updateRgba();
