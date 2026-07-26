@@ -2,6 +2,37 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.29]
+- 重写悬停 provider，实现上下文感知查找：
+  - 分离 `yamlMap`/`scriptMap`/`commonMap`，YAML 属性名位置优先匹配控件属性，脚本块内优先匹配函数
+  - 修复函数参数名污染 `docMap`（如 `Number.round(x)` 的 `x` 被注册为独立 key）
+  - 只按 `.` 拆分 label，不再按 `()` 拆分
+- 对照知识文档全面审计并修正控件属性描述：
+  - 修正 `scale`（从左上角缩放，非正中心）、`through`（补充"不接受点击事件"）
+  - 修正 `shadow` 适用范围（Text、Texture 含有）、`normal`/`hover` 补充"纹理表达式"说明
+  - 修正 9SliceTexture 的 `left`/`right`/`top`/`bottom` 描述为"从贴图边缘到分割线的像素距离"
+  - 修正 `slotType` 的 `id` 描述为"拓展槽位为字符串，其余为数字"
+  - 修正 `moveX`/`moveY` 补充"0~1，控制滚动位置"
+  - 修正 `spaceBetween` 适用范围增加 BossBars
+- 补充大量缺失控件属性：
+  - `loop`（Texture GIF循环）、`lock`/`cooldown`/`overwriteText`（Slot）
+  - `alignment`（Text 文字对齐）、`uuid`/`hideTag`/`followMouse`（Entity）
+  - `model`/`animation`/`showType`/`followMouse`（Model）
+  - `texture`/`progress`/`time`/`mode`（Progress）
+  - `node`（Import）、`subscribe`/`target`/`maxSize`（Observer）
+  - `inputPattern`（TextBox）、`sendClose`（ChatTextBox）
+  - `border`/`filter`/`showCard`/`exclude`/`keep`（Chat）
+  - `textColor`/`tickColor`/`directionColor`/`tickInterval`/`majorTickInterval`/`showWaypoints`/`waypointFontSize`（Compass）
+  - `shape`/`radius`（图形效果）
+- 补充缺失 UI 选项：`transfer`、`screenScale`、`controls`、`template`、`tasks`
+- 补充缺失控件触发器：`wheel`、`keyPress`、`keyRelease`
+- 补充 `effect` 控件设置项
+- 修正控件类型列表：`9sliceTexture` → `9SliceTexture`，补充 `model`/`progress`/`compass`/`import`/`observer`/`chatTextBox`/`suggestion`/`chat`/`card`/`bossBar`/`bossBars`
+- 修正 Text 类型文档：移除错误的 `right` 属性，改为 `alignment`
+- 修正 Model 类型 `animation` 默认值为 `idle`，补充 `showType` 属性
+- 补充 Chat 类型 `keep` 属性
+- 新增 `card` 卡片消息控件类型
+
 ### [0.0.28]
 - 全面修复悬停功能，补全所有遗漏的数据源和逻辑问题：
   - 新增导入 `control_settings`（`val`/`type`/`attribute`/`children`/`action`）、`task_settings`（`type`/`time`/`cycle`/`run`）、`hud_names`（30个HUD名称）、`match_values`

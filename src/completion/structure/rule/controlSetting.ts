@@ -39,17 +39,28 @@ export const control_settings = [
             '|------|------|\n' +
             '| `texture` | 普通图片控件 |\n' +
             '| `text` | 文本控件 |\n' +
-            '| `9sliceTexture` | 九宫格图片（可拉伸） |\n' +
-            '| `textBox` | 文本输入框 |\n' +
+            '| `9SliceTexture` | 九宫格图片（可拉伸） |\n' +
             '| `entity` | 实体渲染控件 |\n' +
+            '| `model` | 模型渲染控件 |\n' +
             '| `slot` | 物品槽位 |\n' +
+            '| `bossBar` | 多层血条 |\n' +
+            '| `compass` | 罗盘 |\n' +
+            '| `textBox` | 文本输入框 |\n' +
+            '| `progress` | 进度条 |\n' +
+            '| `import` | 导入器 |\n' +
+            '| `observer` | 观察者 |\n' +
+            '| `chatTextBox` | 聊天栏输入框 |\n' +
+            '| `suggestion` | 命令补全器 |\n' +
+            '| `chat` | 聊天栏 |\n' +
+            '| `card` | 卡片消息 |\n' +
             '| `canvas` | 画布容器 |\n' +
             '| `adaptive` | 自适应容器 |\n' +
             '| `hGrid` | 水平网格布局 |\n' +
             '| `vGrid` | 垂直网格布局 |\n' +
             '| `hStack` | 水平堆叠布局 |\n' +
             '| `vStack` | 垂直堆叠布局 |\n' +
-            '| `scroll` | 滚动容器 |'
+            '| `scroll` | 滚动容器 |\n' +
+            '| `bossBars` | Boss血条容器 |'
         )
     },
     {
@@ -96,12 +107,32 @@ export const control_settings = [
             '| 触发器 | 说明 |\n' +
             '|--------|------|\n' +
             '| `click` | 点击事件 |\n' +
-           '| `hover` | 鼠标悬停 |\n' +
+            '| `enter` | 鼠标进入 |\n' +
             '| `leave` | 鼠标离开 |\n' +
-            '| `scroll` | 滚动事件 |\n' +
+            '| `wheel` | 滚轮事件 |\n' +
             '| `create` | 创建时触发 |\n' +
             '| `tick` | 每帧触发 |\n\n' +
             '输入 `/` 查看所有可用的触发器。'
+        )
+    },
+    {
+        label: 'effect',
+        detail: '图形效果块 - 纹理特效（描边、阴影、霓虹、波纹、渐变、流光、能量、饼图剪裁）',
+        insertText: 'effect:\n  $0',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            '## 图形效果\n\n' +
+            '定义控件的纹理特效，位于控件的 `effect` 块中。\n\n' +
+            '**可用特效**:\n' +
+            '- `stroke` - 描边\n' +
+            '- `shadow` - 阴影\n' +
+            '- `neon` - 霓虹\n' +
+            '- `ripple` - 波纹\n' +
+            '- `gradient` - 渐变\n' +
+            '- `flow` - 流光\n' +
+            '- `energy` - 能量\n' +
+            '- `pie` - 饼图剪裁\n\n' +
+            '适用于任何带有渲染纹理的控件。'
         )
     }
 ]

@@ -35,7 +35,7 @@ export const type_values = [
             '| 属性 | 说明 | 默认值 |\n' +
             '|------|------|--------|\n' +
             '| `shadow` | 渲染阴影 | `false` |\n' +
-            '| `right` | 右对齐 | `false` |\n\n' +
+            '| `alignment` | 文字对齐方式 | `~left` |\n\n' +
             '**常用属性**:\n' +
             '- `texts` - 文本内容\n' +
             '- `fontSize` - 字体大小\n' +
@@ -45,9 +45,9 @@ export const type_values = [
         )
     },
     {
-        label: '9sliceTexture',
+        label: '9SliceTexture',
         detail: '九宫格纹理 - 可拉伸图片',
-        insertText: '9sliceTexture',
+        insertText: '9SliceTexture',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 九宫格纹理 (9SliceTexture)\n\n' +
@@ -272,8 +272,10 @@ export const type_values = [
             '| 属性 | 说明 | 默认值 |\n' +
             '|------|------|--------|\n' +
             '| `model` | 模型id | 无 |\n' +
-            '| `animation` | 播放动作 | `animation` |\n' +
-            '| `followMouse` | 视线是否跟随鼠标 | `false` |\n\n' +
+            '| `animation` | 播放动作 | `idle` |\n' +
+            '| `followMouse` | 视线是否跟随鼠标 | `false` |\n' +
+            '| `showType` | 显示部位类型 | `none` |\n\n' +
+            '**showType 选项**: `~none` / `~HEAD` / `~UPPER_BODY` / `~LOWER_BODY` / `~FOOT`\n\n' +
             '**常用场景**: 物品展示、模型预览。'
         )
     },
@@ -466,9 +468,26 @@ export const type_values = [
             '| `background` | 背景颜色（rgba字符串） | `0,0,0` |\n' +
             '| `filter` | 过滤（匹配消息开头才显示） | 无 |\n' +
             '| `showCard` | 显示卡片消息 | `true` |\n' +
-            '| `exclude` | 排除（排除指定开头的消息） | 无 |\n\n' +
+            '| `exclude` | 排除（排除指定开头的消息） | 无 |\n' +
+            '| `keep` | 持续渲染（不在聊天屏幕也显示） | `false` |\n\n' +
             '**注意**: 该控件无子控件。\n\n' +
             '**常用场景**: 聊天窗口、消息显示。'
+        )
+    },
+    {
+        label: 'card',
+        detail: '卡片消息 - 聊天卡片根控件',
+        insertText: 'card',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 卡片消息 (Card)\n\n' +
+            '用于定义聊天卡片消息的根控件样式。配置位于插件的 chat_card 文件夹。\n\n' +
+            '**独有属性**:\n' +
+            '| 属性 | 说明 | 默认值 |\n' +
+            '|------|------|--------|\n' +
+            '| `width` | 卡片宽度 | `0` |\n' +
+            '| `height` | 卡片高度 | `0` |\n\n' +
+            '**注意**: 卡片内部可通过 `self.parent.data[\'key\']` 访问服务端传入的数据字段。'
         )
     },
     // ========== 布局型（续）==========

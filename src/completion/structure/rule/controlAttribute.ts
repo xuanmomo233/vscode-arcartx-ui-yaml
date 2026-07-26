@@ -3,13 +3,13 @@ import * as vscode from 'vscode';
 export const control_attribute = [
     {
         label: 'enable',
-        detail: '是否开启[默认: true] - 关闭后触发器将不会触发',
+        detail: '是否开启[默认: true] - 关闭后交互性触发器不会触发，影响子组件',
         insertText: 'enable: ${1|true,false|}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'visible',
-        detail: '是否可见[默认: true] - 关闭后将不可见',
+        detail: '是否可见[默认: true] - 关闭后不可见，影响子组件',
         insertText: 'visible: ${1|true,false|}',
         kind: vscode.CompletionItemKind.Property
     },
@@ -81,7 +81,7 @@ export const control_attribute = [
     },
     {
         label: 'point',
-        detail: '锚点[默认: top_left]',
+        detail: '锚点[默认: top_left] - 详见锚点类型表',
         insertText: 'point: ~',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
@@ -160,8 +160,8 @@ export const control_attribute = [
     },
     {
         label: 'shadow',
-        detail: '渲染阴影[默认: false] - (Text独有)',
-        insertText: 'shadow: true',
+        detail: '渲染阴影[默认: false] - 为文字添加投影，提升可读性 (Text、Texture含有)',
+        insertText: 'shadow: ${1|true,false|}',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -172,55 +172,61 @@ export const control_attribute = [
     },
     {
         label: 'through',
-        detail: '是否穿透[默认: false] - 穿透后不阻挡下方组件交互',
+        detail: '是否穿透[默认: false] - true 时不阻挡下方组件交互事件，且不接受点击事件',
         insertText: 'through: ${1|true,false|}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'normal',
-        detail: '常态显示内容 (Texture、9SliceTexture、Slot含有)',
+        detail: '常态显示内容 (Texture、9SliceTexture、Slot含有) - 纹理表达式',
         insertText: 'normal: ~${1|~255\\,255\\,255,资源路径|}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'hover',
-        detail: '鼠标悬停上方显示的内容 (Texture、9SliceTexture、Slot含有)',
+        detail: '鼠标悬停显示内容 (Texture、9SliceTexture、Slot含有) - 不设置则悬停时渲染常态图',
         insertText: 'hover: ~${1|~255\\,255\\,255,资源路径|}',
         kind: vscode.CompletionItemKind.Property
     },
     {
+        label: 'loop',
+        detail: 'GIF是否循环[默认: false] - false时GIF停止于最后一帧 (Texture含有)',
+        insertText: 'loop: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
         label: 'left',
-        detail: '左侧分割线[默认: 0] (9SliceTexture独有)',
+        detail: '左侧分割线宽度[默认: 0] - 从贴图边缘到分割线的像素距离 (9SliceTexture独有)',
         insertText: 'left: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'right',
-        detail: '右侧分割线[默认: 0] (9SliceTexture独有)',
+        detail: '右侧分割线宽度[默认: 0] - 从贴图边缘到分割线的像素距离 (9SliceTexture独有)',
         insertText: 'right: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'top',
-        detail: '上侧分割线[默认: 0] (9SliceTexture独有)',
+        detail: '上侧分割线高度[默认: 0] - 从贴图边缘到分割线的像素距离 (9SliceTexture独有)',
         insertText: 'top: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'bottom',
-        detail: '下侧分割线[默认: 0] (9SliceTexture独有)',
+        detail: '下侧分割线高度[默认: 0] - 从贴图边缘到分割线的像素距离 (9SliceTexture独有)',
         insertText: 'bottom: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'textureWidth',
-        detail: '贴图宽度[默认: 0] (9SliceTexture独有)',
+        detail: '原始贴图宽度[默认: 0] (9SliceTexture独有)',
         insertText: 'textureWidth: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'textureHeight',
-        detail: '贴图高度[默认: 0] (9SliceTexture独有)',
+        detail: '原始贴图高度[默认: 0] (9SliceTexture独有)',
         insertText: 'textureHeight: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
@@ -323,7 +329,7 @@ export const control_attribute = [
     },
     {
         label: 'id',
-        detail: '槽位ID[默认: 0] (Slot独有)',
+        detail: '槽位ID[默认: 0] - 拓展槽位为字符串，其余为数字 (Slot独有)',
         insertText: 'id: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
@@ -331,6 +337,24 @@ export const control_attribute = [
         label: 'itemScale',
         detail: '物品缩放比例[默认: 1.0] (Slot独有)',
         insertText: 'itemScale: ${1:1.0}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'lock',
+        detail: '锁定点击[默认: false] - 锁定后无法点击槽位物品（仅客户端） (Slot独有)',
+        insertText: 'lock: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'cooldown',
+        detail: '物品冷却状态贴图 (Slot独有) - 纹理表达式',
+        insertText: 'cooldown: ~${1:255,255,255}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'overwriteText',
+        detail: '覆盖显示[默认: 无] - 替换物品右下角文字显示 (Slot独有)',
+        insertText: 'overwriteText: ~${1:文字}',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -359,20 +383,217 @@ export const control_attribute = [
     },
     {
         label: 'spaceBetween',
-        detail: '间距[默认: 0] (HStack、VStack含有)',
+        detail: '子控件间距[默认: 0] (HStack、VStack、BossBars含有)',
         insertText: 'spaceBetween: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
     {
+        label: 'maxSize',
+        detail: '最大数量[默认: 64] - 超过后将移除最先加入的控件 (HStack、VStack、Observer、BossBars含有)',
+        insertText: 'maxSize: ${1:64}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
         label: 'moveX',
-        detail: '横向移动百分比[默认: 0] (Scroll独有)',
+        detail: '横向移动百分比[默认: 0] - 0~1，控制横向滚动位置 (Scroll独有)',
         insertText: 'moveX: ${1:0}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'moveY',
-        detail: '纵向移动百分比[默认: 0] (Scroll独有)',
+        detail: '纵向移动百分比[默认: 0] - 0~1，控制纵向滚动位置 (Scroll独有)',
         insertText: 'moveY: ${1:0}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Text 独有 ==========
+    {
+        label: 'alignment',
+        detail: '文字对齐方式[默认: ~left] - ~left / ~center / ~right (Text独有)',
+        insertText: 'alignment: ~${1|left,center,right|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Entity 独有 ==========
+    {
+        label: 'uuid',
+        detail: '渲染实体UUID[默认: 当前客户端玩家自身UUID] (Entity独有)',
+        insertText: 'uuid: ~${1:self}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'hideTag',
+        detail: '是否渲染名称标签[默认: false] (Entity独有)',
+        insertText: 'hideTag: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'followMouse',
+        detail: '视线是否跟随鼠标[默认: false] (Entity、Model含有)',
+        insertText: 'followMouse: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Model 独有 ==========
+    {
+        label: 'model',
+        detail: '模型ID (Model独有)',
+        insertText: 'model: ~${1:模型ID}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'animation',
+        detail: '播放动作[默认: idle] (Model独有)',
+        insertText: 'animation: ~${1:idle}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'showType',
+        detail: '显示部位类型[默认: none] - ~none / ~HEAD / ~UPPER_BODY / ~LOWER_BODY / ~FOOT (Model独有)',
+        insertText: 'showType: ~${1|none,HEAD,UPPER_BODY,LOWER_BODY,FOOT|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Progress 独有 ==========
+    {
+        label: 'texture',
+        detail: '填充纹理 (Progress独有) - 纹理表达式',
+        insertText: 'texture: ~${1:255,255,255}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'progress',
+        detail: '进度比值[默认: 0] - 0~1，0完全空，1完全满 (Progress独有)',
+        insertText: 'progress: ${1:0}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'time',
+        detail: '缓动时间[默认: 100] - 毫秒 (Progress独有)',
+        insertText: 'time: ${1:100}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'mode',
+        detail: '进度模式[默认: 0] - 0左到右、1右到左、2上到下、3下到上 (Progress独有)',
+        insertText: 'mode: ${1:0}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Import 独有 ==========
+    {
+        label: 'node',
+        detail: '节点路径 (Import独有) - 格式: <menu|hud>.<UI_ID>.<控件路径>',
+        insertText: 'node: ~${1:menu.test.adaptive.chat}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Observer 独有 ==========
+    {
+        label: 'subscribe',
+        detail: '订阅变量 (Observer独有) - 必须是字典类型',
+        insertText: 'subscribe: ${1:global.testMap}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'target',
+        detail: '目标控件 (Observer独有) - 增加键时复制该控件，减少键时删除对应控件',
+        insertText: 'target: ${1:val.vStack[\'test\']}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== TextBox 独有 ==========
+    {
+        label: 'inputPattern',
+        detail: '输入限制（正则）[默认: 无] (TextBox独有)',
+        insertText: 'inputPattern: "${1:^[a-zA-Z0-9]*$}"',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== ChatTextBox 独有 ==========
+    {
+        label: 'sendClose',
+        detail: '发送后关闭UI[默认: true] (ChatTextBox独有)',
+        insertText: 'sendClose: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Chat 独有 ==========
+    {
+        label: 'border',
+        detail: '边框宽度[默认: 5] (Chat独有)',
+        insertText: 'border: ${1:5}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'filter',
+        detail: '过滤[默认: 无] - 仅显示消息开头与该值匹配的消息 (Chat独有)',
+        insertText: 'filter: ~${1:前缀}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'showCard',
+        detail: '显示卡片[默认: true] - 关闭后该聊天栏不显示卡片消息 (Chat独有)',
+        insertText: 'showCard: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'exclude',
+        detail: '排除[默认: 无] - 消息开头为该值时排除对应消息 (Chat独有)',
+        insertText: 'exclude: ~${1:前缀}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'keep',
+        detail: '持续渲染[默认: false] - true时即使不在聊天屏幕中也持续显示所有消息 (Chat独有)',
+        insertText: 'keep: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== Compass 独有 ==========
+    {
+        label: 'textColor',
+        detail: '文字颜色[默认: 255,255,255] (Compass独有)',
+        insertText: 'textColor: ~${1:255,255,255}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'tickColor',
+        detail: '刻度颜色[默认: 255,255,255] (Compass独有)',
+        insertText: 'tickColor: ~${1:255,255,255}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'directionColor',
+        detail: '方位颜色[默认: 255,255,255] (Compass独有)',
+        insertText: 'directionColor: ~${1:255,255,255}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'tickInterval',
+        detail: '刻度间隔[默认: 5] (Compass独有)',
+        insertText: 'tickInterval: ${1:5}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'majorTickInterval',
+        detail: '主要刻度间隔[默认: 15] (Compass独有)',
+        insertText: 'majorTickInterval: ${1:15}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'showWaypoints',
+        detail: '显示路标图标[默认: true] (Compass独有)',
+        insertText: 'showWaypoints: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'waypointFontSize',
+        detail: '路标文字尺寸[默认: 32] (Compass独有)',
+        insertText: 'waypointFontSize: ${1:32}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    // ========== 图形效果 ==========
+    {
+        label: 'shape',
+        detail: '形状类型[默认: rect] - rect / round_rect / circle (图形效果)',
+        insertText: 'shape: ~${1|rect,round_rect,circle|}',
+        kind: vscode.CompletionItemKind.Property
+    },
+    {
+        label: 'radius',
+        detail: '圆角半径[默认: 5] - round_rect 时生效 (图形效果)',
+        insertText: 'radius: ${1:5}',
         kind: vscode.CompletionItemKind.Property
     },
 ]

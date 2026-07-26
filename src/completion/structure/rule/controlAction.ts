@@ -120,6 +120,19 @@ export const control_actions = [
 
     // ========== 滚动事件 ==========
     {
+        label: 'wheel',
+        detail: '鼠标滚轮事件 - 通过 self.wheelValue 获取滚动值',
+        insertText: 'wheel: |-\n  ${1:// 通过self.wheelValue正负判断滚动方向}',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            '## 滚轮 (wheel)\n\n' +
+            '鼠标滚轮在控件上滚动时触发。\n\n' +
+            '**获取滚动值**: `self.wheelValue`\n\n' +
+            '- 正数: 向上滚动\n' +
+            '- 负数: 向下滚动'
+        )
+    },
+    {
         label: 'scroll',
         detail: '滚动事件',
         insertText: 'scroll: |-\n  ${1:// 滚动时触发}',
@@ -128,6 +141,30 @@ export const control_actions = [
             '## 滚动 (scroll)\n\n' +
             '鼠标滚轮在控件上滚动时触发。\n\n' +
             '**可用变量**: `self.scrollDelta` - 滚动方向和幅度'
+        )
+    },
+
+    // ========== 键盘事件 ==========
+    {
+        label: 'keyPress',
+        detail: '按键按下事件 - 通过 self.keyCode 获取按键',
+        insertText: 'keyPress: |-\n  ${1:// 通过self.keyCode获取按下的按键}',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            '## 按键按下 (keyPress)\n\n' +
+            '按键按下时触发。\n\n' +
+            '**获取按键**: `self.keyCode`'
+        )
+    },
+    {
+        label: 'keyRelease',
+        detail: '按键释放事件 - 通过 self.keyCode 获取按键',
+        insertText: 'keyRelease: |-\n  ${1:// 通过self.keyCode获取释放的按键}',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            '## 按键释放 (keyRelease)\n\n' +
+            '按键释放时触发。\n\n' +
+            '**获取按键**: `self.keyCode`'
         )
     },
 

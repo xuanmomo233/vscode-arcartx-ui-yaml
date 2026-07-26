@@ -133,15 +133,41 @@ export const ui_options = [
     },
     {
         label: 'level',
-        detail: 'HUD渲染的优先级[默认: 0][脚本]',
-        insertText: 'level: ${1:优先级}',
+        detail: 'HUD渲染优先级[默认: 0] - 数字越大越先渲染（显示在越底层）[脚本]',
+        insertText: 'level: ${1:0}',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             `**HUD渲染优先级**\n\n` +
             `- **生效对象**: HUD类型\n` +
             `- **脚本支持**: 是\n` +
             `- **默认值**: 0\n\n` +
-            `HUD的渲染层级，数字越大越先渲染（显示越靠后）。`
+            `HUD的渲染层级，数字越大越先渲染（显示在越底层）。`
+        )
+    },
+    {
+        label: 'transfer',
+        detail: '是否将交互传递到底层UI/HUD[默认: false] - 常用于替换聊天栏时让HUD聊天控件仍可交互[脚本]',
+        insertText: 'transfer: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            `**交互传递**\n\n` +
+            `- **生效对象**: Menu类型、HUD类型\n` +
+            `- **脚本支持**: 是\n` +
+            `- **默认值**: false\n\n` +
+            `是否将交互传递到底层UI/HUD。常用于替换聊天栏时让HUD聊天控件仍可交互。`
+        )
+    },
+    {
+        label: 'screenScale',
+        detail: '是否启用屏幕缩放适配[默认: true][非脚本]',
+        insertText: 'screenScale: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            `**屏幕缩放适配**\n\n` +
+            `- **生效对象**: Menu类型、HUD类型\n` +
+            `- **脚本支持**: 否\n` +
+            `- **默认值**: true\n\n` +
+            `是否启用屏幕缩放适配。`
         )
     },
     {
@@ -180,6 +206,40 @@ export const ui_options = [
             `**UI动作触发器**\n\n` +
             `定义UI的各种触发器和事件处理。\n\n` +
             `输入 \`?\` 查看可用的触发器类型。`
+        )
+    },
+    {
+        label: 'controls',
+        detail: '控件定义块',
+        insertText: 'controls:\n  ',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            `**控件定义**\n\n` +
+            `在此块下定义UI的所有控件。\n\n` +
+            `每个控件可包含 type、val、attribute、effect、action、children 等子节点。`
+        )
+    },
+    {
+        label: 'template',
+        detail: '模板控件块 - 写法和controls一致，但控件作为模板存在，不会被创建，需主动使用create函数加入UI',
+        insertText: 'template:\n  ',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            `**模板控件**\n\n` +
+            `写法和controls一致，但此块中的控件作为模板存在，不会被创建。\n` +
+            `需要主动使用 \`self.create(tempID, newName)\` 函数来加入到UI中。\n\n` +
+            `用于动态创建UI的需求。`
+        )
+    },
+    {
+        label: 'tasks',
+        detail: 'UI定时任务块',
+        insertText: 'tasks:\n  ',
+        kind: vscode.CompletionItemKind.Property,
+        documentation: new vscode.MarkdownString(
+            `**UI定时任务**\n\n` +
+            `定义UI的定时任务，用于延迟执行或循环执行脚本。\n\n` +
+            `输入 \`?\` 查看可用的任务配置项。`
         )
     },
     {
