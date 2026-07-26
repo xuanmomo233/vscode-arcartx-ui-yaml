@@ -5,11 +5,10 @@ import * as vscode from 'vscode';
  */
 export class ColorDecorator {
     private swatchType: vscode.TextEditorDecorationType;
-    private textColorType: vscode.TextEditorDecorationType;
-    private gradientType: vscode.TextEditorDecorationType;
     private activeEditor: vscode.TextEditor | undefined;
     private updateTimeout: NodeJS.Timeout | undefined;
     private _enabled: boolean = true;
+    private dynamicTypes: vscode.TextEditorDecorationType[] = [];
 
     constructor(context: vscode.ExtensionContext) {
         this.swatchType = vscode.window.createTextEditorDecorationType({
@@ -21,23 +20,8 @@ export class ColorDecorator {
                 margin: '0 4px 0 0',
             },
         });
-        this.textColorType = vscode.window.createTextEditorDecorationType({
-            after: {
-                contentText: ' ',
-                width: '0',
-            },
-        });
-        this.gradientType = vscode.window.createTextEditorDecorationType({
-            before: {
-                contentText: ' ',
-                border: '1px solid #555',
-                width: '14px',
-                height: '14px',
-                margin: '0 6px 0 0',
-            },
-        });
 
-        context.subscriptions.push(this.swatchType, this.textColorType, this.gradientType);
+        context.subscriptions.push(this.swatchType);
 
         // 监听编辑器切换
         vscode.window.onDidChangeActiveTextEditor(editor => {
@@ -82,8 +66,11 @@ export class ColorDecorator {
     private clearDecorations() {
         if (this.activeEditor) {
             this.activeEditor.setDecorations(this.swatchType, []);
-            this.activeEditor.setDecorations(this.textColorType, []);
-            this.activeEditor.setDecorations(this.gradientType, []);
+            this.dynamicTypes.forEach(t => {
+                this.activeEditor!.setDecorations(t, []);
+                t.dispose();
+            });
+            this.dynamicTypes = [];
         }
     }
 
@@ -91,9 +78,12 @@ export class ColorDecorator {
         if (!this.activeEditor || !this._enabled) return;
         const editor = this.activeEditor;
         const text = editor.document.getText();
+
+        // 销毁上一轮的动态装饰类型
+        this.dynamicTypes.forEach(t => t.dispose());
+        this.dynamicTypes = [];
+
         const swatchDecorations: vscode.DecorationOptions[] = [];
-        const textColorDecorations: vscode.DecorationOptions[] = [];
-        const gradientDecorations: vscode.DecorationOptions[] = [];
 
         // 1. 匹配 ~R,G,B 或 ~R,G,B,A（允许空格）— 显示色块
         const colorRegex = /~(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(\d{1,3}))?/g;
@@ -127,68 +117,76 @@ export class ColorDecorator {
             });
         }
 
-        // 2. 匹配 §#RRGGBB — 文字本身着色 + 后置色点
+        // 2. 匹配 §#RRGGBB — 文字本身直接着色渲染
+        // 按颜色分组，每种颜色创建一个动态 decorationType（color 属性）
+        const textColorMap = new Map<string, vscode.Range[]>();
         const textColorRegex = /§#([0-9A-Fa-f]{6})/g;
         while ((match = textColorRegex.exec(text)) !== null) {
-            const hex = match[1];
+            const hex = match[1].toUpperCase();
             const startPos = editor.document.positionAt(match.index);
             const endPos = editor.document.positionAt(match.index + match[0].length);
             const range = new vscode.Range(startPos, endPos);
-
-            textColorDecorations.push({
-                range,
-                renderOptions: {
-                    before: {
-                        backgroundColor: `#${hex}`,
-                        contentText: ' ',
-                        border: '1px solid #555',
-                        width: '10px',
-                        height: '10px',
-                        margin: '0 4px 0 0',
-                    },
-                    after: {
-                        contentText: '●',
-                        color: `#${hex}`,
-                        margin: '0 0 0 2px',
-                    },
+            if (!textColorMap.has(hex)) {
+                textColorMap.set(hex, []);
+            }
+            textColorMap.get(hex)!.push(range);
+        }
+        for (const [hex, ranges] of textColorMap) {
+            const type = vscode.window.createTextEditorDecorationType({
+                color: `#${hex}`,
+                before: {
+                    backgroundColor: `#${hex}`,
+                    contentText: ' ',
+                    border: '1px solid #555',
+                    width: '10px',
+                    height: '10px',
+                    margin: '0 4px 0 0',
                 },
             });
+            this.dynamicTypes.push(type);
+            editor.setDecorations(type, ranges);
         }
 
-        // 3. 匹配 §~RRGGBB-RRGGBB — 渐变色双色块
+        // 3. 匹配 §~RRGGBB-RRGGBB — 渐变色文字直接着色 + 双色块
+        // 按颜色对分组，每对创建一个动态 decorationType
+        const gradientMap = new Map<string, { ranges: vscode.Range[], hex1: string, hex2: string }>();
         const gradientRegex = /§~([0-9A-Fa-f]{6})-([0-9A-Fa-f]{6})/g;
         while ((match = gradientRegex.exec(text)) !== null) {
-            const hex1 = match[1];
-            const hex2 = match[2];
+            const hex1 = match[1].toUpperCase();
+            const hex2 = match[2].toUpperCase();
+            const key = `${hex1}-${hex2}`;
             const startPos = editor.document.positionAt(match.index);
             const endPos = editor.document.positionAt(match.index + match[0].length);
             const range = new vscode.Range(startPos, endPos);
-
-            gradientDecorations.push({
-                range,
-                renderOptions: {
-                    before: {
-                        backgroundColor: `#${hex1}`,
-                        contentText: ' ',
-                        border: '1px solid #555',
-                        width: '14px',
-                        height: '14px',
-                        margin: '0 6px 0 0',
-                    },
-                    after: {
-                        backgroundColor: `#${hex2}`,
-                        contentText: ' ',
-                        border: '1px solid #555',
-                        width: '14px',
-                        height: '14px',
-                        margin: '0 0 0 4px',
-                    },
+            if (!gradientMap.has(key)) {
+                gradientMap.set(key, { ranges: [], hex1, hex2 });
+            }
+            gradientMap.get(key)!.ranges.push(range);
+        }
+        for (const [, { ranges, hex1, hex2 }] of gradientMap) {
+            const type = vscode.window.createTextEditorDecorationType({
+                color: `#${hex1}`,
+                before: {
+                    backgroundColor: `#${hex1}`,
+                    contentText: ' ',
+                    border: '1px solid #555',
+                    width: '10px',
+                    height: '10px',
+                    margin: '0 4px 0 0',
+                },
+                after: {
+                    backgroundColor: `#${hex2}`,
+                    contentText: ' ',
+                    border: '1px solid #555',
+                    width: '10px',
+                    height: '10px',
+                    margin: '0 0 0 4px',
                 },
             });
+            this.dynamicTypes.push(type);
+            editor.setDecorations(type, ranges);
         }
 
         editor.setDecorations(this.swatchType, swatchDecorations);
-        editor.setDecorations(this.textColorType, textColorDecorations);
-        editor.setDecorations(this.gradientType, gradientDecorations);
     }
 }
