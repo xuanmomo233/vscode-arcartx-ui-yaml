@@ -468,9 +468,14 @@ select {
 
     <div class="section">
         <div class="section-title">预览</div>
-        <div class="frosted-preview-bg" style="position:relative;height:80px;border-radius:6px;overflow:hidden;">
-            <div style="position:absolute;inset:0;background:linear-gradient(135deg,#ff6b6b,#4ecdc4,#45b7d1,#f9ca24,#6c5ce7);background-size:200% 200%;"></div>
-            <div id="frostedPreview" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+        <div style="position:relative;height:80px;border-radius:6px;overflow:hidden;">
+            <div id="frostedBg" style="position:absolute;inset:-20px;
+                background:
+                    linear-gradient(180deg,#87CEEB 0%,#87CEEB 40%,#7CB342 40%,#7CB342 55%,#8D6E63 55%,#8D6E63 75%,#616161 75%,#616161 100%);
+                background-size:16px 16px;
+                image-rendering:pixelated;
+                filter:blur(9px);"></div>
+            <div id="frostedOverlay" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
                 <span class="preview-text" id="frostedPreviewText">~Frosted:30;255,255,255,80</span>
             </div>
         </div>
@@ -888,11 +893,10 @@ function updateFrosted() {
     document.getElementById('frostedAVal').textContent = a;
     const hexA = rgbToHexA(r, g, b, a);
     const frostedStr = '~Frosted:' + blur + ';' + r + ',' + g + ',' + b + ',' + a;
-    const preview = document.getElementById('frostedPreview');
-    const blurPx = 'blur(' + (blur * 0.3) + 'px)';
-    preview.style.backdropFilter = blurPx;
-    preview.style.webkitBackdropFilter = blurPx;
-    preview.style.background = hexA;
+    const blurPx = blur * 0.3;
+    document.getElementById('frostedBg').style.filter = 'blur(' + blurPx + 'px)';
+    const overlay = document.getElementById('frostedOverlay');
+    overlay.style.background = hexA;
     const previewText = document.getElementById('frostedPreviewText');
     previewText.textContent = frostedStr;
     previewText.style.color = (r + g + b) > 382 ? '#000' : '#fff';
