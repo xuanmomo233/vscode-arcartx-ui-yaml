@@ -81,7 +81,7 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                 // 无属性值补全的属性分两类：
                 // 1. 块级关键字（action/attribute/children）: 落入 section 3，通过路径匹配显示块内容（触发器/属性/控件模板）
                 // 2. 其他普通属性（x/y/width/123 等）: 直接返回 []，避免无关补全
-                const blockKeys = ['action', 'attribute', 'children'];
+                const blockKeys = ['action', 'attribute', 'children', 'effect'];
                 if (!blockKeys.includes(attrName)) {
                     return [];
                 }
@@ -214,7 +214,7 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
         }
 
         // 检测当前是否在块头行（action:/attribute:/children:）
-        const isOnBlockHeader = linePrefix.match(/^(\s*)(action|attribute|children):\s*$/) !== null;
+        const isOnBlockHeader = linePrefix.match(/^(\s*)(action|attribute|children|effect):\s*$/) !== null;
         // 块头子项缩进：仅 2 空格相对缩进，VSCode auto-indent 会自动补上当前行的基础缩进
         const blockChildIndent = isOnBlockHeader ? '  ' : '';
 

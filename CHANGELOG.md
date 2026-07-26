@@ -2,6 +2,9 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.31]
+- 修复 `effect:` 不会自动触发补全的问题：将 `effect` 加入 `blockKeys` 和 `isOnBlockHeader` 检测
+
 ### [0.0.30]
 - 新增 `effect` 块补全：在控件的 `effect:` 下输入 `/` 或 `?` 可触发 8 种图形特效补全
   - `stroke`（描边）、`shadow`（阴影）、`neon`（霓虹）、`ripple`（波纹）
