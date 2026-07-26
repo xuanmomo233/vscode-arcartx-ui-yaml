@@ -1,6 +1,6 @@
 # ArcartX Aria UI
 
-![Version](https://img.shields.io/badge/version-0.0.61-blue.svg)
+![Version](https://img.shields.io/badge/version-0.0.65-blue.svg)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)
 ![VSCode](https://img.shields.io/badge/VSCode-%3E%3D1.100.0-007ACC.svg)
 
@@ -45,8 +45,10 @@ ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在�
 
 ### 颜色装饰渲染
 - 🎨 **RGBA 色块** — `~R,G,B,A` 值旁自动显示对应颜色色块，直观预览
-- 🌈 **§# 文字着色** — `§#RRGGBB` 颜色码后的文字直接以该颜色渲染，颜色码本身显示色块标记
+- �️ **Frosted 色块** — `Frosted:blur;R,G,B,A` 毛玻璃语法旁显示 RGBA 色块，直观预览颜色
+- �🌈 **§# 文字着色** — `§#RRGGBB` 颜色码后的文字直接以该颜色渲染，颜色码本身显示色块标记
 - ✨ **§~ 渐变逐字插值** — `§~RRGGBB-RRGGBB` 颜色码后的文字逐字在两个颜色之间线性插值，每个字符显示不同的渐变色，颜色码本身显示双色块标记
+- 🎮 **§a / &b Minecraft 颜色码** — `§0`-`§f` 和 `&0`-`&f` 共 16 种标准颜色码显示色块标记并着色后续文字，遇到下一个颜色码或 `§r` / `&r` 自动停止
 
 ### 侧边栏工具箱
 - 📦 **ArcartX 工具箱面板** — 活动栏中的多功能侧边栏面板，标题随 Tab 切换动态更新
