@@ -40,11 +40,12 @@ export class HoverProvider implements vscode.HoverProvider {
         ];
 
         for (const item of allItems) {
-            this.docMap.set(item.label, item);
+            this.docMap.set(item.label.toLowerCase(), item);
             const parts = item.label.split(/[.()]/).filter(p => p.length > 0);
             for (const part of parts) {
-                if (!this.docMap.has(part)) {
-                    this.docMap.set(part, item);
+                const partLower = part.toLowerCase();
+                if (!this.docMap.has(partLower)) {
+                    this.docMap.set(partLower, item);
                 }
             }
         }
@@ -64,20 +65,20 @@ export class HoverProvider implements vscode.HoverProvider {
 
         // 尝试匹配带点号的完整名称（如 Screen.open）
         const fullMatch = line.substring(range.start.character, range.end.character);
-        let docItem = this.docMap.get(fullMatch);
+        let docItem = this.docMap.get(fullMatch.toLowerCase());
 
         // 尝试匹配 "对象.方法" 模式
         if (!docItem) {
             const dotMatch = line.substring(0, range.end.character).match(/(\w+)\.(\w+)$/);
             if (dotMatch) {
                 const fullKey = `${dotMatch[1]}.${dotMatch[2]}`;
-                docItem = this.docMap.get(fullKey);
+                docItem = this.docMap.get(fullKey.toLowerCase());
             }
         }
 
         // 尝试匹配单个词
         if (!docItem) {
-            docItem = this.docMap.get(word);
+            docItem = this.docMap.get(word.toLowerCase());
         }
 
         // 尝试匹配属性值上下文（type: texture）
@@ -87,7 +88,7 @@ export class HoverProvider implements vscode.HoverProvider {
                 const attrName = attrContext[1];
                 const attrValue = attrContext[2];
                 if (attrName === 'type') {
-                    docItem = this.docMap.get(attrValue);
+                    docItem = this.docMap.get(attrValue.toLowerCase());
                 }
             }
         }

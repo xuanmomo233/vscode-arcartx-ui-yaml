@@ -2,6 +2,9 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.24]
+- 修复悬停文档大小写敏感问题：`docMap` 的 key 和所有查找改为 `.toLowerCase()`，现在 `Text`、`Texture`、`HGrid` 等首字母大写也能正确悬停
+
 ### [0.0.23]
 - 修复缩进翻倍问题（根因：VSCode auto-indent 自动为新行补基础缩进，代码又手动加了 currentLineIndent）：
   - `blockChildIndent` 从 `currentLineIndent + '  '` 改为仅 `'  '`（相对缩进）
