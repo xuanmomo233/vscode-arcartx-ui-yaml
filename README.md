@@ -1,12 +1,12 @@
 # ArcartX Aria UI
 
-![Version](https://img.shields.io/badge/version-0.0.23-blue.svg)
+![Version](https://img.shields.io/badge/version-0.0.47-blue.svg)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)
 ![VSCode](https://img.shields.io/badge/VSCode-%3E%3D1.100.0-007ACC.svg)
 
 ## 概述
 
-ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在简化 ArcartX UI 的 YAML 配置工作。通过提供智能代码片段、上下文感知补全、Aria 脚本高亮与补全等功能，帮助开发者快速构建复杂的用户界面。
+ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在简化 ArcartX UI 的 YAML 配置工作。通过提供智能代码片段、上下文感知补全、Aria 脚本高亮与补全、颜色装饰渲染、侧边栏工具箱等功能，帮助开发者快速构建复杂的用户界面。
 
 ## 功能特点
 
@@ -38,10 +38,26 @@ ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在�
 | `.` | 输入 `self.` / `val.` / `var.` 后触发函数补全 |
 
 ### 开发辅助
-- 💡 **悬停文档** — 鼠标悬停在控件类型、属性名、Aria 函数上显示详细文档和示例
+- 💡 **悬停文档** — 鼠标悬停在控件类型、属性名、属性值（锚点、形状、对齐等）、Aria 函数上显示详细文档和示例
 - 🔧 **签名提示** — 输入 Aria 函数调用时弹出参数提示，显示参数名和类型
 - 🩺 **代码诊断** — 自动检测无效控件类型、混合缩进、未闭合代码块等常见错误
 - 🔗 **跳转定义** — `Ctrl+点击` 变量名、控件名、模板 ID 快速跳转到声明位置
+
+### 颜色装饰渲染
+- 🎨 **RGBA 色块** — `~R,G,B,A` 值旁自动显示对应颜色色块，直观预览
+- 🌈 **§# 文字着色** — `§#RRGGBB` 颜色码后的文字直接以该颜色渲染，颜色码本身显示色块标记
+- ✨ **§~ 渐变逐字插值** — `§~RRGGBB-RRGGBB` 颜色码后的文字逐字在两个颜色之间线性插值，每个字符显示不同的渐变色，颜色码本身显示双色块标记
+
+### 侧边栏工具箱
+- 📦 **ArcartX 工具箱面板** — 活动栏中的多功能侧边栏面板，标题随 Tab 切换动态更新
+  - **RGBA 色块** — 可视化色板选择器，滑块调节 RGBA 值，一键插入 `~R,G,B,A` 格式
+  - **文字颜色** — 选择颜色后插入 `§#RRGGBB` 格式码
+  - **渐变色** — 双色选择器，预览渐变效果，插入 `§~RRGGBB-RRGGBB` 格式码
+  - **色板** — 预设常用颜色快速选取
+  - **控件模板** — 浏览并插入完整控件模板（Texture、Text、Slot、Grid 等）
+  - **特效模板** — 浏览并插入控件特效模板（ Neon、Shadow 等）
+  - **UI 模板** — 浏览并插入 UI 配置模板（完整 UI、基础设定、控件结构等）
+  - **自定义模板** — 用户自建模板，支持添加 / 删除 / 复制 / 插入 / 预览，持久化存储
 
 ## 安装方法
 
@@ -85,15 +101,21 @@ codeMultiple: |-
 | `9sliceTexture` | 九宫格图片（可拉伸） |
 | `textbox` | 文本输入框 |
 | `entity` | 实体渲染控件 |
+| `model` | 模型渲染控件（支持部位裁剪） |
 | `slot` | 物品槽位 |
 | `canvas` | 画布容器 |
-| `adaptive` | 自适应容器 |
+| `adaptive` | 自适应容器（等比缩放） |
 | `hGrid` / `vGrid` | 水平 / 垂直网格布局 |
 | `hStack` / `vStack` | 水平 / 垂直堆叠布局 |
 | `scroll` | 滚动容器 |
 | `button` | 按钮（快捷模板） |
 | `progress` | 进度条 |
-| `chat` / `chatTextBox` | 聊天框 |
+| `compass` | 指南针 / 路标控件 |
+| `bossBar` | Boss 血条控件 |
+| `chat` / `chatTextBox` | 聊天框 / 聊天输入框 |
+| `suggestion` | 命令建议提示控件 |
+| `observer` | 数据驱动列表控件 |
+| `import` | 跨 UI 导入控件 |
 
 ## 致谢
 
