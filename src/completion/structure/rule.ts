@@ -11,7 +11,7 @@ import {control_attribute} from "./rule/controlAttribute";
 import {control_actions} from "./rule/controlAction";
 import {control_settings} from "./rule/controlSetting";
 import {hud_names, match_values} from "./rule/uiValue";
-import {type_values, point_values, slotType_values} from "./rule/controlAttributeValue";
+import {type_values, point_values, slotType_values, shape_values, alignment_values, showType_values, progress_mode_values} from "./rule/controlAttributeValue";
 import {task_settings, task_templates} from "./rule/uiTaskSettings";
 import {task_type_values} from "./rule/uiTaskTypeValues";
 import {control_effects} from "./rule/controlEffect";
@@ -38,6 +38,10 @@ export const attributeValueMap: Map<string, Array<{
     ['type', type_values],
     ['point', point_values],
     ['slotType', slotType_values],
+    ['shape', shape_values],
+    ['alignment', alignment_values],
+    ['showType', showType_values],
+    ['mode', progress_mode_values],
     ['task_type', task_type_values],
 ]);
 

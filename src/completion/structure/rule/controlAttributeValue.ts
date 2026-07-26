@@ -1073,3 +1073,307 @@ export const slotType_values = [
         )
     },
 ];
+
+// shape 属性的形状选项
+export const shape_values = [
+    {
+        label: 'rect',
+        detail: '矩形[默认]',
+        insertText: '~rect',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 矩形 (rect)\n\n' +
+            '默认形状，标准矩形渲染。\n\n' +
+            '**适用控件**: Texture/9SliceTexture/Slot/TextBox/Progress/Compass/Chat/BossBar'
+        )
+    },
+    {
+        label: '~rect',
+        detail: '矩形[默认]',
+        insertText: '~rect',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 矩形 (rect)\n\n' +
+            '默认形状，标准矩形渲染。\n\n' +
+            '**适用控件**: Texture/9SliceTexture/Slot/TextBox/Progress/Compass/Chat/BossBar'
+        )
+    },
+    {
+        label: 'round_rect',
+        detail: '圆角矩形',
+        insertText: '~round_rect',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 圆角矩形 (round_rect)\n\n' +
+            '圆角矩形渲染，需配合 `radius` 属性设置圆角半径。\n\n' +
+            '**适用控件**: Texture/9SliceTexture/Slot/TextBox/Progress/Compass/Chat/BossBar\n\n' +
+            '**相关属性**: `radius` — 圆角半径[默认: 5]'
+        )
+    },
+    {
+        label: '~round_rect',
+        detail: '圆角矩形',
+        insertText: '~round_rect',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 圆角矩形 (round_rect)\n\n' +
+            '圆角矩形渲染，需配合 `radius` 属性设置圆角半径。\n\n' +
+            '**适用控件**: Texture/9SliceTexture/Slot/TextBox/Progress/Compass/Chat/BossBar\n\n' +
+            '**相关属性**: `radius` — 圆角半径[默认: 5]'
+        )
+    },
+    {
+        label: 'circle',
+        detail: '圆形',
+        insertText: '~circle',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 圆形 (circle)\n\n' +
+            '将控件渲染为圆形，常用于头像、图标等。\n\n' +
+            '**适用控件**: Texture/9SliceTexture/Slot/TextBox/Progress/Compass/Chat/BossBar'
+        )
+    },
+    {
+        label: '~circle',
+        detail: '圆形',
+        insertText: '~circle',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 圆形 (circle)\n\n' +
+            '将控件渲染为圆形，常用于头像、图标等。\n\n' +
+            '**适用控件**: Texture/9SliceTexture/Slot/TextBox/Progress/Compass/Chat/BossBar'
+        )
+    },
+];
+
+// alignment 属性的文字对齐选项
+export const alignment_values = [
+    {
+        label: 'left',
+        detail: '左对齐[默认]',
+        insertText: '~left',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 左对齐 (left)\n\n' +
+            '文字左对齐渲染。\n\n' +
+            '**适用控件**: Text'
+        )
+    },
+    {
+        label: '~left',
+        detail: '左对齐[默认]',
+        insertText: '~left',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 左对齐 (left)\n\n' +
+            '文字左对齐渲染。\n\n' +
+            '**适用控件**: Text'
+        )
+    },
+    {
+        label: 'center',
+        detail: '居中对齐',
+        insertText: '~center',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 居中对齐 (center)\n\n' +
+            '文字居中对齐渲染。\n\n' +
+            '**适用控件**: Text'
+        )
+    },
+    {
+        label: '~center',
+        detail: '居中对齐',
+        insertText: '~center',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 居中对齐 (center)\n\n' +
+            '文字居中对齐渲染。\n\n' +
+            '**适用控件**: Text'
+        )
+    },
+    {
+        label: 'right',
+        detail: '右对齐',
+        insertText: '~right',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 右对齐 (right)\n\n' +
+            '文字右对齐渲染。\n\n' +
+            '**适用控件**: Text'
+        )
+    },
+    {
+        label: '~right',
+        detail: '右对齐',
+        insertText: '~right',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 右对齐 (right)\n\n' +
+            '文字右对齐渲染。\n\n' +
+            '**适用控件**: Text'
+        )
+    },
+];
+
+// showType 属性的显示部位选项
+export const showType_values = [
+    {
+        label: 'none',
+        detail: '完整显示[默认]',
+        insertText: '~none',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 完整显示 (none)\n\n' +
+            '显示完整模型，不裁剪任何部位。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: '~none',
+        detail: '完整显示[默认]',
+        insertText: '~none',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 完整显示 (none)\n\n' +
+            '显示完整模型，不裁剪任何部位。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: 'HEAD',
+        detail: '仅显示头部',
+        insertText: '~HEAD',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 仅头部 (HEAD)\n\n' +
+            '只渲染模型的头部部分。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: '~HEAD',
+        detail: '仅显示头部',
+        insertText: '~HEAD',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 仅头部 (HEAD)\n\n' +
+            '只渲染模型的头部部分。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: 'UPPER_BODY',
+        detail: '仅显示上半身',
+        insertText: '~UPPER_BODY',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 上半身 (UPPER_BODY)\n\n' +
+            '只渲染模型的上半身部分。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: '~UPPER_BODY',
+        detail: '仅显示上半身',
+        insertText: '~UPPER_BODY',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 上半身 (UPPER_BODY)\n\n' +
+            '只渲染模型的上半身部分。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: 'LOWER_BODY',
+        detail: '仅显示下半身',
+        insertText: '~LOWER_BODY',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 下半身 (LOWER_BODY)\n\n' +
+            '只渲染模型的下半身部分。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: '~LOWER_BODY',
+        detail: '仅显示下半身',
+        insertText: '~LOWER_BODY',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 下半身 (LOWER_BODY)\n\n' +
+            '只渲染模型的下半身部分。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: 'FOOT',
+        detail: '仅显示脚部',
+        insertText: '~FOOT',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 脚部 (FOOT)\n\n' +
+            '只渲染模型的脚部部分。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+    {
+        label: '~FOOT',
+        detail: '仅显示脚部',
+        insertText: '~FOOT',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 脚部 (FOOT)\n\n' +
+            '只渲染模型的脚部部分。\n\n' +
+            '**适用控件**: Model'
+        )
+    },
+];
+
+// Progress mode 属性的进度模式选项
+export const progress_mode_values = [
+    {
+        label: '0',
+        detail: '从左到右[默认]',
+        insertText: '0',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 从左到右 (0)\n\n' +
+            '进度条从左向右填充。\n\n' +
+            '**适用控件**: Progress'
+        )
+    },
+    {
+        label: '1',
+        detail: '从右到左',
+        insertText: '1',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 从右到左 (1)\n\n' +
+            '进度条从右向左填充。\n\n' +
+            '**适用控件**: Progress'
+        )
+    },
+    {
+        label: '2',
+        detail: '从上到下',
+        insertText: '2',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 从上到下 (2)\n\n' +
+            '进度条从上向下填充。\n\n' +
+            '**适用控件**: Progress'
+        )
+    },
+    {
+        label: '3',
+        detail: '从下到上',
+        insertText: '3',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '## 从下到上 (3)\n\n' +
+            '进度条从下向上填充。\n\n' +
+            '**适用控件**: Progress'
+        )
+    },
+];

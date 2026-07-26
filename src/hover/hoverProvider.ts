@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { builtin_functions } from '../completion/structure/rule/ariaBuiltin';
-import { type_values, point_values, slotType_values } from '../completion/structure/rule/controlAttributeValue';
+import { type_values, point_values, slotType_values, shape_values, alignment_values, showType_values, progress_mode_values } from '../completion/structure/rule/controlAttributeValue';
 import { control_attribute } from '../completion/structure/rule/controlAttribute';
 import { control_actions } from '../completion/structure/rule/controlAction';
 import { control_settings } from '../completion/structure/rule/controlSetting';
@@ -45,6 +45,10 @@ export class HoverProvider implements vscode.HoverProvider {
             ...type_values,
             ...point_values,
             ...slotType_values,
+            ...shape_values,
+            ...alignment_values,
+            ...showType_values,
+            ...progress_mode_values,
             ...match_values,
         ];
 
