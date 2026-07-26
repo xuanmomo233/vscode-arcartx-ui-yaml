@@ -6,8 +6,10 @@ const common_attr_labels = new Set([
     'enable', 'visible', 'limitControl', 'width', 'height', 'x', 'y',
     'scale', 'alpha', 'point', 'rotate', 'middleScale', 'through',
     'minDragX', 'minDragY', 'maxDragX', 'maxDragY', 'tip',
-    'shape', 'radius', 'shadow',
 ]);
+
+// 图形属性 — 仅对有纹理渲染/背景的控件生效
+const shape_attr_labels = new Set(['shape', 'radius']);
 
 // 文本相关属性 — texture、text、9sliceTexture 等含有 texts 的控件
 const text_attr_labels = new Set([
@@ -16,13 +18,13 @@ const text_attr_labels = new Set([
 
 // 每种控件类型的专属属性（不含通用属性）
 const type_specific_attrs: Record<string, string[]> = {
-    texture: ['normal', 'hover', 'loop', ...text_attr_labels],
-    text: [...text_attr_labels],
-    '9sliceTexture': ['normal', 'hover', 'left', 'right', 'top', 'bottom', 'textureWidth', 'textureHeight', ...text_attr_labels],
+    texture: ['normal', 'hover', 'loop', ...shape_attr_labels, ...text_attr_labels],
+    text: ['shadow', 'alignment', ...text_attr_labels],
+    '9sliceTexture': ['normal', 'hover', 'left', 'right', 'top', 'bottom', 'textureWidth', 'textureHeight', ...shape_attr_labels, ...text_attr_labels],
     entity: ['uuid', 'hideTag', 'followMouse'],
-    slot: ['normal', 'hover', 'slotType', 'id', 'itemScale', 'lock', 'cooldown', 'overwriteText', 'itemEffect'],
-    textBox: ['length', 'allowNewLine', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'passwordChar', 'inputPattern', 'textColor', 'uneditableTextColor', ...text_attr_labels],
-    chatTextBox: ['length', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'sendClose', ...text_attr_labels],
+    slot: ['normal', 'hover', 'slotType', 'id', 'itemScale', 'lock', 'cooldown', 'overwriteText', 'itemEffect', ...shape_attr_labels],
+    textBox: ['length', 'allowNewLine', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'passwordChar', 'inputPattern', 'textColor', 'uneditableTextColor', ...shape_attr_labels, ...text_attr_labels],
+    chatTextBox: ['length', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'sendClose', ...shape_attr_labels, ...text_attr_labels],
     canvas: [],
     adaptive: ['autoScale'],
     hGrid: ['spaceBetweenX', 'spaceBetweenY', 'column'],
@@ -31,12 +33,12 @@ const type_specific_attrs: Record<string, string[]> = {
     vStack: ['spaceBetween', 'maxSize'],
     scroll: ['moveX', 'moveY'],
     model: ['model', 'animation', 'followMouse', 'showType'],
-    bossBar: ['textures', 'transitionTime'],
-    compass: ['background', 'textColor', 'tickColor', 'directionColor', 'tickInterval', 'majorTickInterval', 'showWaypoints', 'waypointFontSize', 'waypointIconWidth', 'waypointIconHeight', 'wayOffsetY'],
-    progress: ['texture', 'progress', 'time', 'mode'],
+    bossBar: ['textures', 'transitionTime', ...shape_attr_labels],
+    compass: ['background', 'textColor', 'tickColor', 'directionColor', 'tickInterval', 'majorTickInterval', 'showWaypoints', 'waypointFontSize', 'waypointIconWidth', 'waypointIconHeight', 'wayOffsetY', ...shape_attr_labels],
+    progress: ['texture', 'progress', 'time', 'mode', ...shape_attr_labels],
     import: ['node'],
     observer: ['maxSize', 'subscribe', 'target'],
-    chat: ['border', 'spaceBetween', 'background', 'filter', 'showCard', 'exclude', 'keep'],
+    chat: ['border', 'spaceBetween', 'background', 'filter', 'showCard', 'exclude', 'keep', ...shape_attr_labels],
     suggestion: ['background', 'radius', 'spaceBetween', 'backgroundBorder', 'up', 'maxShow', 'textColor', 'hoverTextColor', ...text_attr_labels],
     bossBars: ['spaceBetween', 'maxSize'],
 };

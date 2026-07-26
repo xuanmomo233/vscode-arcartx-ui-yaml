@@ -583,16 +583,16 @@ export const control_attribute = [
         insertText: 'waypointFontSize: ${1:32}',
         kind: vscode.CompletionItemKind.Property
     },
-    // ========== 公共图形属性 ==========
+    // ========== 公共图形属性（仅纹理渲染控件生效）==========
     {
         label: 'shape',
-        detail: '形状类型[默认: rect] - rect / round_rect / circle (公共属性)',
+        detail: '形状类型[默认: rect] - rect / round_rect / circle (Texture/9SliceTexture/Slot/TextBox/Progress/Compass/Chat/BossBar)',
         insertText: 'shape: ~${1|rect,round_rect,circle|}',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'radius',
-        detail: '圆角半径[默认: 5] - round_rect 时生效 (公共属性)',
+        detail: '圆角半径[默认: 5] - round_rect 时生效 (Texture/9SliceTexture/Slot/TextBox/Progress/Compass/Chat/BossBar)',
         insertText: 'radius: ${1:5}',
         kind: vscode.CompletionItemKind.Property
     },

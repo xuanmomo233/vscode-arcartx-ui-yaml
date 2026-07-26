@@ -2,6 +2,13 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.33]
+- 修正 `shape`/`radius`/`shadow` 的适用范围：
+  - `shape`/`radius` 从公共属性改为仅对有纹理渲染的控件生效（Texture/9SliceTexture/Slot/TextBox/ChatTextBox/Progress/Compass/Chat/BossBar）
+  - `shadow` 从公共属性改为 Text 独有属性（§8.1 文档明确标注）
+  - `alignment` 移到 Text 独有
+  - Entity/Model/Canvas/Adaptive/HStack/VStack/HGrid/VGrid/Scroll/Import/Observer/BossBars 不再显示 shape/radius/shadow 补全
+
 ### [0.0.32]
 - 对照知识文档和避坑指南全面优化：
   - **属性补全修正**：`shape`/`radius`/`shadow` 移为公共属性（所有控件可用）
