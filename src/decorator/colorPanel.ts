@@ -561,7 +561,9 @@ select {
         <div class="output-group">
             <div class="output-label">effect 渐变块 (YAML)</div>
             <div class="output-row">
-                <input type="text" id="gradEffectOutput" readonly>
+                <textarea id="gradEffectOutput" readonly rows="5" style="width:100%;font-family:var(--vscode-editor-font-family);font-size:11px;resize:vertical"></textarea>
+            </div>
+            <div class="output-row">
                 <button class="btn btn-sm" onclick="copyText('gradEffectOutput')">复制</button>
                 <button class="btn btn-sm" onclick="insertText('gradEffectOutput')">插入</button>
             </div>
@@ -873,10 +875,10 @@ function copyRaw(text) { vscode.postMessage({ command: 'copyToClipboard', text }
 
 function stripSnippetSyntax(text) {
     return text
-        .replace(/\$\{(\d+):([^}]*)\}/g, '$2')
-        .replace(/\$\{(\d+)\|([^|}]*)\|[^}]*\}/g, '$2')
-        .replace(/\$\{(\d+)\}/g, '')
-        .replace(/\$\d+/g, '');
+        .replace(/\\$\{(\\d+):([^}]*)\}/g, '$2')
+        .replace(/\\$\{(\\d+)\|([^|}]*)\|[^}]*\}/g, '$2')
+        .replace(/\\$\{(\\d+)\}/g, '')
+        .replace(/\\$\\d+/g, '');
 }
 
 function makeTemplateItem(t) {
@@ -891,7 +893,7 @@ function makeTemplateItem(t) {
         '<div class="template-item-preview" style="display:none"></div>';
     const btns = item.querySelectorAll('button');
     btns[0].addEventListener('click', () => copyRaw(stripSnippetSyntax(t.insertText)));
-    btns[1].addEventListener('click', () => insertRaw(t.insertText));
+    btns[1].addEventListener('click', () => insertRaw(stripSnippetSyntax(t.insertText)));
     btns[2].addEventListener('click', () => {
         const pre = item.querySelector('.template-item-preview');
         if (pre.style.display === 'none') { pre.textContent = stripSnippetSyntax(t.insertText); pre.style.display = 'block'; btns[2].textContent = '隐藏'; }
