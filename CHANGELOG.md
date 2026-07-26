@@ -2,6 +2,12 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.25]
+- 修复链式调用中悬停无法识别函数的问题：
+  - 清理捕获词的前后点号（`.setDragYRatio` → `setDragYRatio`）
+  - 按 `.` / `[` / `]` / `'` / `"` 拆分，从最后一段逐段向前查找 docMap
+  - 现在 `self.parent['纵向滑块'].setDragYRatio(...)` 中的 `setDragYRatio`、`self.wheelValue` 中的 `wheelValue`、`.round(1)` 中的 `round` 均可正确悬停
+
 ### [0.0.24]
 - 修复悬停文档大小写敏感问题：`docMap` 的 key 和所有查找改为 `.toLowerCase()`，现在 `Text`、`Texture`、`HGrid` 等首字母大写也能正确悬停
 

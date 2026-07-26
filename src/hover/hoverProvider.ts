@@ -59,15 +59,18 @@ export class HoverProvider implements vscode.HoverProvider {
         const range = document.getWordRangeAtPosition(position, /[\w.]+/);
         if (!range) return undefined;
 
-        const word = document.getText(range);
+        const rawWord = document.getText(range);
         const line = document.lineAt(position.line).text;
-        const linePrefix = line.substring(0, range.start.character);
 
-        // 尝试匹配带点号的完整名称（如 Screen.open）
-        const fullMatch = line.substring(range.start.character, range.end.character);
-        let docItem = this.docMap.get(fullMatch.toLowerCase());
+        // 清理前导/尾随点号（如 ".setDragYRatio" → "setDragYRatio"）
+        const cleanWord = rawWord.replace(/^\.+|\.+$/g, '');
 
-        // 尝试匹配 "对象.方法" 模式
+        let docItem: DocItem | undefined;
+
+        // 1. 尝试完整 dotted 路径（如 "Math.round"、"self.wheelValue"）
+        docItem = this.docMap.get(cleanWord.toLowerCase());
+
+        // 2. 尝试 "对象.方法" 模式（从行文本中提取）
         if (!docItem) {
             const dotMatch = line.substring(0, range.end.character).match(/(\w+)\.(\w+)$/);
             if (dotMatch) {
@@ -76,12 +79,22 @@ export class HoverProvider implements vscode.HoverProvider {
             }
         }
 
-        // 尝试匹配单个词
+        // 3. 尝试按 "." 拆分，从最长到最短逐段查找
+        //    如 "self.parent['xxx'].setDragYRatio" → 尝试 "setDragYRatio"
+        //    如 "self.wheelValue" → 尝试 "wheelValue"
         if (!docItem) {
-            docItem = this.docMap.get(word.toLowerCase());
+            const segments = cleanWord.split(/[.\[\]'"]/).filter(s => s.length > 0);
+            for (let i = segments.length - 1; i >= 0 && !docItem; i--) {
+                docItem = this.docMap.get(segments[i].toLowerCase());
+            }
         }
 
-        // 尝试匹配属性值上下文（type: texture）
+        // 4. 尝试单个词（清理后的）
+        if (!docItem) {
+            docItem = this.docMap.get(cleanWord.toLowerCase());
+        }
+
+        // 5. 尝试匹配属性值上下文（type: texture）
         if (!docItem) {
             const attrContext = line.match(/(\w+):\s*(\w+)/);
             if (attrContext) {
