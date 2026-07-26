@@ -174,8 +174,88 @@ export class ColorDecorator {
             });
         }
 
-        // 2. 匹配 §#RRGGBB — 只着色后续文字，不着色颜色码本身（全文档，按颜色分组）
+        // 1b. 匹配 Frosted:blur;R,G,B,A — 显示色块
+        const frostedRegex = /Frosted:(\d+)\s*;\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(\d{1,3}))?/g;
+        while ((match = frostedRegex.exec(text)) !== null) {
+            if (isInComment(match.index)) continue;
+            const r = parseInt(match[2]);
+            const g = parseInt(match[3]);
+            const b = parseInt(match[4]);
+            const a = match[5] !== undefined ? parseInt(match[5]) : 255;
+            if (r > 255 || g > 255 || b > 255 || a > 255) continue;
+
+            const startPos = editor.document.positionAt(match.index);
+            const endPos = editor.document.positionAt(match.index + match[0].length);
+            const alphaHex = Math.round(a / 255 * 255).toString(16).padStart(2, '0');
+            const colorHex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}${alphaHex}`;
+
+            swatchDecorations.push({
+                range: new vscode.Range(startPos, endPos),
+                renderOptions: {
+                    before: {
+                        backgroundColor: colorHex,
+                        contentText: ' ',
+                        border: '1px solid #555',
+                        width: '14px',
+                        height: '14px',
+                        margin: '0 6px 0 0',
+                    },
+                },
+            });
+        }
+
+        // textColorMap 供 §a/&b 和 §# 共用
         const textColorMap = new Map<string, vscode.Range[]>();
+
+        // 1c. 匹配 §a / &b 等 Minecraft 颜色码 — 显示色块 + 着色后续文字
+        const mcColorMap: Record<string, string> = {
+            '0': '#000000', '1': '#0000AA', '2': '#00AA00', '3': '#00AAAA',
+            '4': '#AA0000', '5': '#AA00AA', '6': '#FFAA00', '7': '#AAAAAA',
+            '8': '#555555', '9': '#5555FF', 'a': '#55FF55', 'b': '#55FFFF',
+            'c': '#FF5555', 'd': '#FF55FF', 'e': '#FFFF55', 'f': '#FFFFFF',
+        };
+        const mcCodeRegex = /[§&]([0-9a-f])/g;
+        while ((match = mcCodeRegex.exec(text)) !== null) {
+            if (isInComment(match.index)) continue;
+            const code = match[1];
+            const colorHex = mcColorMap[code];
+            if (!colorHex) continue;
+
+            const codeStart = match.index;
+            const codeEnd = match.index + match[0].length;
+            const afterCode = text.substring(codeEnd);
+            const stopPatterns = ['§r', '§#', '§~', '§0', '§1', '§2', '§3', '§4', '§5', '§6', '§7', '§8', '§9', '§a', '§b', '§c', '§d', '§e', '§f', '&r', '&0', '&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8', '&9', '&a', '&b', '&c', '&d', '&e', '&f', '\n'];
+            let endRel = afterCode.length;
+            for (const p of stopPatterns) {
+                const idx = afterCode.indexOf(p);
+                if (idx >= 0 && idx < endRel) endRel = idx;
+            }
+            const textStart = codeEnd;
+            const textEnd = codeEnd + endRel;
+
+            swatchDecorations.push({
+                range: new vscode.Range(editor.document.positionAt(codeStart), editor.document.positionAt(codeEnd)),
+                renderOptions: {
+                    before: {
+                        backgroundColor: colorHex,
+                        contentText: ' ',
+                        border: '1px solid #555',
+                        width: '10px',
+                        height: '10px',
+                        margin: '0 4px 0 0',
+                    },
+                },
+            });
+
+            if (textEnd > textStart) {
+                if (!textColorMap.has(colorHex.substring(1).toUpperCase())) {
+                    textColorMap.set(colorHex.substring(1).toUpperCase(), []);
+                }
+                textColorMap.get(colorHex.substring(1).toUpperCase())!.push(new vscode.Range(editor.document.positionAt(textStart), editor.document.positionAt(textEnd)));
+            }
+        }
+
+        // 2. 匹配 §#RRGGBB — 只着色后续文字，不着色颜色码本身（全文档，按颜色分组）
         const textColorRegex = /§#([0-9A-Fa-f]{6})/g;
         while ((match = textColorRegex.exec(text)) !== null) {
             if (isInComment(match.index)) continue;
@@ -184,7 +264,7 @@ export class ColorDecorator {
             const codeEnd = match.index + match[0].length;
             // 查找后续文字结束位置
             const afterCode = text.substring(codeEnd);
-            const stopPatterns = ['§r', '§#', '§~', '\n'];
+            const stopPatterns = ['§r', '§#', '§~', '§0', '§1', '§2', '§3', '§4', '§5', '§6', '§7', '§8', '§9', '§a', '§b', '§c', '§d', '§e', '§f', '&r', '&0', '&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8', '&9', '&a', '&b', '&c', '&d', '&e', '&f', '\n'];
             let endRel = afterCode.length;
             for (const p of stopPatterns) {
                 const idx = afterCode.indexOf(p);
@@ -242,7 +322,7 @@ export class ColorDecorator {
             const codeEnd = match.index + match[0].length;
             // 查找后续文字结束位置
             const afterCode = text.substring(codeEnd);
-            const stopPatterns = ['§r', '§#', '§~', '\n'];
+            const stopPatterns = ['§r', '§#', '§~', '§0', '§1', '§2', '§3', '§4', '§5', '§6', '§7', '§8', '§9', '§a', '§b', '§c', '§d', '§e', '§f', '&r', '&0', '&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8', '&9', '&a', '&b', '&c', '&d', '&e', '&f', '\n'];
             let endRel = afterCode.length;
             for (const p of stopPatterns) {
                 const idx = afterCode.indexOf(p);
