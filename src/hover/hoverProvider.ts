@@ -163,6 +163,8 @@ export class HoverProvider implements vscode.HoverProvider {
         return false;
     }
 
+    private ariaKeywords = new Set(['self', 'val', 'var']);
+
     provideHover(
         document: vscode.TextDocument,
         position: vscode.Position,
@@ -176,6 +178,50 @@ export class HoverProvider implements vscode.HoverProvider {
 
         // 清理前导/尾随点号
         const cleanWord = rawWord.replace(/^\.+|\.+$/g, '');
+        if (!cleanWord) return undefined;
+
+        // 拆分 dotted 路径为段
+        const segments = cleanWord.split('.').filter(s => s.length > 0);
+        if (segments.length === 0) return undefined;
+
+        // 确定光标所在段索引
+        const cursorOffset = position.character - range.start.character;
+        let cursorSegIndex = 0;
+        let accumLen = 0;
+        for (let i = 0; i < segments.length; i++) {
+            accumLen += segments[i].length;
+            if (cursorOffset <= accumLen) {
+                cursorSegIndex = i;
+                break;
+            }
+            accumLen += 1; // dot
+            cursorSegIndex = i + 1;
+        }
+        if (cursorSegIndex >= segments.length) cursorSegIndex = segments.length - 1;
+
+        const cursorSegRaw = segments[cursorSegIndex];
+        const cursorSeg = cursorSegRaw.replace(/\(.*$/, '').toLowerCase();
+
+        // 跳过 Aria 关键字（self/val/var）
+        if (this.ariaKeywords.has(cursorSeg)) return undefined;
+
+        // 光标段的精确 range（只覆盖当前段，不覆盖整个 dotted 路径）
+        let segStartChar = range.start.character;
+        for (let i = 0; i < cursorSegIndex; i++) {
+            segStartChar += segments[i].length + 1; // +1 for dot
+        }
+        const segRange = new vscode.Range(
+            position.line, segStartChar,
+            position.line, segStartChar + cursorSegRaw.length
+        );
+
+        // 构建查找路径前缀（从首段到光标段）
+        const prefixPath = segments.slice(0, cursorSegIndex + 1).join('.').replace(/\(.*$/, '').toLowerCase();
+        // 前一段 + 光标段（如 parent.height）
+        const predecessorSeg = cursorSegIndex > 0
+            ? segments[cursorSegIndex - 1].replace(/\(.*$/, '').toLowerCase()
+            : null;
+        const predecessorDotSeg = predecessorSeg ? `${predecessorSeg}.${cursorSeg}` : null;
 
         // 判断上下文
         const isYamlKey = this.isYamlKeyContext(line, range);
@@ -184,26 +230,38 @@ export class HoverProvider implements vscode.HoverProvider {
         let docItem: DocItem | undefined;
 
         if (isYamlKey && !isScript) {
-            // YAML 键上下文：优先查 yamlMap
-            docItem = this.lookupInMap(this.yamlMap, cleanWord, line, range);
+            // YAML 键上下文：只查 yamlMap
+            docItem = this.yamlMap.get(prefixPath) || this.yamlMap.get(cursorSeg);
         } else if (isScript) {
-            // 脚本上下文：优先查 scriptMap
-            docItem = this.lookupInMap(this.scriptMap, cleanWord, line, range);
-            // 脚本上下文中也查 yamlMap 作为补充（如 self.wheelValue 中的 wheelValue 可能是控件属性）
+            // 脚本上下文：
+            // 1. 路径前缀查找（如 player.getfood）→ 优先 scriptMap
+            docItem = this.scriptMap.get(prefixPath);
+            if (!docItem) docItem = this.yamlMap.get(prefixPath);
+            // 2. 前一段.光标段 查找（如 parent.height）→ 优先 scriptMap
+            if (!docItem && predecessorDotSeg) {
+                docItem = this.scriptMap.get(predecessorDotSeg);
+                if (!docItem) docItem = this.yamlMap.get(predecessorDotSeg);
+            }
+            // 3. 单段查找 → 优先 yamlMap（属性优先于函数）
+            //    如 height 在 yamlMap 是控件属性，在 scriptMap 是 Display.height()
+            //    self.parent.height 中的 height 应匹配控件属性
             if (!docItem) {
-                docItem = this.lookupInMap(this.yamlMap, cleanWord, line, range);
+                docItem = this.yamlMap.get(cursorSeg);
+            }
+            if (!docItem) {
+                docItem = this.scriptMap.get(cursorSeg);
             }
         } else {
-            // 模糊上下文：先查 yamlMap，再查 scriptMap
-            docItem = this.lookupInMap(this.yamlMap, cleanWord, line, range);
+            // 模糊上下文：yamlMap 优先
+            docItem = this.yamlMap.get(prefixPath) || this.yamlMap.get(cursorSeg);
             if (!docItem) {
-                docItem = this.lookupInMap(this.scriptMap, cleanWord, line, range);
+                docItem = this.scriptMap.get(prefixPath) || this.scriptMap.get(cursorSeg);
             }
         }
 
         // 最后查通用 map
         if (!docItem) {
-            docItem = this.commonMap.get(cleanWord.toLowerCase());
+            docItem = this.commonMap.get(cursorSeg);
         }
 
         if (!docItem) return undefined;
@@ -216,49 +274,6 @@ export class HoverProvider implements vscode.HoverProvider {
             contents.appendMarkdown(docItem.documentation.value);
         }
 
-        return new vscode.Hover(contents, range);
-    }
-
-    private lookupInMap(
-        map: Map<string, DocItem>,
-        cleanWord: string,
-        line: string,
-        range: vscode.Range
-    ): DocItem | undefined {
-        let docItem: DocItem | undefined;
-
-        // 1. 尝试完整 dotted 路径（去掉括号）
-        const cleanLower = cleanWord.toLowerCase().replace(/\(.*$/, '');
-        docItem = map.get(cleanLower);
-
-        // 2. 逐步缩短 dotted 前缀查找
-        // 例如 Player.getFood.round -> player.getfood -> player
-        if (!docItem) {
-            const segments = cleanWord.split('.').filter(s => s.length > 0);
-            for (let i = segments.length - 1; i >= 0 && !docItem; i--) {
-                const prefix = segments.slice(0, i + 1).join('.').toLowerCase().replace(/\(.*$/, '');
-                docItem = map.get(prefix);
-            }
-        }
-
-        // 3. 尝试 "对象.方法" 模式（从行文本中提取）
-        if (!docItem) {
-            const dotMatch = line.substring(0, range.end.character).match(/(\w+)\.(\w+)$/);
-            if (dotMatch) {
-                const fullKey = `${dotMatch[1]}.${dotMatch[2]}`.toLowerCase();
-                docItem = map.get(fullKey);
-            }
-        }
-
-        // 4. 单段查找（去掉括号）
-        if (!docItem) {
-            const segments = cleanWord.split(/[.\[\]'"]/).filter(s => s.length > 0);
-            for (let i = segments.length - 1; i >= 0 && !docItem; i--) {
-                const segLower = segments[i].toLowerCase().replace(/\(.*$/, '');
-                docItem = map.get(segLower);
-            }
-        }
-
-        return docItem;
+        return new vscode.Hover(contents, segRange);
     }
 }
