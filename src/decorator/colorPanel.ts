@@ -352,6 +352,7 @@ select {
 
 <div class="tabs">
     <div class="tab active" data-tab="rgba">RGBA</div>
+    <div class="tab" data-tab="frosted">毛玻璃</div>
     <div class="tab" data-tab="text">文字色</div>
     <div class="tab" data-tab="gradient">渐变</div>
     <div class="tab" data-tab="colors">色板</div>
@@ -425,6 +426,64 @@ select {
             <div class="output-row">
                 <input type="text" id="hexOutput" readonly value="#FFFFFFFF">
                 <button class="btn btn-sm" onclick="copyText('hexOutput')">复制</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tab 1b: 毛玻璃 Frosted -->
+<div id="tab-frosted" class="tab-content">
+    <div class="section">
+        <div class="section-title">模糊度 (Blur)</div>
+        <div class="row">
+            <label>模糊</label>
+            <input type="range" id="blurSlider" min="0" max="100" value="30">
+            <span class="val" id="blurVal">30</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">RGBA 颜色</div>
+        <div class="row">
+            <label style="color:#e74c3c">R</label>
+            <input type="range" id="frostedR" min="0" max="255" value="255">
+            <span class="val" id="frostedRVal">255</span>
+        </div>
+        <div class="row">
+            <label style="color:#2ecc71">G</label>
+            <input type="range" id="frostedG" min="0" max="255" value="255">
+            <span class="val" id="frostedGVal">255</span>
+        </div>
+        <div class="row">
+            <label style="color:#3498db">B</label>
+            <input type="range" id="frostedB" min="0" max="255" value="255">
+            <span class="val" id="frostedBVal">255</span>
+        </div>
+        <div class="row">
+            <label>A</label>
+            <input type="range" id="frostedA" min="0" max="255" value="80">
+            <span class="val" id="frostedAVal">80</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">预览</div>
+        <div class="frosted-preview-bg" style="position:relative;height:80px;border-radius:6px;overflow:hidden;">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,#ff6b6b,#4ecdc4,#45b7d1,#f9ca24,#6c5ce7);background-size:200% 200%;"></div>
+            <div id="frostedPreview" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+                <span class="preview-text" id="frostedPreviewText">~Frosted:30;255,255,255,80</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">输出格式</div>
+        <div class="output-group">
+            <div class="output-label">控件属性值 (~Frosted:blur;R,G,B,A)</div>
+            <div class="output-row">
+                <input type="text" id="frostedOutput" readonly value="~Frosted:30;255,255,255,80">
+                <button class="btn btn-sm" onclick="copyText('frostedOutput')">复制</button>
+                <button class="btn btn-sm" onclick="insertText('frostedOutput')">插入</button>
             </div>
         </div>
     </div>
@@ -762,6 +821,7 @@ function initColorPicker(canvasId, hueCanvasId, onPick) {
 // ===== Tab 切换 =====
 const tabTitles = {
     'rgba': 'RGBA 色块',
+    'frosted': '毛玻璃 Frosted',
     'text': '文字颜色',
     'gradient': '渐变色',
     'colors': '色板',
@@ -812,6 +872,35 @@ initColorPicker('colorPicker', 'hueBar', (r, g, b) => {
     document.getElementById('gSlider').value = g;
     document.getElementById('bSlider').value = b;
     updateRgba();
+});
+
+// ===== Tab 1b: 毛玻璃 Frosted =====
+function updateFrosted() {
+    const blur = +document.getElementById('blurSlider').value;
+    const r = +document.getElementById('frostedR').value;
+    const g = +document.getElementById('frostedG').value;
+    const b = +document.getElementById('frostedB').value;
+    const a = +document.getElementById('frostedA').value;
+    document.getElementById('blurVal').textContent = blur;
+    document.getElementById('frostedRVal').textContent = r;
+    document.getElementById('frostedGVal').textContent = g;
+    document.getElementById('frostedBVal').textContent = b;
+    document.getElementById('frostedAVal').textContent = a;
+    const hexA = rgbToHexA(r, g, b, a);
+    const frostedStr = '~Frosted:' + blur + ';' + r + ',' + g + ',' + b + ',' + a;
+    const preview = document.getElementById('frostedPreview');
+    const blurPx = 'blur(' + (blur * 0.3) + 'px)';
+    preview.style.backdropFilter = blurPx;
+    preview.style.webkitBackdropFilter = blurPx;
+    preview.style.background = hexA;
+    const previewText = document.getElementById('frostedPreviewText');
+    previewText.textContent = frostedStr;
+    previewText.style.color = (r + g + b) > 382 ? '#000' : '#fff';
+    document.getElementById('frostedOutput').value = frostedStr;
+}
+
+['blurSlider', 'frostedR', 'frostedG', 'frostedB', 'frostedA'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateFrosted);
 });
 
 // ===== Tab 2: 文字颜色 =====
@@ -1090,6 +1179,7 @@ vscode.postMessage({ command: 'getCustomTemplates' });
 updateRgba();
 updateTextColor();
 updateGradient();
+updateFrosted();
 </script>
 </body>
 </html>`;
