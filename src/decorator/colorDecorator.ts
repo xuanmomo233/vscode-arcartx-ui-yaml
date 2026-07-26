@@ -175,7 +175,7 @@ export class ColorDecorator {
         }
 
         // 1b. 匹配 Frosted:blur;R,G,B,A — 显示色块
-        const frostedRegex = /Frosted:(\d+)\s*;\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(\d{1,3}))?/g;
+        const frostedRegex = /~?Frosted:(\d+)\s*;\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(\d{1,3}))?/g;
         while ((match = frostedRegex.exec(text)) !== null) {
             if (isInComment(match.index)) continue;
             const r = parseInt(match[2]);
