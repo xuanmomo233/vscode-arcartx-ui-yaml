@@ -1,18 +1,26 @@
 import * as vscode from 'vscode';
+import { controls } from '../completion/structure/rule/control';
+import { control_effects } from '../completion/structure/rule/controlEffect';
+import * as root from '../completion/structure/rule/root';
 
 /**
- * 颜色面板侧边栏 — 色谱选择器、RGBA 预览、渐变色生成器
+ * 侧边栏面板 — 颜色选择器 + 颜色展示 + 控件模板 + Effect 模板 + UI 模板
  */
 export class ColorPanelProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'arcartxUiYaml.colorPanel';
 
     private view?: vscode.WebviewView;
+    private decorator: { enabled: boolean; setEnabled: (e: boolean) => void } | undefined;
 
     constructor(private readonly context: vscode.ExtensionContext) {}
 
+    public setDecorator(decorator: { enabled: boolean; setEnabled: (e: boolean) => void }) {
+        this.decorator = decorator;
+    }
+
     public resolveWebviewView(
         webviewView: vscode.WebviewView,
-        context: vscode.WebviewViewResolveContext,
+        _context: vscode.WebviewViewResolveContext,
         _token: vscode.CancellationToken,
     ) {
         this.view = webviewView;
@@ -33,15 +41,41 @@ export class ColorPanelProvider implements vscode.WebviewViewProvider {
             case 'insertText': {
                 const editor = vscode.window.activeTextEditor;
                 if (editor) {
+                    const text = message.text as string;
+                    const lines = text.split('\n');
                     editor.edit(editBuilder => {
-                        editBuilder.insert(editor.selection.active, message.text);
+                        if (lines.length <= 1) {
+                            editBuilder.insert(editor.selection.active, text);
+                        } else {
+                            const pos = editor.selection.active;
+                            const indent = ' '.repeat(pos.character);
+                            const multiLine = lines.map((line, i) =>
+                                i === 0 ? line : indent + line
+                            ).join('\n');
+                            editBuilder.insert(pos, multiLine);
+                        }
                     });
+                } else {
+                    vscode.window.showWarningMessage('请先打开一个 .arx 文件');
                 }
                 break;
             }
             case 'copyToClipboard': {
                 vscode.env.clipboard.writeText(message.text);
-                vscode.window.showInformationMessage(`已复制: ${message.text}`);
+                vscode.window.showInformationMessage(`已复制到剪贴板`);
+                break;
+            }
+            case 'toggleDecorator': {
+                if (this.decorator) {
+                    this.decorator.setEnabled(message.enabled);
+                }
+                break;
+            }
+            case 'getDecoratorState': {
+                this.view?.webview.postMessage({
+                    command: 'decoratorState',
+                    enabled: this.decorator?.enabled ?? true,
+                });
                 break;
             }
         }
@@ -201,14 +235,73 @@ select {
 }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
+.color-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+.color-card {
+    border: 1px solid var(--vscode-editorWidget-border); border-radius: 3px;
+    padding: 5px; cursor: pointer; display: flex; align-items: center; gap: 5px;
+    transition: border-color 0.15s;
+}
+.color-card:hover { border-color: var(--vscode-button-background); }
+.color-swatch { width: 22px; height: 22px; border-radius: 3px; border: 1px solid rgba(128,128,128,0.3); flex-shrink: 0; }
+.color-card-info { flex: 1; min-width: 0; }
+.color-card-name { font-size: 11px; font-weight: bold; }
+.color-card-value { font-size: 10px; color: var(--vscode-descriptionForeground); }
+.template-list { display: flex; flex-direction: column; gap: 4px; }
+.template-item {
+    border: 1px solid var(--vscode-editorWidget-border); border-radius: 3px;
+    padding: 6px; cursor: default; transition: border-color 0.15s;
+}
+.template-item:hover { border-color: var(--vscode-button-background); }
+.template-item-label { font-size: 12px; font-weight: bold; }
+.template-item-detail { font-size: 10px; color: var(--vscode-descriptionForeground); margin-top: 2px; }
+.template-item-actions { display: flex; gap: 4px; margin-top: 4px; }
+.template-item-preview {
+    font-size: 10px; font-family: var(--vscode-editor-font-family);
+    background: var(--vscode-textCodeBlock-background);
+    border: 1px solid var(--vscode-editorWidget-border);
+    border-radius: 2px; padding: 5px; margin-top: 4px;
+    max-height: 100px; overflow: auto; white-space: pre-wrap;
+    word-break: break-all; color: var(--vscode-editor-foreground);
+}
+.search-box { margin-bottom: 6px; }
+.decorator-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 8px; margin-bottom: 8px;
+    border: 1px solid var(--vscode-editorWidget-border); border-radius: 3px;
+    background: var(--vscode-editor-inactiveSelectionBackground);
+}
+.decorator-toggle-label { font-size: 12px; font-weight: bold; }
+.switch { position: relative; width: 32px; height: 18px; cursor: pointer; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch .slider {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border);
+    border-radius: 9px; transition: 0.2s;
+}
+.switch .slider:before {
+    content: ''; position: absolute; width: 12px; height: 12px;
+    left: 2px; top: 2px; background: var(--vscode-editor-foreground);
+    border-radius: 50%; transition: 0.2s;
+}
+.switch input:checked + .slider { background: var(--vscode-button-background); border-color: var(--vscode-button-background); }
+.switch input:checked + .slider:before { transform: translateX(14px); background: var(--vscode-button-foreground); }
 </style>
 </head>
 <body>
 
+<div class="decorator-toggle">
+    <span class="decorator-toggle-label">颜色色块装饰器</span>
+    <label class="switch"><input type="checkbox" id="decoratorSwitch" checked><span class="slider"></span></label>
+</div>
+
 <div class="tabs">
-    <div class="tab active" data-tab="rgba">RGBA 色块</div>
-    <div class="tab" data-tab="text">文字颜色</div>
-    <div class="tab" data-tab="gradient">渐变色</div>
+    <div class="tab active" data-tab="rgba">RGBA</div>
+    <div class="tab" data-tab="text">文字色</div>
+    <div class="tab" data-tab="gradient">渐变</div>
+    <div class="tab" data-tab="colors">色板</div>
+    <div class="tab" data-tab="controls">控件</div>
+    <div class="tab" data-tab="effects">特效</div>
+    <div class="tab" data-tab="ui">UI模板</div>
 </div>
 
 <!-- Tab 1: RGBA 色块 -->
@@ -461,7 +554,48 @@ select {
     </div>
 </div>
 
+<!-- Tab 4: 色板 -->
+<div id="tab-colors" class="tab-content">
+    <div class="section">
+        <div class="section-title">预设颜色</div>
+        <div class="color-grid" id="colorGrid"></div>
+    </div>
+</div>
+
+<!-- Tab 5: 控件模板 -->
+<div id="tab-controls" class="tab-content">
+    <div class="search-box"><input type="text" id="controlSearch" placeholder="搜索控件..."></div>
+    <div class="template-list" id="controlList"></div>
+</div>
+
+<!-- Tab 6: 特效模板 -->
+<div id="tab-effects" class="tab-content">
+    <div class="template-list" id="effectList"></div>
+</div>
+
+<!-- Tab 7: UI 模板 -->
+<div id="tab-ui" class="tab-content">
+    <div class="template-list" id="uiList"></div>
+</div>
+
 <script>
+const vscode = acquireVsCodeApi();
+
+// ===== 装饰器开关 =====
+const decoratorSwitch = document.getElementById('decoratorSwitch');
+decoratorSwitch.addEventListener('change', () => {
+    vscode.postMessage({ command: 'toggleDecorator', enabled: decoratorSwitch.checked });
+});
+// 接收扩展返回的装饰器状态
+window.addEventListener('message', (e) => {
+    const msg = e.data;
+    if (msg.command === 'decoratorState') {
+        decoratorSwitch.checked = msg.enabled;
+    }
+});
+// 初始化时请求当前状态
+vscode.postMessage({ command: 'getDecoratorState' });
+
 // ===== 通用工具 =====
 function hsvToRgb(h, s, v) {
     s = s / 100; v = v / 100;

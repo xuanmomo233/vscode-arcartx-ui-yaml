@@ -2,6 +2,18 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.36]
+- 修复侧边栏面板复制/插入无效问题（添加 `acquireVsCodeApi()` 调用）
+- 新增 **颜色色块装饰器开关**：侧边栏顶部 toggle 开关，实时控制编辑器中 `~R,G,B,A` 色块预览的显示/隐藏
+- 扩展侧边栏面板为 7 个 Tab：
+  - **RGBA** — HSV 色谱选择器 + RGBA 滑块 + 色块预览
+  - **文字色** — HSV 色谱 + RGB 滑块 + 深色背景预览，输出 `§#RRGGBB`/`§s§#`/`§^`/`§*` 四种文字格式码
+  - **渐变** — 双色谱选择器 + 渐变类型/角度 + effect YAML 块和文字渐变码输出
+  - **色板** — 16 种预设颜色卡片，点击跳转 RGBA Tab 并同步滑块
+  - **控件** — 全部控件模板列表，支持搜索、复制、插入、预览
+  - **特效** — 全部 effect 特效模板（stroke/shadow/neon/ripple/gradient/flow/energy/pie）
+  - **UI模板** — UI 配置模板（ui-full/ui-base/controls-empty/controls-with-adaptive/tip-base/tip-adaptive/entity-model）
+
 ### [0.0.35]
 - 新增 **侧边栏颜色面板**（活动栏图标入口）：
   - **RGBA 色块 Tab**：HSV 色谱选择器 + 色相条 + RGBA 滑块，实时预览色块

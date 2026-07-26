@@ -7,6 +7,7 @@ export class ColorDecorator {
     private decorationType: vscode.TextEditorDecorationType;
     private activeEditor: vscode.TextEditor | undefined;
     private updateTimeout: NodeJS.Timeout | undefined;
+    private _enabled: boolean = true;
 
     constructor(context: vscode.ExtensionContext) {
         this.decorationType = vscode.window.createTextEditorDecorationType({
@@ -45,8 +46,30 @@ export class ColorDecorator {
         }
     }
 
+    get enabled(): boolean { return this._enabled; }
+
+    setEnabled(enabled: boolean) {
+        this._enabled = enabled;
+        if (!enabled) {
+            this.clearDecorations();
+        } else {
+            this.updateDecorations();
+        }
+    }
+
+    toggle(): boolean {
+        this.setEnabled(!this._enabled);
+        return this._enabled;
+    }
+
+    private clearDecorations() {
+        if (this.activeEditor) {
+            this.activeEditor.setDecorations(this.decorationType, []);
+        }
+    }
+
     private updateDecorations() {
-        if (!this.activeEditor) return;
+        if (!this.activeEditor || !this._enabled) return;
         const editor = this.activeEditor;
         const text = editor.document.getText();
         const decorations: vscode.DecorationOptions[] = [];

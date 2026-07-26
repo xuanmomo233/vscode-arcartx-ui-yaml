@@ -52,9 +52,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     const colorPickerCommand = ColorPickerCommand.register(context);
 
+    const colorPanel = new ColorPanelProvider(context);
+    colorPanel.setDecorator(colorDecorator);
     const colorPanelProvider = vscode.window.registerWebviewViewProvider(
         ColorPanelProvider.viewType,
-        new ColorPanelProvider(context),
+        colorPanel,
         { webviewOptions: { retainContextWhenHidden: true } }
     );
 
