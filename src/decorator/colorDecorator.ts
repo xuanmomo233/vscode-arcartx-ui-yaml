@@ -40,6 +40,15 @@ export class ColorDecorator {
             }
         }, null, context.subscriptions);
 
+        // 监听滚动 / 可视区域变化 — 只为渐变逐字装饰触发重渲染
+        vscode.window.onDidChangeTextEditorVisibleRanges(e => {
+            if (this.activeEditor && e.textEditor === this.activeEditor &&
+                this.activeEditor.document.languageId === 'arcartx-ui-yaml') {
+                if (this.updateTimeout) clearTimeout(this.updateTimeout);
+                this.updateTimeout = setTimeout(() => this.updateDecorations(), 80);
+            }
+        }, null, context.subscriptions);
+
         // 初始化当前编辑器
         this.activeEditor = vscode.window.activeTextEditor;
         if (this.activeEditor && this.activeEditor.document.languageId === 'arcartx-ui-yaml') {
@@ -86,9 +95,18 @@ export class ColorDecorator {
         });
         this.dynamicTypes = [];
 
+        // 计算可视区域的字符偏移范围（用于渐变逐字装饰的视口裁剪）
+        const visibleRanges = editor.visibleRanges;
+        let visibleStartOffset = 0;
+        let visibleEndOffset = text.length;
+        if (visibleRanges.length > 0) {
+            visibleStartOffset = editor.document.offsetAt(visibleRanges[0].start);
+            visibleEndOffset = editor.document.offsetAt(visibleRanges[visibleRanges.length - 1].end);
+        }
+
         const swatchDecorations: vscode.DecorationOptions[] = [];
 
-        // 1. 匹配 ~R,G,B 或 ~R,G,B,A（允许空格）— 显示色块
+        // 1. 匹配 ~R,G,B 或 ~R,G,B,A（允许空格）— 显示色块（全文档，量小）
         const colorRegex = /~(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(\d{1,3}))?/g;
         let match: RegExpExecArray | null;
 
@@ -120,8 +138,7 @@ export class ColorDecorator {
             });
         }
 
-        // 2. 匹配 §#RRGGBB — 只着色后续文字，不着色颜色码本身
-        // 按颜色批量分组，同一颜色的所有 range 共享一个 decorationType
+        // 2. 匹配 §#RRGGBB — 只着色后续文字，不着色颜色码本身（全文档，按颜色分组）
         const textColorMap = new Map<string, vscode.Range[]>();
         const textColorRegex = /§#([0-9A-Fa-f]{6})/g;
         while ((match = textColorRegex.exec(text)) !== null) {
@@ -154,7 +171,7 @@ export class ColorDecorator {
                 },
             });
 
-            // 文字部分：按颜色批量分组着色（同一颜色的所有 range 共享一个 decorationType）
+            // 文字部分：按颜色批量分组着色
             if (textEnd > textStart) {
                 if (!textColorMap.has(hex)) {
                     textColorMap.set(hex, []);
@@ -171,7 +188,7 @@ export class ColorDecorator {
         }
 
         // 3. 匹配 §~RRGGBB-RRGGBB — 逐字线性插值着色
-        // 优化：按颜色批量分组，相同颜色的字符共享一个 decorationType
+        // 性能优化：只渲染可视区域内的字符，滚动时动态更新
         const gradientColorMap = new Map<string, vscode.Range[]>();
         const gradientRegex = /§~([0-9A-Fa-f]{6})-([0-9A-Fa-f]{6})/g;
         while ((match = gradientRegex.exec(text)) !== null) {
@@ -195,8 +212,9 @@ export class ColorDecorator {
             }
             const textContent = afterCode.substring(0, endRel);
             const textStart = codeEnd;
+            const textEnd = codeEnd + endRel;
 
-            // 颜色码部分：显示双色块
+            // 颜色码部分：显示双色块（始终渲染，量小）
             swatchDecorations.push({
                 range: new vscode.Range(editor.document.positionAt(codeStart), editor.document.positionAt(codeEnd)),
                 renderOptions: {
@@ -219,20 +237,30 @@ export class ColorDecorator {
                 },
             });
 
-            // 逐字插值着色 — 按颜色分组批量装饰
+            // 视口裁剪：跳过完全在可视区域外的渐变文本
+            if (textEnd < visibleStartOffset || textStart > visibleEndOffset) {
+                continue;
+            }
+
+            // 逐字插值着色 — 只渲染可视区域内的字符
             const chars = [...textContent];
             const charCount = chars.length;
             let charOffset = 0;
             for (let i = 0; i < charCount; i++) {
+                const charStart = textStart + charOffset;
+                const charEnd = textStart + charOffset + chars[i].length;
+                charOffset += chars[i].length;
+
+                // 跳过可视区域外的字符
+                if (charEnd < visibleStartOffset || charStart > visibleEndOffset) {
+                    continue;
+                }
+
                 const t = charCount > 1 ? i / (charCount - 1) : 0;
                 const r = Math.round(r1 + (r2 - r1) * t);
                 const g = Math.round(g1 + (g2 - g1) * t);
                 const b = Math.round(b1 + (b2 - b1) * t);
                 const charHex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-
-                const charStart = textStart + charOffset;
-                const charEnd = textStart + charOffset + chars[i].length;
-                charOffset += chars[i].length;
 
                 if (!gradientColorMap.has(charHex)) {
                     gradientColorMap.set(charHex, []);
