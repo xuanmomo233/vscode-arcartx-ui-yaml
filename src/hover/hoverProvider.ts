@@ -39,11 +39,15 @@ export class HoverProvider implements vscode.HoverProvider {
             ...control_self_functions,
         ];
 
+        // Aria 上下文关键字，不应作为独立悬停 key 注册
+        const ariaKeywords = new Set(['self', 'val', 'var']);
+
         for (const item of allItems) {
             this.docMap.set(item.label.toLowerCase(), item);
             const parts = item.label.split(/[.()]/).filter(p => p.length > 0);
             for (const part of parts) {
                 const partLower = part.toLowerCase();
+                if (ariaKeywords.has(partLower)) continue;
                 if (!this.docMap.has(partLower)) {
                     this.docMap.set(partLower, item);
                 }

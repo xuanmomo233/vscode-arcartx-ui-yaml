@@ -2,6 +2,11 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.26]
+- 修复 `self.parent` 悬停误识别为 `Sound.self()` 的问题：
+  - `Sound.self()` 的 label 拆分后 `self` 被注册为 docMap 独立 key
+  - 现在跳过 Aria 上下文关键字（`self`/`val`/`var`），不再作为独立悬停 key 注册
+
 ### [0.0.25]
 - 修复链式调用中悬停无法识别函数的问题：
   - 清理捕获词的前后点号（`.setDragYRatio` → `setDragYRatio`）
