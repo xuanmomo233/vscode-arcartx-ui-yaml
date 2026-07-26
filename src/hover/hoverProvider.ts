@@ -110,7 +110,7 @@ export class HoverProvider implements vscode.HoverProvider {
             }
         }
 
-        if (!docItem || !docItem.documentation) return undefined;
+        if (!docItem) return undefined;
 
         const contents = new vscode.MarkdownString();
         contents.isTrusted = true;

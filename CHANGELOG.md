@@ -2,6 +2,10 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.27]
+- 修复控件属性悬停无效问题：只有 `point` 和 `slotType` 有 `documentation` 字段，其他属性被跳过
+  - 现在 `documentation` 为空时使用 `detail` 作为悬停内容，所有属性均可悬停
+
 ### [0.0.26]
 - 修复 `self.parent` 悬停误识别为 `Sound.self()` 的问题：
   - `Sound.self()` 的 label 拆分后 `self` 被注册为 docMap 独立 key
