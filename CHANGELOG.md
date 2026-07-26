@@ -2,6 +2,12 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.28]
+- 全面修复悬停功能，补全所有遗漏的数据源和逻辑问题：
+  - 新增导入 `control_settings`（`val`/`type`/`attribute`/`children`/`action`）、`task_settings`（`type`/`time`/`cycle`/`run`）、`hud_names`（30个HUD名称）、`match_values`
+  - `ariaKeywords` 跳过逻辑改为仅跳过拆分段注册，不跳过完整 label 注册，确保 `val` 属性可悬停
+  - 完整 label 注册改为 `!has` 保护，避免后注册的覆盖先注册的更精确匹配
+
 ### [0.0.27]
 - 修复控件属性悬停无效问题：只有 `point` 和 `slotType` 有 `documentation` 字段，其他属性被跳过
   - 现在 `documentation` 为空时使用 `detail` 作为悬停内容，所有属性均可悬停

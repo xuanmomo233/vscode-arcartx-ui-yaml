@@ -3,10 +3,13 @@ import { builtin_functions } from '../completion/structure/rule/ariaBuiltin';
 import { type_values, point_values, slotType_values } from '../completion/structure/rule/controlAttributeValue';
 import { control_attribute } from '../completion/structure/rule/controlAttribute';
 import { control_actions } from '../completion/structure/rule/controlAction';
+import { control_settings } from '../completion/structure/rule/controlSetting';
 import { ui_actions } from '../completion/structure/rule/uiAction';
 import { ui_options } from '../completion/structure/rule/ui';
 import { packetHandler_options } from '../completion/structure/rule/uiPacketHandler';
 import { task_type_values } from '../completion/structure/rule/uiTaskTypeValues';
+import { task_settings } from '../completion/structure/rule/uiTaskSettings';
+import { hud_names, match_values } from '../completion/structure/rule/uiValue';
 import { self_functions } from '../completion/structure/rule/uiSelf';
 import { control_self_functions } from '../completion/structure/rule/controlSelf';
 
@@ -31,19 +34,28 @@ export class HoverProvider implements vscode.HoverProvider {
             ...slotType_values,
             ...control_attribute,
             ...control_actions,
+            ...control_settings,
             ...ui_actions,
             ...ui_options,
             ...packetHandler_options,
             ...task_type_values,
+            ...task_settings,
+            ...hud_names,
+            ...match_values,
             ...self_functions,
             ...control_self_functions,
         ];
 
-        // Aria 上下文关键字，不应作为独立悬停 key 注册
+        // Aria 上下文关键字，不应作为独立悬停 key 注册（仅跳过拆分段的注册，不跳过完整 label）
         const ariaKeywords = new Set(['self', 'val', 'var']);
 
         for (const item of allItems) {
-            this.docMap.set(item.label.toLowerCase(), item);
+            // 完整 label 始终注册（如 control_settings 的 "val" 属性）
+            const labelLower = item.label.toLowerCase();
+            if (!this.docMap.has(labelLower)) {
+                this.docMap.set(labelLower, item);
+            }
+            // 拆分段注册时跳过 Aria 关键字（避免 Sound.self() 的 "self" 被注册）
             const parts = item.label.split(/[.()]/).filter(p => p.length > 0);
             for (const part of parts) {
                 const partLower = part.toLowerCase();
