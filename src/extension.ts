@@ -8,6 +8,7 @@ import { DiagnosticProvider } from './diagnostics/diagnosticProvider';
 import { DefinitionProvider } from './definition/definitionProvider';
 import { ColorDecorator } from './decorator/colorDecorator';
 import { ColorPickerCommand } from './decorator/colorPicker';
+import { ColorPanelProvider } from './decorator/colorPanel';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -51,6 +52,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     const colorPickerCommand = ColorPickerCommand.register(context);
 
+    const colorPanelProvider = vscode.window.registerWebviewViewProvider(
+        ColorPanelProvider.viewType,
+        new ColorPanelProvider(context),
+        { webviewOptions: { retainContextWhenHidden: true } }
+    );
+
     context.subscriptions.push(
         structureCompletionProvider,
         variableCompletionProvider,
@@ -59,6 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
         signatureHelpProvider,
         definitionProvider,
         colorPickerCommand,
+        colorPanelProvider,
     );
 }
 
