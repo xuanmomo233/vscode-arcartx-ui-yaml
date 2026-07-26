@@ -1,6 +1,6 @@
 # ArcartX Aria UI
 
-![Version](https://img.shields.io/badge/version-0.0.47-blue.svg)
+![Version](https://img.shields.io/badge/version-0.0.61-blue.svg)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)
 ![VSCode](https://img.shields.io/badge/VSCode-%3E%3D1.100.0-007ACC.svg)
 
@@ -17,7 +17,7 @@ ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在�
 ### 智能补全
 - 🧠 **上下文感知的 UI 结构补全** — 根据当前 YAML 路径自动推断补全上下文
   - 根级别：UI 模板、tips、controls、entity_model 等
-  - `controls` 下：控件模板（texture、text、slot、hGrid 等）
+  - `controls` 下：控件模板（Texture、Text、Slot、HGrid 等）
   - 控件内部：`type`、`attribute`、`children`、`action` 等属性
   - `attribute:` 下：根据控件 `type` 自动过滤只显示相关属性
   - `action:` 下：触发器列表（click、hover、tick、create 等）
@@ -51,11 +51,12 @@ ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在�
 ### 侧边栏工具箱
 - 📦 **ArcartX 工具箱面板** — 活动栏中的多功能侧边栏面板，标题随 Tab 切换动态更新
   - **RGBA 色块** — 可视化色板选择器，滑块调节 RGBA 值，一键插入 `~R,G,B,A` 格式
+  - **毛玻璃 Frosted** — 模糊度 + RGBA 滑块，实时预览毛玻璃效果，插入 `~Frosted:blur;R,G,B,A` 格式
   - **文字颜色** — 选择颜色后插入 `§#RRGGBB` 格式码
   - **渐变色** — 双色选择器，预览渐变效果，插入 `§~RRGGBB-RRGGBB` 格式码
   - **色板** — 预设常用颜色快速选取
   - **控件模板** — 浏览并插入完整控件模板（Texture、Text、Slot、Grid 等）
-  - **特效模板** — 浏览并插入控件特效模板（ Neon、Shadow 等）
+  - **特效模板** — 浏览并插入控件特效模板（Neon、Shadow 等）
   - **UI 模板** — 浏览并插入 UI 配置模板（完整 UI、基础设定、控件结构等）
   - **自定义模板** — 用户自建模板，支持添加 / 删除 / 复制 / 插入 / 预览，持久化存储
 
@@ -96,26 +97,27 @@ codeMultiple: |-
 
 | 类型 | 说明 |
 |------|------|
-| `texture` | 普通图片控件 |
-| `text` | 文本控件 |
-| `9sliceTexture` | 九宫格图片（可拉伸） |
-| `textbox` | 文本输入框 |
-| `entity` | 实体渲染控件 |
-| `model` | 模型渲染控件（支持部位裁剪） |
-| `slot` | 物品槽位 |
-| `canvas` | 画布容器 |
-| `adaptive` | 自适应容器（等比缩放） |
-| `hGrid` / `vGrid` | 水平 / 垂直网格布局 |
-| `hStack` / `vStack` | 水平 / 垂直堆叠布局 |
-| `scroll` | 滚动容器 |
-| `button` | 按钮（快捷模板） |
-| `progress` | 进度条 |
-| `compass` | 指南针 / 路标控件 |
-| `bossBar` | Boss 血条控件 |
-| `chat` / `chatTextBox` | 聊天框 / 聊天输入框 |
-| `suggestion` | 命令建议提示控件 |
-| `observer` | 数据驱动列表控件 |
-| `import` | 跨 UI 导入控件 |
+| `Texture` | 普通图片控件 |
+| `Text` | 文本控件 |
+| `9SliceTexture` | 九宫格图片（可拉伸） |
+| `TextBox` | 文本输入框 |
+| `Entity` | 实体渲染控件 |
+| `Model` | 模型渲染控件（支持部位裁剪） |
+| `Slot` | 物品槽位 |
+| `Canvas` | 画布容器 |
+| `Adaptive` | 自适应容器（等比缩放） |
+| `HGrid` / `VGrid` | 水平 / 垂直网格布局 |
+| `HStack` / `VStack` | 水平 / 垂直堆叠布局 |
+| `Scroll` | 滚动容器 |
+| `Progress` | 进度条 |
+| `Compass` | 指南针 / 路标控件 |
+| `BossBar` | Boss 血条控件 |
+| `Chat` / `ChatTextBox` | 聊天框 / 聊天输入框 |
+| `Suggestion` | 命令建议提示控件 |
+| `Observer` | 数据驱动列表控件 |
+| `Import` | 跨 UI 导入控件 |
+| `Card` | 聊天卡片根控件 |
+| `BossBars` | 血条排列器 |
 
 ## 致谢
 

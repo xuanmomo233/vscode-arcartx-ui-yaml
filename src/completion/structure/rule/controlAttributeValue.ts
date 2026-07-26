@@ -4,9 +4,9 @@ import * as vscode from 'vscode';
 export const type_values = [
     // ========== 基础显示 ==========
     {
-        label: 'texture',
+        label: 'Texture',
         detail: '纹理 - 普通图片控件',
-        insertText: 'texture',
+        insertText: 'Texture',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 纹理 (Texture)\n\n' +
@@ -24,9 +24,9 @@ export const type_values = [
         )
     },
     {
-        label: 'text',
+        label: 'Text',
         detail: '文字 - 文本控件',
-        insertText: 'text',
+        insertText: 'Text',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 文字 (Text)\n\n' +
@@ -70,9 +70,9 @@ export const type_values = [
     },
     // ========== 游戏内容显示 ==========
     {
-        label: 'entity',
+        label: 'Entity',
         detail: '实体 - 游戏实体渲染',
-        insertText: 'entity',
+        insertText: 'Entity',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 实体 (Entity)\n\n' +
@@ -87,9 +87,9 @@ export const type_values = [
         )
     },
     {
-        label: 'slot',
+        label: 'Slot',
         detail: '槽位 - 物品格子',
-        insertText: 'slot',
+        insertText: 'Slot',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 槽位 (Slot)\n\n' +
@@ -116,9 +116,9 @@ export const type_values = [
     },
     // ========== 输入控件 ==========
     {
-        label: 'textBox',
+        label: 'TextBox',
         detail: '输入框 - 文本输入',
-        insertText: 'textBox',
+        insertText: 'TextBox',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 输入框 (TextBox)\n\n' +
@@ -140,9 +140,9 @@ export const type_values = [
     },
     // ========== 布局型 ==========
     {
-        label: 'canvas',
+        label: 'Canvas',
         detail: '画布 - 基础容器',
-        insertText: 'canvas',
+        insertText: 'Canvas',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 画布 (Canvas)\n\n' +
@@ -156,9 +156,9 @@ export const type_values = [
         )
     },
     {
-        label: 'adaptive',
+        label: 'Adaptive',
         detail: '自适配布局 - 响应式容器',
-        insertText: 'adaptive',
+        insertText: 'Adaptive',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 自适配布局 (Adaptive)\n\n' +
@@ -172,9 +172,9 @@ export const type_values = [
         )
     },
     {
-        label: 'hGrid',
+        label: 'HGrid',
         detail: '横向网格布局 (Grid)',
-        insertText: 'hGrid',
+        insertText: 'HGrid',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 横向网格布局 (HGrid/Gird)\n\n' +
@@ -189,9 +189,9 @@ export const type_values = [
         )
     },
     {
-        label: 'vGrid',
+        label: 'VGrid',
         detail: '纵向网格布局',
-        insertText: 'vGrid',
+        insertText: 'VGrid',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 纵向网格布局 (VGrid)\n\n' +
@@ -206,9 +206,9 @@ export const type_values = [
         )
     },
     {
-        label: 'hStack',
+        label: 'HStack',
         detail: '横向布局 (Stack)',
-        insertText: 'hStack',
+        insertText: 'HStack',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 横向布局 (HStack/Stack)\n\n' +
@@ -223,9 +223,9 @@ export const type_values = [
         )
     },
     {
-        label: 'vStack',
+        label: 'VStack',
         detail: '竖向布局',
-        insertText: 'vStack',
+        insertText: 'VStack',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 竖向布局 (VStack)\n\n' +
@@ -240,9 +240,9 @@ export const type_values = [
         )
     },
     {
-        label: 'scroll',
+        label: 'Scroll',
         detail: '滚动栏',
-        insertText: 'scroll',
+        insertText: 'Scroll',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 滚动栏 (Scroll)\n\n' +
@@ -261,9 +261,9 @@ export const type_values = [
     },
     // ========== 游戏内容显示（续）==========
     {
-        label: 'model',
+        label: 'Model',
         detail: '模特 - 模型渲染',
-        insertText: 'model',
+        insertText: 'Model',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 模特 (Model)\n\n' +
@@ -280,9 +280,9 @@ export const type_values = [
         )
     },
     {
-        label: 'bossBar',
+        label: 'BossBar',
         detail: '多层血条 - UI血条显示',
-        insertText: 'bossBar',
+        insertText: 'BossBar',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 多层血条 (BossBar)\n\n' +
@@ -298,9 +298,9 @@ export const type_values = [
     },
     // ========== 特殊控件 ==========
     {
-        label: 'compass',
+        label: 'Compass',
         detail: '罗盘 - 指南针',
-        insertText: 'compass',
+        insertText: 'Compass',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 罗盘 (Compass)\n\n' +
@@ -323,9 +323,9 @@ export const type_values = [
         )
     },
     {
-        label: 'progress',
+        label: 'Progress',
         detail: '进度条 - 缓动动画',
-        insertText: 'progress',
+        insertText: 'Progress',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 进度条 (Progress)\n\n' +
@@ -346,9 +346,9 @@ export const type_values = [
         )
     },
     {
-        label: 'import',
+        label: 'Import',
         detail: '导入器 - 导入其他UI控件',
-        insertText: 'import',
+        insertText: 'Import',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 导入器 (Import)\n\n' +
@@ -371,9 +371,9 @@ export const type_values = [
         )
     },
     {
-        label: 'observer',
+        label: 'Observer',
         detail: '观察者 - 动态创建/删除控件',
-        insertText: 'observer',
+        insertText: 'Observer',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 观察者 (Observer)\n\n' +
@@ -409,9 +409,9 @@ export const type_values = [
     },
     // ========== 聊天相关 ==========
     {
-        label: 'chatTextBox',
+        label: 'ChatTextBox',
         detail: '聊天栏输入框 - 聊天专用输入',
-        insertText: 'chatTextBox',
+        insertText: 'ChatTextBox',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 聊天栏输入框 (ChatTextBox)\n\n' +
@@ -431,9 +431,9 @@ export const type_values = [
         )
     },
     {
-        label: 'suggestion',
+        label: 'Suggestion',
         detail: '命令补全器 - 命令补全',
-        insertText: 'suggestion',
+        insertText: 'Suggestion',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 命令补全器 (Suggestion)\n\n' +
@@ -453,9 +453,9 @@ export const type_values = [
         )
     },
     {
-        label: 'chat',
+        label: 'Chat',
         detail: '聊天栏 - 聊天消息显示',
-        insertText: 'chat',
+        insertText: 'Chat',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 聊天栏 (Chat)\n\n' +
@@ -475,9 +475,9 @@ export const type_values = [
         )
     },
     {
-        label: 'card',
+        label: 'Card',
         detail: '卡片消息 - 聊天卡片根控件',
-        insertText: 'card',
+        insertText: 'Card',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 卡片消息 (Card)\n\n' +
@@ -492,9 +492,9 @@ export const type_values = [
     },
     // ========== 布局型（续）==========
     {
-        label: 'bossBars',
+        label: 'BossBars',
         detail: '血条排列器 - 自动布局血条',
-        insertText: 'bossBars',
+        insertText: 'BossBars',
         kind: vscode.CompletionItemKind.EnumMember,
         documentation: new vscode.MarkdownString(
             '## 血条排列器 (BossBars)\n\n' +
