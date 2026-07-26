@@ -468,9 +468,8 @@ select {
 
     <div class="section">
         <div class="section-title">预览</div>
-        <div style="position:relative;height:100px;border-radius:6px;overflow:hidden;border:1px solid var(--vscode-panel-border);">
-            <img id="frostedBg" src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a5/Minecraft_Landscape.png" style="position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);object-fit:cover;filter:blur(9px);pointer-events:none;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-            <div style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#5a8a3a;color:#fff;font-size:12px;">背景加载失败</div>
+        <div style="position:relative;height:100px;border-radius:6px;overflow:hidden;border:1px solid var(--vscode-panel-border);background:#4a7a3a;">
+            <div id="frostedBg" style="position:absolute;inset:0;background:#4a7a3a;filter:blur(9px);"></div>
             <div id="frostedOverlay" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
                 <span class="preview-text" id="frostedPreviewText">~Frosted:30;255,255,255,80</span>
             </div>
