@@ -586,3 +586,53 @@ export const builtin_objects = [
     // 对象方法
     'Tip', 'ItemStack', 'PotionEffect'
 ];
+
+// 内置对象介绍（悬停对象名时显示，而非具体函数）
+export const builtin_object_descriptions: { label: string; detail: string; documentation: vscode.MarkdownString }[] = [
+    { label: 'Aria', detail: 'Aria 脚本引擎', documentation: new vscode.MarkdownString('**Aria 脚本引擎对象**\n\n提供脚本运行时的全局操作接口。') },
+    { label: 'Math', detail: '数学工具对象', documentation: new vscode.MarkdownString('**Math 数学工具对象**\n\n提供数学运算函数，如 abs、sin、cos、floor、round 等。') },
+    { label: 'String', detail: '字符串工具对象', documentation: new vscode.MarkdownString('**String 字符串工具对象**\n\n提供字符串操作函数。') },
+    { label: 'Number', detail: '数字工具对象', documentation: new vscode.MarkdownString('**Number 数字工具对象**\n\n提供数字操作函数。') },
+    { label: 'List', detail: '列表工具对象', documentation: new vscode.MarkdownString('**List 列表工具对象**\n\n提供列表操作函数，如 add、remove、get、size 等。') },
+    { label: 'Map', detail: '字典工具对象', documentation: new vscode.MarkdownString('**Map 字典工具对象**\n\n提供字典操作函数，如 put、get、keys、values 等。') },
+    { label: 'UUID', detail: 'UUID 对象', documentation: new vscode.MarkdownString('**UUID 对象**\n\n提供 UUID 生成和操作功能。') },
+    // 动画插值
+    { label: 'Lerp', detail: '线性插值动画对象', documentation: new vscode.MarkdownString('**Lerp 线性插值**\n\n在指定时间内将数值平滑过渡到目标值。\n\n**方法**: `get()` / `reset()` / `reverse()`') },
+    { label: 'Back', detail: '回弹插值动画对象', documentation: new vscode.MarkdownString('**Back 回弹插值**\n\n带回弹效果的动画插值。') },
+    { label: 'Bezier', detail: '贝塞尔插值动画对象', documentation: new vscode.MarkdownString('**Bezier 贝塞尔插值**\n\n贝塞尔曲线动画插值。') },
+    { label: 'Bounce', detail: '弹跳插值动画对象', documentation: new vscode.MarkdownString('**Bounce 弹跳插值**\n\n弹跳效果动画插值。') },
+    { label: 'CircX', detail: '圆形插值动画对象', documentation: new vscode.MarkdownString('**CircX 圆形插值**\n\n圆形缓动动画插值。') },
+    { label: 'CircY', detail: '圆形插值动画对象', documentation: new vscode.MarkdownString('**CircY 圆形插值**\n\n圆形缓动动画插值。') },
+    { label: 'Elastic', detail: '弹性插值动画对象', documentation: new vscode.MarkdownString('**Elastic 弹性插值**\n\n弹性效果动画插值。') },
+    { label: 'Expo', detail: '指数插值动画对象', documentation: new vscode.MarkdownString('**Expo 指数插值**\n\n指数缓动动画插值。') },
+    { label: 'Sine', detail: '正弦插值动画对象', documentation: new vscode.MarkdownString('**Sine 正弦插值**\n\n正弦缓动动画插值。') },
+    { label: 'Smooth', detail: '平滑插值动画对象', documentation: new vscode.MarkdownString('**Smooth 平滑插值**\n\n平滑缓动动画插值。') },
+    { label: 'Spring', detail: '弹簧插值动画对象', documentation: new vscode.MarkdownString('**Spring 弹簧插值**\n\n弹簧效果动画插值。') },
+    // 全局工具集
+    { label: 'Cast', detail: '类型转换工具', documentation: new vscode.MarkdownString('**Cast 类型转换工具**\n\n提供类型转换函数。') },
+    { label: 'Chat', detail: '聊天工具对象', documentation: new vscode.MarkdownString('**Chat 聊天工具对象**\n\n提供聊天消息相关函数，如 `getEventMessage()` 等。') },
+    { label: 'Display', detail: '显示工具对象', documentation: new vscode.MarkdownString('**Display 显示工具对象**\n\n提供屏幕显示相关函数，如 `getWidth()` / `getHeight()` 等。') },
+    { label: 'Entity', detail: '实体工具对象', documentation: new vscode.MarkdownString('**Entity 实体工具对象**\n\n提供实体相关操作函数。') },
+    { label: 'Fog', detail: '雾效工具对象', documentation: new vscode.MarkdownString('**Fog 雾效工具对象**\n\n提供雾效控制函数。') },
+    { label: 'Game', detail: '游戏工具对象', documentation: new vscode.MarkdownString('**Game 游戏工具对象**\n\n提供游戏相关控制函数。') },
+    { label: 'Keyboard', detail: '键盘工具对象', documentation: new vscode.MarkdownString('**Keyboard 键盘工具对象**\n\n提供键盘输入相关函数。') },
+    { label: 'Message', detail: '消息工具对象', documentation: new vscode.MarkdownString('**Message 消息工具对象**\n\n提供消息发送相关函数，如 `chat()` 等。') },
+    { label: 'Name', detail: '名称工具对象', documentation: new vscode.MarkdownString('**Name 名称工具对象**\n\n提供名称相关函数。') },
+    { label: 'Packet', detail: '数据包工具对象', documentation: new vscode.MarkdownString('**Packet 数据包工具对象**\n\n提供客户端到服务端的数据包发送函数，如 `send()` 等。') },
+    { label: 'Placeholder', detail: '占位符工具对象', documentation: new vscode.MarkdownString('**Placeholder 占位符工具对象**\n\n提供服务器变量占位符解析，如 `parse()` 等。') },
+    { label: 'Player', detail: '玩家工具对象', documentation: new vscode.MarkdownString('**Player 玩家工具对象**\n\n提供玩家状态查询函数，如 `getName()` / `getHealth()` / `getLevel()` 等。') },
+    { label: 'Potion', detail: '药水工具对象', documentation: new vscode.MarkdownString('**Potion 药水工具对象**\n\n提供药水效果相关函数，如 `getActivePotionEffects()` 等。') },
+    { label: 'Screen', detail: '屏幕工具对象', documentation: new vscode.MarkdownString('**Screen 屏幕工具对象**\n\n提供 UI 打开/关闭和屏幕尺寸函数，如 `open()` / `close()` / `getWidth()` 等。') },
+    { label: 'Shader', detail: '着色器工具对象', documentation: new vscode.MarkdownString('**Shader 着色器工具对象**\n\n提供着色器效果控制函数，如 `start()` / `update()` / `stop()` 等。') },
+    { label: 'Skybox', detail: '天空盒工具对象', documentation: new vscode.MarkdownString('**Skybox 天空盒工具对象**\n\n提供天空盒控制函数。') },
+    { label: 'Sound', detail: '声音工具对象', documentation: new vscode.MarkdownString('**Sound 声音工具对象**\n\n提供音效播放控制函数。') },
+    { label: 'Thread', detail: '线程工具对象', documentation: new vscode.MarkdownString('**Thread 线程工具对象**\n\n提供线程操作函数，如 `sleep()` 等。') },
+    { label: 'Time', detail: '时间工具对象', documentation: new vscode.MarkdownString('**Time 时间工具对象**\n\n提供时间相关函数。') },
+    { label: 'Web', detail: '网络工具对象', documentation: new vscode.MarkdownString('**Web 网络工具对象**\n\n提供网络请求相关函数。') },
+    { label: 'Mouse', detail: '鼠标工具对象', documentation: new vscode.MarkdownString('**Mouse 鼠标工具对象**\n\n提供鼠标状态查询函数，如 `getX()` / `getY()` 等。') },
+    { label: 'Camera', detail: '相机工具对象', documentation: new vscode.MarkdownString('**Camera 相机工具对象**\n\n提供相机控制函数，如 `setThirdPerson()` / `clearState()` / `setCameraPosition()` 等。') },
+    // 对象方法
+    { label: 'Tip', detail: '悬浮提示对象', documentation: new vscode.MarkdownString('**Tip 悬浮提示对象**\n\n提供悬浮提示显示函数，如 `show()` / `hide()` 等。') },
+    { label: 'ItemStack', detail: '物品对象', documentation: new vscode.MarkdownString('**ItemStack 物品对象**\n\n提供物品信息查询函数，如 `getName()` / `getLore()` / `getNBT()` 等。') },
+    { label: 'PotionEffect', detail: '药水效果对象', documentation: new vscode.MarkdownString('**PotionEffect 药水效果对象**\n\n提供药水效果信息查询函数，如 `getCategory()` / `getDuration()` / `getLevel()` 等。') },
+];

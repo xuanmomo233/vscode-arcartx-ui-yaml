@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { builtin_functions } from '../completion/structure/rule/ariaBuiltin';
+import { builtin_functions, builtin_object_descriptions } from '../completion/structure/rule/ariaBuiltin';
 import { type_values, point_values, slotType_values, shape_values, alignment_values, showType_values, progress_mode_values } from '../completion/structure/rule/controlAttributeValue';
 import { control_attribute } from '../completion/structure/rule/controlAttribute';
 import { control_actions } from '../completion/structure/rule/controlAction';
@@ -25,6 +25,8 @@ export class HoverProvider implements vscode.HoverProvider {
     private yamlMap: Map<string, DocItem> = new Map();
     // 脚本上下文使用的 map（Aria 内置函数、self 函数等）
     private scriptMap: Map<string, DocItem> = new Map();
+    // 内置对象介绍 map（悬停对象名时显示对象介绍，而非具体函数）
+    private objectMap: Map<string, DocItem> = new Map();
     // 通用 map（HUD 名称等，两个上下文都可匹配）
     private commonMap: Map<string, DocItem> = new Map();
 
@@ -103,6 +105,11 @@ export class HoverProvider implements vscode.HoverProvider {
                     this.scriptMap.set(partLower, item);
                 }
             }
+        }
+
+        // 注册内置对象介绍（对象名 -> 对象介绍）
+        for (const item of builtin_object_descriptions) {
+            this.objectMap.set(item.label.toLowerCase(), item);
         }
 
         // 注册通用项
@@ -234,9 +241,15 @@ export class HoverProvider implements vscode.HoverProvider {
             docItem = this.yamlMap.get(prefixPath) || this.yamlMap.get(cursorSeg);
         } else if (isScript) {
             // 脚本上下文：
+            // 0. 如果光标在第一段（对象名），优先查 objectMap 显示对象介绍
+            if (cursorSegIndex === 0 && this.objectMap.has(cursorSeg)) {
+                docItem = this.objectMap.get(cursorSeg);
+            }
             // 1. 路径前缀查找（如 player.getfood）→ 优先 scriptMap
-            docItem = this.scriptMap.get(prefixPath);
-            if (!docItem) docItem = this.yamlMap.get(prefixPath);
+            if (!docItem) {
+                docItem = this.scriptMap.get(prefixPath);
+                if (!docItem) docItem = this.yamlMap.get(prefixPath);
+            }
             // 2. 前一段.光标段 查找（如 parent.height）→ 优先 scriptMap
             if (!docItem && predecessorDotSeg) {
                 docItem = this.scriptMap.get(predecessorDotSeg);
