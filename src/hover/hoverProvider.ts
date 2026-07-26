@@ -144,7 +144,7 @@ export class HoverProvider implements vscode.HoverProvider {
         for (let i = position.line; i >= 0; i--) {
             const lineText = document.lineAt(i).text;
             // 匹配 "xxx: |-" 或 "xxx: |" 模式
-            if (/^\s*\w+:\s*\|/-?\s*$/.test(lineText)) {
+            if (/^\s*\w+:\s*\|-?\s*$/.test(lineText)) {
                 return true;
             }
             // 如果遇到非缩进行（顶层 YAML 键），停止查找
