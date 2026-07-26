@@ -589,7 +589,7 @@ select {
         <div class="output-group">
             <div class="output-label">effect 渐变块 (YAML)</div>
             <div class="output-row">
-                <textarea id="gradEffectOutput" readonly rows="5" style="width:100%;font-family:var(--vscode-editor-font-family);font-size:11px;resize:vertical"></textarea>
+                <textarea id="gradEffectOutput" readonly rows="5" style="width:100%;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-input-border);padding:4px;border-radius:3px;font-family:var(--vscode-editor-font-family);font-size:11px;resize:vertical"></textarea>
             </div>
             <div class="output-row">
                 <button class="btn btn-sm" onclick="copyText('gradEffectOutput')">复制</button>

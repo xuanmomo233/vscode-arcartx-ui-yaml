@@ -99,14 +99,14 @@ export class ColorDecorator {
             const startPos = editor.document.positionAt(match.index);
             const endPos = editor.document.positionAt(match.index + match[0].length);
             const range = new vscode.Range(startPos, endPos);
-            const alpha = (a / 255).toFixed(2);
-            const colorRgba = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            const alphaHex = Math.round(a / 255 * 255).toString(16).padStart(2, '0');
+            const colorHex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}${alphaHex}`;
 
             swatchDecorations.push({
                 range,
                 renderOptions: {
                     before: {
-                        backgroundColor: colorRgba,
+                        backgroundColor: colorHex,
                         contentText: ' ',
                         border: '1px solid #555',
                         width: '14px',
