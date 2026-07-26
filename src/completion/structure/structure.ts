@@ -301,7 +301,7 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
                     // 检查是否是容器关键字
                     if (actualContent.endsWith(':')) {
                         const key = actualContent.replace(':', '').trim();
-                        const containerKeys = ['attribute', 'children', 'action', 'controls', 'ui', 'root_control', 'packetHandler'];
+                        const containerKeys = ['attribute', 'children', 'action', 'controls', 'ui', 'root_control', 'packetHandler', 'effect'];
                         if (containerKeys.includes(key)) {
                             currentBlockKey = key;
                             blockLineNum = lineNum;

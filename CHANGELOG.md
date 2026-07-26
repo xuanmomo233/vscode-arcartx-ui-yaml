@@ -2,6 +2,13 @@
 ### [0.0.1]
 - Initial release
 
+### [0.0.30]
+- 新增 `effect` 块补全：在控件的 `effect:` 下输入 `/` 或 `?` 可触发 8 种图形特效补全
+  - `stroke`（描边）、`shadow`（阴影）、`neon`（霓虹）、`ripple`（波纹）
+  - `gradient`（渐变）、`flow`（流光）、`energy`（能量）、`pie`（饼图剪裁）
+  - 每种特效带完整参数模板和详细文档
+- 修复 `isScriptContext` 正则中未转义的 `/` 导致编译失败
+
 ### [0.0.29]
 - 重写悬停 provider，实现上下文感知查找：
   - 分离 `yamlMap`/`scriptMap`/`commonMap`，YAML 属性名位置优先匹配控件属性，脚本块内优先匹配函数

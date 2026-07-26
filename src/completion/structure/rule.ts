@@ -14,6 +14,7 @@ import {hud_names, match_values} from "./rule/uiValue";
 import {type_values, point_values, slotType_values} from "./rule/controlAttributeValue";
 import {task_settings, task_templates} from "./rule/uiTaskSettings";
 import {task_type_values} from "./rule/uiTaskTypeValues";
+import {control_effects} from "./rule/controlEffect";
 
 export interface CompletionConfig {
     path: string[];
@@ -107,6 +108,12 @@ const action_level: CompletionConfig[] = [
     { path: ['*', 'action', '*'], completions: [...control_self_functions, ...builtin_functions] },
 ];
 
+// ========== 图形效果配置 ==========
+const effect_level: CompletionConfig[] = [
+    // effect 块 - 显示特效类型补全（通配符匹配所有以 effect 结尾的路径）
+    { path: ['*', 'effect'], completions: control_effects },
+];
+
 // ========== UI 定时任务配置 ==========
 const tasks_level: CompletionConfig[] = [
     // tasks 块 - 显示任务模板（delay-task, loop-task）
@@ -124,5 +131,6 @@ export const completionConfigs: CompletionConfig[] = [
     ...controls_level,
     ...attribute_level,
     ...action_level,
+    ...effect_level,
     ...tasks_level,
 ];
