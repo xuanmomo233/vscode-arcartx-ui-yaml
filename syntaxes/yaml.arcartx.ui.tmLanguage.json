@@ -155,7 +155,7 @@
             "name": "punctuation.definition.block.sequence.item.yaml"
         },
         "comment": {
-            "begin": "(?:(^[ \\t]*)|[ \\t]+)(?=#.*$)",
+            "begin": "(?:(^[ \\t]*)|[ \\t]+)(?=#[^\\n]*)",
             "beginCaptures": {
                 "1": {
                     "name": "punctuation.whitespace.comment.leading.yaml"

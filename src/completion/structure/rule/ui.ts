@@ -147,7 +147,7 @@ export const ui_options = [
     {
         label: 'transfer',
         detail: '是否将交互传递到底层UI/HUD[默认: false] - 常用于替换聊天栏时让HUD聊天控件仍可交互[脚本]',
-        insertText: 'transfer: ${1|true,false|}',
+        insertText: 'transfer: false',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             `**交互传递**\n\n` +
@@ -160,7 +160,7 @@ export const ui_options = [
     {
         label: 'screenScale',
         detail: '是否启用屏幕缩放适配[默认: true][非脚本]',
-        insertText: 'screenScale: ${1|true,false|}',
+        insertText: 'screenScale: true',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             `**屏幕缩放适配**\n\n` +

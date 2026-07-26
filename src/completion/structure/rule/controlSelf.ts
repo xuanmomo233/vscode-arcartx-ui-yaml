@@ -40,7 +40,7 @@ export const control_self_functions = [
             '```yaml\n' +
             'template:\n' +
             '  模板ID:\n' +
-            '    type: texture\n' +
+            '    type: Texture\n' +
             '    attribute:\n' +
             '      width: 100\n' +
             '      height: 100\n' +

@@ -143,8 +143,8 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'point', snippet: '~${3:top_left}' },
         { label: 'x', snippet: '${4:0}' },
         { label: 'y', snippet: '${5:0}' },
-        { label: 'center', snippet: '${6|true,false|}' },
-        { label: 'shadow', snippet: '${7|true,false|}' },
+        { label: 'center', snippet: 'true' },
+        { label: 'shadow', snippet: 'true' },
     ],
     '9slicetexture': [
         { label: 'width', snippet: '${1:100}' },
@@ -170,13 +170,13 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'background', snippet: '~${2:Frosted:30;0,0,0,80}' },
         { label: 'point', snippet: '~${3:horizontal_stretch_bottom}' },
         { label: 'height', snippet: '${4:45}' },
-        { label: 'canLoseFocus', snippet: '${5|true,false|}' },
+        { label: 'canLoseFocus', snippet: 'true' },
     ],
     entity: [
         { label: 'scale', snippet: '${1:5}' },
         { label: 'point', snippet: '~${2:middle_center}' },
-        { label: 'hideTag', snippet: '${3|true,false|}' },
-        { label: 'followMouse', snippet: '${4|true,false|}' },
+        { label: 'hideTag', snippet: 'false' },
+        { label: 'followMouse', snippet: 'false' },
         { label: 'uuid', snippet: '~${5:self}' },
     ],
     slot: [
@@ -192,7 +192,7 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'width', snippet: '${1:800}' },
         { label: 'height', snippet: '${2:600}' },
         { label: 'point', snippet: '~${3:middle_center}' },
-        { label: 'through', snippet: '${4|true,false|}' },
+        { label: 'through', snippet: 'false' },
     ],
     adaptive: [
         { label: 'width', snippet: '${1:1920}' },
@@ -243,7 +243,7 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'animation', snippet: '~${2:animation}' },
         { label: 'scale', snippet: '${3:1}' },
         { label: 'point', snippet: '~${4:middle_center}' },
-        { label: 'followMouse', snippet: '${5|true,false|}' },
+        { label: 'followMouse', snippet: 'false' },
     ],
     bossbar: [
         { label: 'textures', snippet: '~[${1:texture1.png,texture2.png}]' },
@@ -281,10 +281,10 @@ const type_templates: Record<string, PropTemplate[]> = {
         { label: 'point', snippet: '~${3:horizontal_stretch_top}' },
         { label: 'height', snippet: '${4:495}' },
         { label: 'lineSpace', snippet: '${5:10}' },
-        { label: 'showCard', snippet: '${6|true,false|}' },
+        { label: 'showCard', snippet: 'true' },
     ],
     suggestion: [
-        { label: 'up', snippet: '${1|true,false|}' },
+        { label: 'up', snippet: 'false' },
         { label: 'fontSize', snippet: '${2:64}' },
         { label: 'background', snippet: '~${3:0,0,0,200}' },
         { label: 'backgroundBorder', snippet: '${4:10}' },

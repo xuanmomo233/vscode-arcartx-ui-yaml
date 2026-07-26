@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 
 
 const texture = {
-    label: 'texture',
+    label: 'Texture',
     detail: '创建纹理控件',
     insertText: [
         '${1:texture_}:',
-        '  type: texture',
+        '  type: Texture',
         '  attribute:',
         '    width: ${2:100}',
         '    height: ${3:100}',
@@ -18,28 +18,28 @@ const texture = {
     kind: vscode.CompletionItemKind.Snippet
 }
 const text = {
-    label: 'text',
+    label: 'Text',
     detail: '创建文字控件',
     insertText: [
         '${1:text_}:',
-        '  type: text',
+        '  type: Text',
         '  attribute:',
         '    texts: ~${2:&f文本}',
         '    fontSize: ${3:49}',
         '    point: ~${4:top_left}',
         '    x: ${5:0}',
         '    y: ${6:0}',
-        '    center: ${7|true,false|}',
-        '    shadow: ${8|true,false|}',
+        '    center: true',
+        '    shadow: true',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
 const _9sliceTexture = {
-    label: '9sliceTexture',
+    label: '9SliceTexture',
     detail: '创建九宫格纹理控件',
     insertText: [
         '${1:nineSliceTexture_}:',
-        '  type: 9sliceTexture',
+        '  type: 9SliceTexture',
         '  attribute:',
         '    width: ${2:100}',
         '    height: ${3:100}',
@@ -59,7 +59,7 @@ const textInput = {
     detail: '创建常规文本输入框控件',
     insertText: [
         '${1:textInput_}:',
-        '  type: textbox',
+        '  type: TextBox',
         '  attribute:',
         '    width: ${2:350}',
         '    height: ${3:28}',
@@ -74,7 +74,7 @@ const passwordInput = {
     detail: '创建密码输入框控件',
     insertText: [
         '${1:passwordInput_}:',
-        '  type: textbox',
+        '  type: TextBox',
         '  attribute:',
         '    width: ${2:350}',
         '    height: ${3:28}',
@@ -86,26 +86,26 @@ const passwordInput = {
     kind: vscode.CompletionItemKind.Snippet
 };
 const entity = {
-    label: 'entity',
+    label: 'Entity',
     detail: '创建实体控件',
     insertText: [
         '${1:entity_}:',
-        '  type: entity',
+        '  type: Entity',
         '  attribute:',
         '    scale: ${2:5}',
         '    point: ~${3:middle_center}',
-        '    hideTag: ${4|true,false|}',
-        '    followMouse: ${5|true,false|}',
-        '    uuid: ~${6:self}'
+        '    hideTag: false',
+        '    followMouse: false',
+        '    uuid: ~${4:self}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
 const slot =  {
-    label: 'slot',
+    label: 'Slot',
     detail: '创建槽位控件',
     insertText: [
         '${1:slot_}:',
-        '  type: slot',
+        '  type: Slot',
         '  attribute:',
         '    width: ${2:80}',
         '    height: ${3:80}',
@@ -118,25 +118,25 @@ const slot =  {
     kind: vscode.CompletionItemKind.Snippet
 }
 const canvas = {
-    label: 'canvas',
+    label: 'Canvas',
     detail: '创建画布控件',
     insertText: [
         '${1:canvas_}:',
-        '  type: canvas',
+        '  type: Canvas',
         '  attribute:',
         '    width: ${2:800}',
         '    height: ${3:600}',
         '    point: ~${4:middle_center}',
-        '    through: ${5|true,false|}'
+        '    through: false'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
 const adaptive = {
-    label: 'adaptive',
+    label: 'Adaptive',
     detail: '创建自适应控件',
     insertText: [
         '${1:adaptive_}:',
-        '  type: adaptive',
+        '  type: Adaptive',
         '  attribute:',
         '    width: ${2:1920}',
         '    height: ${3:1080}',
@@ -145,11 +145,11 @@ const adaptive = {
     kind: vscode.CompletionItemKind.Snippet
 }
 const hGrid = {
-    label: 'hGrid',
+    label: 'HGrid',
     detail: '创建水平网格控件',
     insertText: [
         '${1:hGrid_}:',
-        '  type: hGrid',
+        '  type: HGrid',
         '  attribute:',
         '    spaceBetweenX: ${2:10}',
         '    spaceBetweenY: ${3:10}',
@@ -161,11 +161,11 @@ const hGrid = {
     kind: vscode.CompletionItemKind.Snippet
 }
 const vGrid = {
-    label: 'vGrid',
+    label: 'VGrid',
     detail: '创建垂直网格控件',
     insertText: [
         '${1:vGrid_}:',
-        '  type: vGrid',
+        '  type: VGrid',
         '  attribute:',
         '    spaceBetweenX: ${2:10}',
         '    spaceBetweenY: ${3:10}',
@@ -177,11 +177,11 @@ const vGrid = {
     kind: vscode.CompletionItemKind.Snippet
 }
 const hStack = {
-    label: 'hStack',
+    label: 'HStack',
     detail: '创建水平堆栈控件',
     insertText: [
         '${1:hStack_}:',
-        '  type: hStack',
+        '  type: HStack',
         '  attribute:',
         '    spaceBetween: ${2:10}',
         '    point: ~${3:top_left}',
@@ -192,11 +192,11 @@ const hStack = {
     kind: vscode.CompletionItemKind.Snippet
 };
 const vStack = {
-    label: 'vStack',
+    label: 'VStack',
     detail: '创建垂直堆栈控件',
     insertText: [
         '${1:vStack_}:',
-        '  type: vStack',
+        '  type: VStack',
         '  attribute:',
         '    spaceBetween: ${2:10}',
         '    point: ~${3:top_left}',
@@ -211,14 +211,14 @@ const scroll_full = {
     detail: '创建完整滚动栏组件(包含垂直、水平滑块)',
     insertText: [
         '${1:scroll_}:',
-        '  type: canvas',
+        '  type: Canvas',
         '  attribute:',
         '    width: ${2:800}',
         '    height: ${3:500}',
         '    point: ~${4:middle_center}',
         '  children:',
         '    vButton:',
-        '      type: texture',
+        '      type: Texture',
         '      attribute:',
         '        point: ~top_right',
         '        width: 25',
@@ -227,7 +227,7 @@ const scroll_full = {
         '        maxDragY: |',
         '          self.parent.height - self.height',
         '    hButton:',
-        '      type: texture',
+        '      type: Texture',
         '      attribute:',
         '        point: ~bottom_left',
         '        width: 80',
@@ -236,7 +236,7 @@ const scroll_full = {
         '        maxDragX: |',
         '          self.parent.width - self.width',
         '    scroll:',
-        '      type: scroll',
+        '      type: Scroll',
         '      attribute:',
         '        width: |',
         '          self.parent.width - self.parent[\'vButton\'].width',
@@ -248,7 +248,7 @@ const scroll_full = {
         '          self.parent[\'hButton\'].getDragXRatio()',
         '      children:',
         '        container:',
-        '          type: ${5:canvas}',
+        '          type: ${5:Canvas}',
         '          attribute:',
         '            width: ${6:1270}',
         '            height: ${7:1000}',
@@ -262,14 +262,14 @@ const scroll_v = {
     detail: '创建完整滚动栏组件(仅垂直滚动)',
     insertText: [
         '${1:scroll_}:',
-        '  type: canvas',
+        '  type: Canvas',
         '  attribute:',
         '    width: ${2:800}',
         '    height: ${3:500}',
         '    point: ~${4:middle_center}',
         '  children:',
         '    vButton:',
-        '      type: texture',
+        '      type: Texture',
         '      attribute:',
         '        point: ~top_right',
         '        width: 25',
@@ -278,7 +278,7 @@ const scroll_v = {
         '        maxDragY: |',
         '          self.parent.height - self.height',
         '    scroll:',
-        '      type: scroll',
+        '      type: Scroll',
         '      attribute:',
         '        width: |',
         '          self.parent.width - self.parent[\'vButton\'].width',
@@ -288,7 +288,7 @@ const scroll_v = {
         '          self.parent[\'vButton\'].getDragYRatio()',
         '      children:',
         '        container:',
-        '          type: ${5:canvas}',
+        '          type: ${5:Canvas}',
         '          attribute:',
         '            width: |',
         '              self.parent.width',
@@ -303,14 +303,14 @@ const scroll_h = {
     detail: '创建完整滚动栏组件(仅水平滚动)',
     insertText: [
         '${1:scroll_}:',
-        '  type: canvas',
+        '  type: Canvas',
         '  attribute:',
         '    width: ${2:800}',
         '    height: ${3:500}',
         '    point: ~${4:middle_center}',
         '  children:',
         '    hButton:',
-        '      type: texture',
+        '      type: Texture',
         '      attribute:',
         '        point: ~bottom_center',
         '        width: 80',
@@ -319,7 +319,7 @@ const scroll_h = {
         '        maxDragX: |',
         '          self.parent.width - self.width',
         '    scroll:',
-        '      type: scroll',
+        '      type: Scroll',
         '      attribute:',
         '        width: |',
         '          self.parent.width',
@@ -329,7 +329,7 @@ const scroll_h = {
         '          self.parent[\'hButton\'].getDragXRatio()',
         '      children:',
         '        container:',
-        '          type: ${5:canvas}',
+        '          type: ${5:Canvas}',
         '          attribute:',
         '            width: ${6:1000}',
         '            height: |',
@@ -344,7 +344,7 @@ const button = {
     detail: '快速创建按钮',
     insertText: [
         '${1:button_}:',
-        '  type: texture',
+        '  type: Texture',
         '  attribute:',
         '    width: ${2:100}',
         '    height: ${3:30}',
@@ -362,7 +362,7 @@ const button_text = {
     detail: '快速创建按钮(带背景和文字)',
     insertText: [
         '${1:button_}:',
-        '  type: texture',
+        '  type: Texture',
         '  attribute:',
         '    width: ${2:100}',
         '    height: ${3:30}',
@@ -371,10 +371,10 @@ const button_text = {
         '    hover: ~${6:150,150,150,255}',
         '    texts: ~${7:&0按钮文字}',
         '    fontSize: ${8:49}',
-        '    center: ${9|true,false|}',
+        '    center: true',
         '  action:',
         '    click: |-',
-        '      ${10:// 点击事件}'
+        '      ${9:// 点击事件}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -383,7 +383,7 @@ const inv_slots = {
     detail: '创建背包槽位网格(带自动生成)',
     insertText: [
         '${1:inventory_slots_}:',
-        '  type: grid',
+        '  type: HGrid',
         '  attribute:',
         '    spaceBetweenY: ${2:60}',
         '    spaceBetweenX: ${3:10}',
@@ -395,7 +395,7 @@ const inv_slots = {
         '      }',
         '  children:',
         '    slot0:',
-        '      type: slot',
+        '      type: Slot',
         '      attribute:',
         '        width: ${4:80}',
         '        height: ${5:80}',
@@ -412,7 +412,7 @@ const hotbar_slots = {
     detail: '创建快捷栏槽位(带自动生成)',
     insertText: [
         '${1:hotbar_slots_}:',
-        '  type: hStack',
+        '  type: HStack',
         '  attribute:',
         '    spaceBetween: ${2:40}',
         '  action:',
@@ -422,7 +422,7 @@ const hotbar_slots = {
         '      }',
         '  children:',
         '    slot0:',
-        '      type: slot',
+        '      type: Slot',
         '      attribute:',
         '        width: ${3:80}',
         '        height: ${4:80}',
@@ -436,26 +436,26 @@ const hotbar_slots = {
 
 // ========== 游戏内容显示（续）==========
 const model = {
-    label: 'model',
+    label: 'Model',
     detail: '创建模特控件',
     insertText: [
         '${1:model_}:',
-        '  type: model',
+        '  type: Model',
         '  attribute:',
         '    model: ~${2:modelId}',
         '    animation: ~${3:animation}',
         '    scale: ${4:1}',
         '    point: ~${5:middle_center}',
-        '    followMouse: ${6|true,false|}'
+        '    followMouse: false'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
 const bossBar = {
-    label: 'bossBar',
+    label: 'BossBar',
     detail: '创建多层血条控件',
     insertText: [
         '${1:bossBar_}:',
-        '  type: bossBar',
+        '  type: BossBar',
         '  attribute:',
         '    textures: ~[${2:texture1.png,texture2.png}]',
         '    transitionTime: ${3:500}',
@@ -466,11 +466,11 @@ const bossBar = {
 
 // ========== 特殊控件 ==========
 const compass = {
-    label: 'compass',
+    label: 'Compass',
     detail: '创建罗盘控件',
     insertText: [
         '${1:compass_}:',
-        '  type: compass',
+        '  type: Compass',
         '  attribute:',
         '    width: ${2:400}',
         '    height: ${3:400}',
@@ -485,11 +485,11 @@ const compass = {
     kind: vscode.CompletionItemKind.Snippet
 }
 const progress = {
-    label: 'progress',
+    label: 'Progress',
     detail: '创建进度条控件',
     insertText: [
         '${1:progress_}:',
-        '  type: progress',
+        '  type: Progress',
         '  attribute:',
         '    width: ${2:200}',
         '    height: ${3:20}',
@@ -501,11 +501,11 @@ const progress = {
     kind: vscode.CompletionItemKind.Snippet
 }
 const _import = {
-    label: 'import',
+    label: 'Import',
     detail: '创建导入器控件',
     insertText: [
         '${1:import_}:',
-        '  type: import',
+        '  type: Import',
         '  attribute:',
         '    node: ~${2:menu.uiId.adaptive.controlName}',
         '    point: ~${3:middle_center}'
@@ -513,11 +513,11 @@ const _import = {
     kind: vscode.CompletionItemKind.Snippet
 }
 const observer = {
-    label: 'observer',
+    label: 'Observer',
     detail: '创建观察者控件',
     insertText: [
         '${1:observer_}:',
-        '  type: observer',
+        '  type: Observer',
         '  attribute:',
         '    maxSize: ${2:32}',
         '    subscribe: ~${3:global.dictVar}',
@@ -528,68 +528,68 @@ const observer = {
 
 // ========== 聊天相关 ==========
 const chatTextBox = {
-    label: 'chatTextBox',
+    label: 'ChatTextBox',
     detail: '创建聊天栏输入框控件',
     insertText: [
         '${1:chatInput_}:',
-        '  type: chatTextBox',
+        '  type: ChatTextBox',
         '  attribute:',
         '    fontSize: ${2:64}',
         '    background: ~${3:Frosted:30;0,0,0,80}',
         '    point: ~${4:horizontal_stretch_bottom}',
         '    height: ${5:45}',
-        '    canLoseFocus: ${6|true,false|}',
+        '    canLoseFocus: true',
         '  children:',
         '    suggestion:',
-        '      type: suggestion',
+        '      type: Suggestion',
         '      attribute:',
-        '        up: ${7|true,false|}',
-        '        fontSize: ${8:64}',
-        '        background: ~${9:0,0,0,200}',
-        '        backgroundBorder: ${10:10}',
-        '        maxShow: ${11:5}'
+        '        up: false',
+        '        fontSize: ${6:64}',
+        '        background: ~${7:0,0,0,200}',
+        '        backgroundBorder: ${8:10}',
+        '        maxShow: ${9:5}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
 const suggestion = {
-    label: 'suggestion',
+    label: 'Suggestion',
     detail: '创建命令补全器控件',
     insertText: [
         '${1:suggestion_}:',
-        '  type: suggestion',
+        '  type: Suggestion',
         '  attribute:',
-        '    up: ${2|true,false|}',
-        '    fontSize: ${3:64}',
-        '    background: ~${4:0,0,0,200}',
-        '    backgroundBorder: ${5:10}',
-        '    maxShow: ${6:5}'
+        '    up: false',
+        '    fontSize: ${2:64}',
+        '    background: ~${3:0,0,0,200}',
+        '    backgroundBorder: ${4:10}',
+        '    maxShow: ${5:5}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
 const chat = {
-    label: 'chat',
+    label: 'Chat',
     detail: '创建聊天栏控件',
     insertText: [
         '${1:chat_}:',
-        '  type: chat',
+        '  type: Chat',
         '  attribute:',
         '    fontSize: ${2:64}',
         '    background: ~${3:0,0,0,120}',
         '    point: ~${4:horizontal_stretch_top}',
         '    height: ${5:495}',
         '    lineSpace: ${6:10}',
-        '    showCard: ${7|true,false|}'
+        '    showCard: true'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
 
 // ========== 布局型（续）==========
 const bossBars = {
-    label: 'bossBars',
+    label: 'BossBars',
     detail: '创建血条排列器控件',
     insertText: [
         '${1:bossBars_}:',
-        '  type: bossBars',
+        '  type: BossBars',
         '  attribute:',
         '    spaceBetween: ${2:10}',
         '    maxSize: ${3:3}',

@@ -4,13 +4,13 @@ export const control_attribute = [
     {
         label: 'enable',
         detail: '是否开启[默认: true] - 关闭后交互性触发器不会触发，影响子组件',
-        insertText: 'enable: ${1|true,false|}',
+        insertText: 'enable: true',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'visible',
         detail: '是否可见[默认: true] - 关闭后不可见，影响子组件',
-        insertText: 'visible: ${1|true,false|}',
+        insertText: 'visible: true',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -137,7 +137,7 @@ export const control_attribute = [
     {
         label: 'center',
         detail: '文字居中[默认: false] - 只用于包含文本显示的组件',
-        insertText: 'center: ${1|true,false|}',
+        insertText: 'center: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -161,7 +161,7 @@ export const control_attribute = [
     {
         label: 'shadow',
         detail: '渲染阴影[默认: false] - 为文字添加投影，提升可读性 (Text、Texture含有)',
-        insertText: 'shadow: ${1|true,false|}',
+        insertText: 'shadow: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -173,7 +173,7 @@ export const control_attribute = [
     {
         label: 'through',
         detail: '是否穿透[默认: false] - true 时不阻挡下方组件交互事件，且不接受点击事件',
-        insertText: 'through: ${1|true,false|}',
+        insertText: 'through: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -191,7 +191,7 @@ export const control_attribute = [
     {
         label: 'loop',
         detail: 'GIF是否循环[默认: false] - false时GIF停止于最后一帧 (Texture含有)',
-        insertText: 'loop: ${1|true,false|}',
+        insertText: 'loop: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -239,13 +239,13 @@ export const control_attribute = [
     {
         label: 'allowNewLine',
         detail: '是否允许换行[默认: false] (TextBox独有)',
-        insertText: 'allowNewLine: ${1|true,false|}',
+        insertText: 'allowNewLine: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'editable',
         detail: '是否可编辑[默认: true] (TextBox独有)',
-        insertText: 'editable: ${1|true,false|}',
+        insertText: 'editable: true',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -275,7 +275,7 @@ export const control_attribute = [
     {
         label: 'canLoseFocus',
         detail: '是否可以失去焦点[默认: true] (TextBox独有)',
-        insertText: 'canLoseFocus: ${1|true,false|}',
+        insertText: 'canLoseFocus: true',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -299,13 +299,13 @@ export const control_attribute = [
     {
         label: 'hideTag',
         detail: '是否渲染名称标签[默认: false] (Entity独有)',
-        insertText: 'hideTag: ${1|true,false|}',
+        insertText: 'hideTag: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'followMouse',
         detail: '视线是否跟随鼠标[默认: false] (Entity独有)',
-        insertText: 'followMouse: ${1|true,false|}',
+        insertText: 'followMouse: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -342,7 +342,7 @@ export const control_attribute = [
     {
         label: 'lock',
         detail: '锁定点击[默认: false] - 锁定后无法点击槽位物品（仅客户端） (Slot独有)',
-        insertText: 'lock: ${1|true,false|}',
+        insertText: 'lock: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -422,13 +422,13 @@ export const control_attribute = [
     {
         label: 'hideTag',
         detail: '是否渲染名称标签[默认: false] (Entity独有)',
-        insertText: 'hideTag: ${1|true,false|}',
+        insertText: 'hideTag: false',
         kind: vscode.CompletionItemKind.Property
     },
     {
         label: 'followMouse',
         detail: '视线是否跟随鼠标[默认: false] (Entity、Model含有)',
-        insertText: 'followMouse: ${1|true,false|}',
+        insertText: 'followMouse: false',
         kind: vscode.CompletionItemKind.Property
     },
     // ========== Model 独有 ==========
@@ -506,7 +506,7 @@ export const control_attribute = [
     {
         label: 'sendClose',
         detail: '发送后关闭UI[默认: true] (ChatTextBox独有)',
-        insertText: 'sendClose: ${1|true,false|}',
+        insertText: 'sendClose: true',
         kind: vscode.CompletionItemKind.Property
     },
     // ========== Chat 独有 ==========
@@ -525,7 +525,7 @@ export const control_attribute = [
     {
         label: 'showCard',
         detail: '显示卡片[默认: true] - 关闭后该聊天栏不显示卡片消息 (Chat独有)',
-        insertText: 'showCard: ${1|true,false|}',
+        insertText: 'showCard: true',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -537,7 +537,7 @@ export const control_attribute = [
     {
         label: 'keep',
         detail: '持续渲染[默认: false] - true时即使不在聊天屏幕中也持续显示所有消息 (Chat独有)',
-        insertText: 'keep: ${1|true,false|}',
+        insertText: 'keep: false',
         kind: vscode.CompletionItemKind.Property
     },
     // ========== Compass 独有 ==========
@@ -574,7 +574,7 @@ export const control_attribute = [
     {
         label: 'showWaypoints',
         detail: '显示路标图标[默认: true] (Compass独有)',
-        insertText: 'showWaypoints: ${1|true,false|}',
+        insertText: 'showWaypoints: true',
         kind: vscode.CompletionItemKind.Property
     },
     {
@@ -613,7 +613,7 @@ export const control_attribute = [
     {
         label: 'autoScale',
         detail: '是否启用等比缩放[默认: false] - true时整树等比缩放到设计分辨率 (Adaptive独有)',
-        insertText: 'autoScale: ${1|true,false|}',
+        insertText: 'autoScale: false',
         kind: vscode.CompletionItemKind.Property
     },
     // ========== Slot 补充 ==========
@@ -627,7 +627,7 @@ export const control_attribute = [
     {
         label: 'up',
         detail: '是否向上展开[默认: false] (Suggestion独有)',
-        insertText: 'up: ${1|true,false|}',
+        insertText: 'up: false',
         kind: vscode.CompletionItemKind.Property
     },
     {

@@ -360,7 +360,7 @@ export const type_values = [
             '**使用示例**:\n' +
             '```yaml\n' +
             'import:\n' +
-            '  type: import\n' +
+            '  type: Import\n' +
             '  attribute:\n' +
             '    node: ~menu.test.adaptive.chat\n' +
             '    # 第一个节点: hud(如果是hud) 或 menu(如果是menu)\n' +
@@ -387,12 +387,12 @@ export const type_values = [
             '**使用示例**:\n' +
             '```yaml\n' +
             'obs:\n' +
-            '  type: observer\n' +
+            '  type: Observer\n' +
             '  attribute:\n' +
             '    target: val.vStack[\'test\']  # 不要给被复制控件加val\n' +
             '    subscribe: global.testMap\n' +
             'adaptive:\n' +
-            '  type: adaptive\n' +
+            '  type: Adaptive\n' +
             '  # ... 省略 ...\n' +
             '  children:\n' +
             '    vStack:\n' +
@@ -400,7 +400,7 @@ export const type_values = [
             '      # ... 省略 ...\n' +
             '      children:\n' +
             '        test:\n' +
-            '          type: texture\n' +
+            '          type: Texture\n' +
             '          attribute:\n' +
             '            texts: "\'键：\' + self.key"  # 复制出的控件会有key变量\n' +
             '```\n\n' +

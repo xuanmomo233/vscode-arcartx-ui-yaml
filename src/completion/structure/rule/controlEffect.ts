@@ -36,7 +36,7 @@ export const control_effects = [
     {
         label: 'neon',
         detail: '霓虹 - 辉光效果',
-        insertText: 'neon:\n  color: ~${1:0,0,100}\n  size: ${2:8}\n  intensity: ${3:1}\n  animated: ${4|true,false|}',
+        insertText: 'neon:\n  color: ~${1:0,0,100}\n  size: ${2:8}\n  intensity: ${3:1}\n  animated: false',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             '## 霓虹 (neon)\n\n' +
