@@ -92,10 +92,12 @@ export class HoverProvider implements vscode.HoverProvider {
             if (!this.scriptMap.has(labelLower)) {
                 this.scriptMap.set(labelLower, item);
             }
-            // 只按 "." 拆分，跳过括号内的参数名
+            // 按 "." 拆分，去掉括号后注册各段（使 getFood 能匹配 getFood()）
             const parts = item.label.split('.').filter(p => p.length > 0);
             for (const part of parts) {
-                const partLower = part.toLowerCase();
+                // 去掉尾部括号，如 getFood() -> getFood
+                const partClean = part.replace(/\(.*$/, '');
+                const partLower = partClean.toLowerCase();
                 if (ariaKeywords.has(partLower)) continue;
                 if (!this.scriptMap.has(partLower)) {
                     this.scriptMap.set(partLower, item);
@@ -225,29 +227,36 @@ export class HoverProvider implements vscode.HoverProvider {
     ): DocItem | undefined {
         let docItem: DocItem | undefined;
 
-        // 1. 尝试完整 dotted 路径
-        docItem = map.get(cleanWord.toLowerCase());
+        // 1. 尝试完整 dotted 路径（去掉括号）
+        const cleanLower = cleanWord.toLowerCase().replace(/\(.*$/, '');
+        docItem = map.get(cleanLower);
 
-        // 2. 尝试 "对象.方法" 模式
+        // 2. 逐步缩短 dotted 前缀查找
+        // 例如 Player.getFood.round -> player.getfood -> player
+        if (!docItem) {
+            const segments = cleanWord.split('.').filter(s => s.length > 0);
+            for (let i = segments.length - 1; i >= 0 && !docItem; i--) {
+                const prefix = segments.slice(0, i + 1).join('.').toLowerCase().replace(/\(.*$/, '');
+                docItem = map.get(prefix);
+            }
+        }
+
+        // 3. 尝试 "对象.方法" 模式（从行文本中提取）
         if (!docItem) {
             const dotMatch = line.substring(0, range.end.character).match(/(\w+)\.(\w+)$/);
             if (dotMatch) {
-                const fullKey = `${dotMatch[1]}.${dotMatch[2]}`;
-                docItem = map.get(fullKey.toLowerCase());
+                const fullKey = `${dotMatch[1]}.${dotMatch[2]}`.toLowerCase();
+                docItem = map.get(fullKey);
             }
         }
 
-        // 3. 按拆分段从后向前查找
+        // 4. 单段查找（去掉括号）
         if (!docItem) {
             const segments = cleanWord.split(/[.\[\]'"]/).filter(s => s.length > 0);
             for (let i = segments.length - 1; i >= 0 && !docItem; i--) {
-                docItem = map.get(segments[i].toLowerCase());
+                const segLower = segments[i].toLowerCase().replace(/\(.*$/, '');
+                docItem = map.get(segLower);
             }
-        }
-
-        // 4. 尝试单个词
-        if (!docItem) {
-            docItem = map.get(cleanWord.toLowerCase());
         }
 
         return docItem;
