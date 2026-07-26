@@ -95,6 +95,41 @@ export class ColorDecorator {
         });
         this.dynamicTypes = [];
 
+        // 预计算每行的注释起始偏移量（YAML # 注释 + Aria // 注释）
+        const commentStarts: number[] = [];
+        const lines = text.split('\n');
+        let lineOffset = 0;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            let commentStart = -1;
+            // 查找 YAML # 注释（行首或空格后的 #）
+            for (let j = 0; j < line.length; j++) {
+                if (line[j] === '#' && (j === 0 || line[j - 1] === ' ' || line[j - 1] === '\t')) {
+                    commentStart = j;
+                    break;
+                }
+            }
+            // 查找 Aria // 注释（如果比 # 更靠前）
+            for (let j = 0; j < line.length - 1; j++) {
+                if (line[j] === '/' && line[j + 1] === '/') {
+                    if (commentStart === -1 || j < commentStart) {
+                        commentStart = j;
+                        break;
+                    }
+                }
+            }
+            commentStarts.push(commentStart >= 0 ? lineOffset + commentStart : -1);
+            lineOffset += line.length + 1;
+        }
+
+        // 辅助函数：判断偏移量是否在注释中
+        const isInComment = (offset: number): boolean => {
+            const pos = editor.document.positionAt(offset);
+            const lineNum = pos.line;
+            if (lineNum >= commentStarts.length) return false;
+            return commentStarts[lineNum] >= 0 && offset >= commentStarts[lineNum];
+        };
+
         // 计算可视区域的字符偏移范围（用于渐变逐字装饰的视口裁剪）
         const visibleRanges = editor.visibleRanges;
         let visibleStartOffset = 0;
@@ -111,6 +146,7 @@ export class ColorDecorator {
         let match: RegExpExecArray | null;
 
         while ((match = colorRegex.exec(text)) !== null) {
+            if (isInComment(match.index)) continue;
             const r = parseInt(match[1]);
             const g = parseInt(match[2]);
             const b = parseInt(match[3]);
@@ -142,6 +178,7 @@ export class ColorDecorator {
         const textColorMap = new Map<string, vscode.Range[]>();
         const textColorRegex = /§#([0-9A-Fa-f]{6})/g;
         while ((match = textColorRegex.exec(text)) !== null) {
+            if (isInComment(match.index)) continue;
             const hex = match[1].toUpperCase();
             const codeStart = match.index;
             const codeEnd = match.index + match[0].length;
@@ -192,6 +229,7 @@ export class ColorDecorator {
         const gradientColorMap = new Map<string, vscode.Range[]>();
         const gradientRegex = /§~([0-9A-Fa-f]{6})-([0-9A-Fa-f]{6})/g;
         while ((match = gradientRegex.exec(text)) !== null) {
+            if (isInComment(match.index)) continue;
             const hex1 = match[1].toUpperCase();
             const hex2 = match[2].toUpperCase();
             const r1 = parseInt(hex1.substring(0, 2), 16);
