@@ -3,7 +3,7 @@
   "displayName": "ArcartX Aria UI",
   "icon": "icons/project.png",
   "description": "ArcartX UI 全能开发工具 — YAML + Aria 混合语法高亮、上下文感知结构补全、智能类型模板、Aria 函数补全、悬停文档、签名提示、代码诊断、跳转定义、颜色装饰渲染（RGBA 色块 / §# 文字着色 / §~ 渐变逐字插值）、侧边栏工具箱（RGBA / 毛玻璃 Frosted / 文字颜色 / 渐变色 / 色板 / 控件 / 特效 / UI 模板 / 自定义模板）。",
-  "version": "0.0.67",
+  "version": "0.0.68",
   "publisher": "ArcartXProject",
   "author": {
     "name": "17Artist,MayIHaveK"
