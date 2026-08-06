@@ -17,30 +17,32 @@ const text_attr_labels = new Set([
 ]);
 
 // 每种控件类型的专属属性（不含通用属性）
+// 注意：键必须全部小写，因为 getAttributesByType 使用 type.toLowerCase() 查询，
+// 这样无论 yaml 中 type 写成 VGrid / vgrid / VGRID 都能大小写不敏感地匹配。
 const type_specific_attrs: Record<string, string[]> = {
     texture: ['normal', 'hover', 'loop', ...shape_attr_labels, ...text_attr_labels],
     text: ['shadow', 'alignment', ...text_attr_labels],
-    '9sliceTexture': ['normal', 'hover', 'left', 'right', 'top', 'bottom', 'textureWidth', 'textureHeight', ...shape_attr_labels, ...text_attr_labels],
+    '9slicetexture': ['normal', 'hover', 'left', 'right', 'top', 'bottom', 'textureWidth', 'textureHeight', ...shape_attr_labels, ...text_attr_labels],
     entity: ['uuid', 'hideTag', 'followMouse'],
     slot: ['normal', 'hover', 'slotType', 'id', 'itemScale', 'lock', 'cooldown', 'overwriteText', 'itemEffect', ...shape_attr_labels],
-    textBox: ['length', 'allowNewLine', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'passwordChar', 'inputPattern', 'textColor', 'uneditableTextColor', ...shape_attr_labels, ...text_attr_labels],
-    chatTextBox: ['length', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'sendClose', ...shape_attr_labels, ...text_attr_labels],
+    textbox: ['length', 'allowNewLine', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'passwordChar', 'inputPattern', 'textColor', 'uneditableTextColor', ...shape_attr_labels, ...text_attr_labels],
+    chattextbox: ['length', 'editable', 'cursorColor', 'emptyText', 'canLoseFocus', 'background', 'sendClose', ...shape_attr_labels, ...text_attr_labels],
     canvas: [],
     adaptive: ['autoScale'],
-    hGrid: ['spaceBetweenX', 'spaceBetweenY', 'column'],
-    vGrid: ['spaceBetweenX', 'spaceBetweenY', 'row'],
-    hStack: ['spaceBetween', 'maxSize'],
-    vStack: ['spaceBetween', 'maxSize'],
+    hgrid: ['spaceBetweenX', 'spaceBetweenY', 'column'],
+    vgrid: ['spaceBetweenX', 'spaceBetweenY', 'row'],
+    hstack: ['spaceBetween', 'maxSize'],
+    vstack: ['spaceBetween', 'maxSize'],
     scroll: ['moveX', 'moveY'],
     model: ['model', 'animation', 'followMouse', 'showType'],
-    bossBar: ['textures', 'transitionTime', ...shape_attr_labels],
+    bossbar: ['textures', 'transitionTime', ...shape_attr_labels],
     compass: ['background', 'textColor', 'tickColor', 'directionColor', 'tickInterval', 'majorTickInterval', 'showWaypoints', 'waypointFontSize', 'waypointIconWidth', 'waypointIconHeight', 'wayOffsetY', ...shape_attr_labels],
     progress: ['texture', 'progress', 'time', 'mode', ...shape_attr_labels],
     import: ['node'],
     observer: ['maxSize', 'subscribe', 'target'],
     chat: ['border', 'spaceBetween', 'background', 'filter', 'showCard', 'exclude', 'keep', ...shape_attr_labels],
     suggestion: ['background', 'radius', 'spaceBetween', 'backgroundBorder', 'up', 'maxShow', 'textColor', 'hoverTextColor', ...text_attr_labels],
-    bossBars: ['spaceBetween', 'maxSize'],
+    bossbars: ['spaceBetween', 'maxSize'],
 };
 
 // 构建 label → attribute item 的索引
