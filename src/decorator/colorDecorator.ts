@@ -207,6 +207,68 @@ export class ColorDecorator {
         // textColorMap 供 §a/&b 和 §# 共用
         const textColorMap = new Map<string, vscode.Range[]>();
 
+        // 颜色码截断模式（遇到下一个颜色码 / 重置码 / 换行时停止染色）
+        const colorStopPatterns = ['§r', '§#', '§~', '§0', '§1', '§2', '§3', '§4', '§5', '§6', '§7', '§8', '§9', '§a', '§b', '§c', '§d', '§e', '§f', '&r', '&0', '&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8', '&9', '&a', '&b', '&c', '&d', '&e', '&f', '\n'];
+
+        // 辅助函数：从颜色码结束位置查找染色范围
+        // 1. 从行首用栈匹配引号，找到颜色码所在字符串的最外层未闭合引号
+        // 2. 染色到同类型闭合引号停止（同时考虑其他颜色码截断）
+        // 3. 染色范围内的 " 和 ' 字符本身不染色
+        // 返回 { textEnd, skipQuoteOffsets }
+        const findColorExtent = (codeEnd: number): { textEnd: number; skipQuoteOffsets: number[] } => {
+            const lineStart = text.lastIndexOf('\n', codeEnd - 1) + 1;
+            const stack: string[] = [];
+            for (let i = lineStart; i < codeEnd; i++) {
+                const ch = text[i];
+                if (ch === '"' || ch === "'") {
+                    if (stack.length > 0 && stack[stack.length - 1] === ch) {
+                        stack.pop();
+                    } else {
+                        stack.push(ch);
+                    }
+                }
+            }
+            const quoteChar = stack.length > 0 ? stack[0] : undefined;
+
+            const afterCode = text.substring(codeEnd);
+            let endRel = afterCode.length;
+            for (const p of colorStopPatterns) {
+                const idx = afterCode.indexOf(p);
+                if (idx >= 0 && idx < endRel) endRel = idx;
+            }
+            if (quoteChar) {
+                const closeIdx = afterCode.indexOf(quoteChar);
+                if (closeIdx >= 0 && closeIdx < endRel) endRel = closeIdx;
+            }
+
+            const skipQuoteOffsets: number[] = [];
+            for (let i = 0; i < endRel; i++) {
+                const ch = afterCode[i];
+                if (ch === '"' || ch === "'") {
+                    skipQuoteOffsets.push(codeEnd + i);
+                }
+            }
+            return { textEnd: codeEnd + endRel, skipQuoteOffsets };
+        };
+
+        // 辅助函数：将染色范围按跳过的引号字符拆分成多个子 Range
+        const splitRangeSkippingQuotes = (textStart: number, textEnd: number, skipOffsets: number[]): vscode.Range[] => {
+            const ranges: vscode.Range[] = [];
+            let curStart = textStart;
+            for (const off of skipOffsets) {
+                if (off < curStart) continue;
+                if (off >= textEnd) break;
+                if (off > curStart) {
+                    ranges.push(new vscode.Range(editor.document.positionAt(curStart), editor.document.positionAt(off)));
+                }
+                curStart = off + 1;
+            }
+            if (curStart < textEnd) {
+                ranges.push(new vscode.Range(editor.document.positionAt(curStart), editor.document.positionAt(textEnd)));
+            }
+            return ranges;
+        };
+
         // 1c. 匹配 §a / &b 等 Minecraft 颜色码 — 显示色块 + 着色后续文字
         const mcColorMap: Record<string, string> = {
             '0': '#000000', '1': '#0000AA', '2': '#00AA00', '3': '#00AAAA',
@@ -223,15 +285,8 @@ export class ColorDecorator {
 
             const codeStart = match.index;
             const codeEnd = match.index + match[0].length;
-            const afterCode = text.substring(codeEnd);
-            const stopPatterns = ['§r', '§#', '§~', '§0', '§1', '§2', '§3', '§4', '§5', '§6', '§7', '§8', '§9', '§a', '§b', '§c', '§d', '§e', '§f', '&r', '&0', '&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8', '&9', '&a', '&b', '&c', '&d', '&e', '&f', '\n'];
-            let endRel = afterCode.length;
-            for (const p of stopPatterns) {
-                const idx = afterCode.indexOf(p);
-                if (idx >= 0 && idx < endRel) endRel = idx;
-            }
+            const { textEnd, skipQuoteOffsets } = findColorExtent(codeEnd);
             const textStart = codeEnd;
-            const textEnd = codeEnd + endRel;
 
             swatchDecorations.push({
                 range: new vscode.Range(editor.document.positionAt(codeStart), editor.document.positionAt(codeEnd)),
@@ -251,7 +306,8 @@ export class ColorDecorator {
                 if (!textColorMap.has(colorHex.substring(1).toUpperCase())) {
                     textColorMap.set(colorHex.substring(1).toUpperCase(), []);
                 }
-                textColorMap.get(colorHex.substring(1).toUpperCase())!.push(new vscode.Range(editor.document.positionAt(textStart), editor.document.positionAt(textEnd)));
+                const subRanges = splitRangeSkippingQuotes(textStart, textEnd, skipQuoteOffsets);
+                textColorMap.get(colorHex.substring(1).toUpperCase())!.push(...subRanges);
             }
         }
 
@@ -262,16 +318,8 @@ export class ColorDecorator {
             const hex = match[1].toUpperCase();
             const codeStart = match.index;
             const codeEnd = match.index + match[0].length;
-            // 查找后续文字结束位置
-            const afterCode = text.substring(codeEnd);
-            const stopPatterns = ['§r', '§#', '§~', '§0', '§1', '§2', '§3', '§4', '§5', '§6', '§7', '§8', '§9', '§a', '§b', '§c', '§d', '§e', '§f', '&r', '&0', '&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8', '&9', '&a', '&b', '&c', '&d', '&e', '&f', '\n'];
-            let endRel = afterCode.length;
-            for (const p of stopPatterns) {
-                const idx = afterCode.indexOf(p);
-                if (idx >= 0 && idx < endRel) endRel = idx;
-            }
+            const { textEnd, skipQuoteOffsets } = findColorExtent(codeEnd);
             const textStart = codeEnd;
-            const textEnd = codeEnd + endRel;
 
             // 颜色码部分：显示色块，不着色文字
             swatchDecorations.push({
@@ -288,12 +336,13 @@ export class ColorDecorator {
                 },
             });
 
-            // 文字部分：按颜色批量分组着色
+            // 文字部分：按颜色批量分组着色（跳过引号字符）
             if (textEnd > textStart) {
                 if (!textColorMap.has(hex)) {
                     textColorMap.set(hex, []);
                 }
-                textColorMap.get(hex)!.push(new vscode.Range(editor.document.positionAt(textStart), editor.document.positionAt(textEnd)));
+                const subRanges = splitRangeSkippingQuotes(textStart, textEnd, skipQuoteOffsets);
+                textColorMap.get(hex)!.push(...subRanges);
             }
         }
         for (const [hex, ranges] of textColorMap) {
@@ -320,17 +369,11 @@ export class ColorDecorator {
             const b2 = parseInt(hex2.substring(4, 6), 16);
             const codeStart = match.index;
             const codeEnd = match.index + match[0].length;
-            // 查找后续文字结束位置
-            const afterCode = text.substring(codeEnd);
-            const stopPatterns = ['§r', '§#', '§~', '§0', '§1', '§2', '§3', '§4', '§5', '§6', '§7', '§8', '§9', '§a', '§b', '§c', '§d', '§e', '§f', '&r', '&0', '&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8', '&9', '&a', '&b', '&c', '&d', '&e', '&f', '\n'];
-            let endRel = afterCode.length;
-            for (const p of stopPatterns) {
-                const idx = afterCode.indexOf(p);
-                if (idx >= 0 && idx < endRel) endRel = idx;
-            }
-            const textContent = afterCode.substring(0, endRel);
+            const { textEnd, skipQuoteOffsets } = findColorExtent(codeEnd);
             const textStart = codeEnd;
-            const textEnd = codeEnd + endRel;
+            const textContent = text.substring(textStart, textEnd);
+            // 构建引号偏移量集合，用于逐字循环中跳过引号字符
+            const skipQuoteSet = new Set(skipQuoteOffsets);
 
             // 颜色码部分：显示双色块（始终渲染，量小）
             swatchDecorations.push({
@@ -360,7 +403,7 @@ export class ColorDecorator {
                 continue;
             }
 
-            // 逐字插值着色 — 只渲染可视区域内的字符
+            // 逐字插值着色 — 只渲染可视区域内的字符，跳过引号字符
             const chars = [...textContent];
             const charCount = chars.length;
             let charOffset = 0;
@@ -371,6 +414,11 @@ export class ColorDecorator {
 
                 // 跳过可视区域外的字符
                 if (charEnd < visibleStartOffset || charStart > visibleEndOffset) {
+                    continue;
+                }
+
+                // 跳过引号字符（不染色，但仍参与插值位置计算）
+                if (skipQuoteSet.has(charStart)) {
                     continue;
                 }
 
