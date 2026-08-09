@@ -214,22 +214,35 @@ export class ColorDecorator {
         // 1. 从行首用栈匹配引号，找到颜色码所在字符串的最外层未闭合引号
         // 2. 染色到同类型闭合引号停止（同时考虑其他颜色码截断）
         // 3. 染色范围内的 " 和 ' 字符本身不染色
-        // 返回 { textEnd, skipQuoteOffsets }
-        const findColorExtent = (codeEnd: number): { textEnd: number; skipQuoteOffsets: number[] } => {
+        // 4. 颜色码在 {...} 外时，染色范围内的 {...} 表达式整体不染色（已有 Aria 语法高亮）
+        // 返回 { textEnd, skipOffsets } — skipOffsets 为需要跳过染色的字符偏移集合
+        const findColorExtent = (codeEnd: number): { textEnd: number; skipOffsets: Set<number> } => {
             const lineStart = text.lastIndexOf('\n', codeEnd - 1) + 1;
-            const stack: string[] = [];
+
+            // 引号栈：查找颜色码所在字符串的最外层未闭合引号
+            const quoteStack: string[] = [];
             for (let i = lineStart; i < codeEnd; i++) {
                 const ch = text[i];
                 if (ch === '"' || ch === "'") {
-                    if (stack.length > 0 && stack[stack.length - 1] === ch) {
-                        stack.pop();
+                    if (quoteStack.length > 0 && quoteStack[quoteStack.length - 1] === ch) {
+                        quoteStack.pop();
                     } else {
-                        stack.push(ch);
+                        quoteStack.push(ch);
                     }
                 }
             }
-            const quoteChar = stack.length > 0 ? stack[0] : undefined;
+            const quoteChar = quoteStack.length > 0 ? quoteStack[0] : undefined;
 
+            // 花括号深度：判断颜色码是否在 {...} 表达式内部
+            let braceDepth = 0;
+            for (let i = lineStart; i < codeEnd; i++) {
+                const ch = text[i];
+                if (ch === '{') braceDepth++;
+                else if (ch === '}') braceDepth--;
+            }
+            const insideBrace = braceDepth > 0;
+
+            // 查找染色结束位置（取颜色码截断、闭合引号的最早位置）
             const afterCode = text.substring(codeEnd);
             let endRel = afterCode.length;
             for (const p of colorStopPatterns) {
@@ -241,27 +254,54 @@ export class ColorDecorator {
                 if (closeIdx >= 0 && closeIdx < endRel) endRel = closeIdx;
             }
 
-            const skipQuoteOffsets: number[] = [];
+            const skipOffsets = new Set<number>();
+
+            // 跳过引号字符本身
             for (let i = 0; i < endRel; i++) {
                 const ch = afterCode[i];
                 if (ch === '"' || ch === "'") {
-                    skipQuoteOffsets.push(codeEnd + i);
+                    skipOffsets.add(codeEnd + i);
                 }
             }
-            return { textEnd: codeEnd + endRel, skipQuoteOffsets };
+
+            // 颜色码在 {...} 外时，跳过后续 {...} 表达式整体（含花括号）
+            if (!insideBrace) {
+                let relPos = 0;
+                while (relPos < endRel) {
+                    if (afterCode[relPos] === '{') {
+                        let depth = 1;
+                        let j = relPos + 1;
+                        while (j < endRel && depth > 0) {
+                            if (afterCode[j] === '{') depth++;
+                            else if (afterCode[j] === '}') depth--;
+                            if (depth > 0) j++;
+                        }
+                        // j 指向匹配的 }（若 depth===0），或未闭合时指向 endRel
+                        const segEnd = depth === 0 ? j + 1 : endRel;
+                        for (let k = relPos; k < segEnd; k++) {
+                            skipOffsets.add(codeEnd + k);
+                        }
+                        relPos = segEnd;
+                    } else {
+                        relPos++;
+                    }
+                }
+            }
+
+            return { textEnd: codeEnd + endRel, skipOffsets };
         };
 
-        // 辅助函数：将染色范围按跳过的引号字符拆分成多个子 Range
-        const splitRangeSkippingQuotes = (textStart: number, textEnd: number, skipOffsets: number[]): vscode.Range[] => {
+        // 辅助函数：将染色范围按跳过的字符偏移集合拆分成多个子 Range
+        const splitRangeSkipping = (textStart: number, textEnd: number, skipOffsets: Set<number>): vscode.Range[] => {
             const ranges: vscode.Range[] = [];
             let curStart = textStart;
-            for (const off of skipOffsets) {
-                if (off < curStart) continue;
-                if (off >= textEnd) break;
-                if (off > curStart) {
-                    ranges.push(new vscode.Range(editor.document.positionAt(curStart), editor.document.positionAt(off)));
+            for (let i = textStart; i < textEnd; i++) {
+                if (skipOffsets.has(i)) {
+                    if (i > curStart) {
+                        ranges.push(new vscode.Range(editor.document.positionAt(curStart), editor.document.positionAt(i)));
+                    }
+                    curStart = i + 1;
                 }
-                curStart = off + 1;
             }
             if (curStart < textEnd) {
                 ranges.push(new vscode.Range(editor.document.positionAt(curStart), editor.document.positionAt(textEnd)));
@@ -285,7 +325,7 @@ export class ColorDecorator {
 
             const codeStart = match.index;
             const codeEnd = match.index + match[0].length;
-            const { textEnd, skipQuoteOffsets } = findColorExtent(codeEnd);
+            const { textEnd, skipOffsets } = findColorExtent(codeEnd);
             const textStart = codeEnd;
 
             swatchDecorations.push({
@@ -306,7 +346,7 @@ export class ColorDecorator {
                 if (!textColorMap.has(colorHex.substring(1).toUpperCase())) {
                     textColorMap.set(colorHex.substring(1).toUpperCase(), []);
                 }
-                const subRanges = splitRangeSkippingQuotes(textStart, textEnd, skipQuoteOffsets);
+                const subRanges = splitRangeSkipping(textStart, textEnd, skipOffsets);
                 textColorMap.get(colorHex.substring(1).toUpperCase())!.push(...subRanges);
             }
         }
@@ -318,7 +358,7 @@ export class ColorDecorator {
             const hex = match[1].toUpperCase();
             const codeStart = match.index;
             const codeEnd = match.index + match[0].length;
-            const { textEnd, skipQuoteOffsets } = findColorExtent(codeEnd);
+            const { textEnd, skipOffsets } = findColorExtent(codeEnd);
             const textStart = codeEnd;
 
             // 颜色码部分：显示色块，不着色文字
@@ -336,12 +376,12 @@ export class ColorDecorator {
                 },
             });
 
-            // 文字部分：按颜色批量分组着色（跳过引号字符）
+            // 文字部分：按颜色批量分组着色（跳过引号字符和 {...} 表达式）
             if (textEnd > textStart) {
                 if (!textColorMap.has(hex)) {
                     textColorMap.set(hex, []);
                 }
-                const subRanges = splitRangeSkippingQuotes(textStart, textEnd, skipQuoteOffsets);
+                const subRanges = splitRangeSkipping(textStart, textEnd, skipOffsets);
                 textColorMap.get(hex)!.push(...subRanges);
             }
         }
@@ -369,11 +409,9 @@ export class ColorDecorator {
             const b2 = parseInt(hex2.substring(4, 6), 16);
             const codeStart = match.index;
             const codeEnd = match.index + match[0].length;
-            const { textEnd, skipQuoteOffsets } = findColorExtent(codeEnd);
+            const { textEnd, skipOffsets } = findColorExtent(codeEnd);
             const textStart = codeEnd;
             const textContent = text.substring(textStart, textEnd);
-            // 构建引号偏移量集合，用于逐字循环中跳过引号字符
-            const skipQuoteSet = new Set(skipQuoteOffsets);
 
             // 颜色码部分：显示双色块（始终渲染，量小）
             swatchDecorations.push({
@@ -403,7 +441,7 @@ export class ColorDecorator {
                 continue;
             }
 
-            // 逐字插值着色 — 只渲染可视区域内的字符，跳过引号字符
+            // 逐字插值着色 — 只渲染可视区域内的字符，跳过引号字符和 {...} 表达式
             const chars = [...textContent];
             const charCount = chars.length;
             let charOffset = 0;
@@ -417,8 +455,8 @@ export class ColorDecorator {
                     continue;
                 }
 
-                // 跳过引号字符（不染色，但仍参与插值位置计算）
-                if (skipQuoteSet.has(charStart)) {
+                // 跳过引号字符和 {...} 表达式字符（不染色，但仍参与插值位置计算）
+                if (skipOffsets.has(charStart)) {
                     continue;
                 }
 
