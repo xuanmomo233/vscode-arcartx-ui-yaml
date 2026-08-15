@@ -53,6 +53,24 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
             }
         }
 
+        // 1.5 检测链式访问后的函数补全
+        // 匹配 self 链式访问并以 ] 或 ) 后的点号结尾，例如：
+        //   self.parent['竖向滑块'].   (索引访问子控件)
+        //   self.parent.get(0).       (get 函数获取子控件)
+        //   self.parent().            (parent() 返回父控件)
+        // 这些场景访问的都是控件对象，返回控件函数集
+        const chainMatch = linePrefix.match(/(^|[^\w.])self\b[\w\[\]'"\-(),\s]*[)\]]\.(\w*)$/);
+        if (chainMatch) {
+            return control_self_functions.map(completion => {
+                const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
+                item.detail = completion.detail || '';
+                item.insertText = new vscode.SnippetString(completion.insertText);
+                item.documentation = completion.documentation;
+                item.sortText = `0${completion.label}`;
+                return item;
+            });
+        }
+
         // 2. 检测属性值补全（如 point: ~xxx）
         // 注意：只有输入了部分内容时才显示补全，使用触发字符（/ 或 ?）时交给第2.5节处理
         const lastChar = linePrefix.charAt(linePrefix.length - 1);
