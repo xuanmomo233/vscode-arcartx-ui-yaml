@@ -3,7 +3,7 @@
   "displayName": "ArcartX Aria UI",
   "icon": "icons/project.png",
   "description": "ArcartX UI 全能开发工具 — YAML + Aria 混合语法高亮、上下文感知结构补全、智能类型模板、Aria 函数补全、悬停文档、签名提示、代码诊断、跳转定义、颜色装饰渲染（RGBA 色块 / §# 文字着色 / §~ 渐变逐字插值）、侧边栏工具箱（RGBA / 毛玻璃 Frosted / 文字颜色 / 渐变色 / 色板 / 控件 / 特效 / UI 模板 / 自定义模板）。",
-  "version": "0.0.70",
+  "version": "0.0.72",
   "publisher": "ArcartXProject",
   "author": {
     "name": "17Artist,MayIHaveK"
@@ -46,6 +46,12 @@
           "light": "./icons/arcartx.svg",
           "dark": "./icons/arcartx.svg"
         }
+      },
+      {
+        "id": "aria",
+        "aliases": ["Aria"],
+        "extensions": [".aria"],
+        "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
@@ -53,6 +59,11 @@
         "language": "arcartx-ui-yaml",
         "scopeName": "source.yaml.arcartx.ui",
         "path": "./syntaxes/yaml.arcartx.ui.tmLanguage.json"
+      },
+      {
+        "language": "aria",
+        "scopeName": "source.aria",
+        "path": "./syntaxes/aria.tmLanguage.json"
       }
     ],
     "snippets": [
@@ -71,6 +82,10 @@
       {
         "language": "arcartx-ui-yaml",
         "path": "./snippets/aria-function-arcartx.json"
+      },
+      {
+        "language": "aria",
+        "path": "./snippets/aria-base.json"
       }
     ],
     "configurationDefaults": {
@@ -127,7 +142,9 @@
             "scope": [
               "constant.numeric.integer.aria",
               "constant.numeric.float.aria",
-              "constant.numeric.hex.aria"
+              "constant.numeric.hex.aria",
+              "constant.numeric.binary.aria",
+              "constant.numeric.octal.aria"
             ],
             "settings": {
               "foreground": "#CE9178",
@@ -156,7 +173,8 @@
           {
             "name": "Aria Variables and Booleans",
             "scope": [
-              "constant.language.boolean.aria"
+              "constant.language.boolean.aria",
+              "constant.language.null.aria"
             ],
             "settings": {
               "foreground": "#9CDCFE",
@@ -173,7 +191,7 @@
           },
           {
             "name": "Aria Functions",
-            "scope": "support.function.aria",
+            "scope": ["support.function.aria", "entity.name.function.aria"],
             "settings": {
               "foreground": "#D7BA7D",
               "fontStyle": "italic"
@@ -191,18 +209,6 @@
             "settings": {
               "foreground": "#BEBEBE",
               "fontStyle": "italic"
-            }
-          },
-          {
-            "name": "Aria Invalid Syntax",
-            "scope": [
-              "invalid.illegal.args-empty-brackets.aria",
-              "invalid.illegal.args-incomplete.aria",
-              "invalid.illegal.args-without-index.aria"
-            ],
-            "settings": {
-              "foreground": "#F44747",
-              "fontStyle": "italic underline"
             }
           }
         ]
@@ -262,9 +268,15 @@
     "test-web": "npm run compile-web && vscode-test-web --browserType=chromium --extensionDevelopmentPath=."
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "16.x",
     "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^8.72.2",
+    "@typescript-eslint/parser": "^8.72.2",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/test-web": "^0.0.78",
+    "eslint": "^9.39.5",
     "ts-loader": "^9.5.4",
     "typescript": "^4.9.4",
     "webpack": "^5.104.1",

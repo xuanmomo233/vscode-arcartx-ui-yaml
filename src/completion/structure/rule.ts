@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import {controls_empty, controls_with_adaptive, tips_adaptive, tips_base, ui_base, ui_full, entity_model_base} from "./rule/root";
+import {rootTemplates} from "./rule/root";
 import {ui_options} from "./rule/ui";
 import {ui_actions} from "./rule/uiAction";
 import {packetHandler_options} from "./rule/uiPacketHandler";
@@ -50,12 +50,7 @@ export const attributeValueMap: Map<string, Array<{
 const root_level: CompletionConfig[] = [
     {
         path: [],
-        completions: [
-            ui_full, ui_base,
-            tips_base, tips_adaptive,
-            controls_empty, controls_with_adaptive,
-            entity_model_base,
-        ]
+        completions: rootTemplates
     },
 ];
 
@@ -74,17 +69,19 @@ const controls_level: CompletionConfig[] = [
     // controls 块 - 在 controls: 根级别显示控件模板补全
     { path: ['controls'], completions: controls },
     { path: ['ui', 'controls'], completions: controls },
+    { path: ['template'], completions: controls },
+    { path: ['root_control'], completions: control_settings },
 
-    // 控件内部 - 在控件内部（如 controls.遮罩: 下）同时显示控件设置和控件模板
-    // 合并 control_settings 和 controls，方便添加子控件或配置当前控件
-    { path: ['controls', '*'], completions: [...control_settings, ...controls] },
-    { path: ['ui', 'controls', '*'], completions: [...control_settings, ...controls] },
-    { path: ['*', 'children', '*'], completions: [...control_settings, ...controls] },
-    { path: ['root_control', 'children', '*'], completions: [...control_settings, ...controls] },
+    // 控件自身提供设置，控件模板放在 controls 或 children 下。
+    { path: ['controls', '*'], completions: control_settings },
+    { path: ['ui', 'controls', '*'], completions: control_settings },
+    { path: ['template', '*'], completions: control_settings },
+    { path: ['*', 'children', '*'], completions: control_settings },
 
     // 子控件 - 在控件内部的 children: 下显示控件模板补全
     { path: ['controls', '*', 'children'], completions: controls },
     { path: ['ui', 'controls', '*', 'children'], completions: controls },
+    { path: ['template', '*', 'children'], completions: controls },
     { path: ['*', 'children', '*', 'children'], completions: controls },
     { path: ['root_control', 'children'], completions: controls },
     { path: ['root_control', 'children', '*', 'children'], completions: controls },

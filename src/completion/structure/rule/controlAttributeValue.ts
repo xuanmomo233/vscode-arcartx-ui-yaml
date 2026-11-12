@@ -1,7 +1,17 @@
 import * as vscode from 'vscode';
+import { repeatGridType } from './repeatGrid';
 
 // type 属性的控件类型选项
 export const type_values = [
+    {
+        label: 'Tip',
+        detail: '物品提示根控件，仅用于 Tooltip 的 root_control',
+        insertText: 'Tip',
+        kind: vscode.CompletionItemKind.EnumMember,
+        documentation: new vscode.MarkdownString(
+            '配置物品提示的根控件。可通过 `follow` 控制跟随鼠标，或设置设计尺寸并启用 `autoScale`。'
+        ),
+    },
     // ========== 基础显示 ==========
     {
         label: 'Texture',
@@ -204,6 +214,19 @@ export const type_values = [
             '| `row` | 行数 | `1` |\n\n' +
             '**常用场景**: 垂直物品列表。'
         )
+    },
+    repeatGridType,
+    {
+        label: 'Grid',
+        detail: '横向网格布局（HGrid 的别名）',
+        insertText: 'Grid',
+        kind: vscode.CompletionItemKind.EnumMember
+    },
+    {
+        label: 'Stack',
+        detail: '横向布局（HStack 的别名）',
+        insertText: 'Stack',
+        kind: vscode.CompletionItemKind.EnumMember
     },
     {
         label: 'HStack',

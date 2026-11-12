@@ -5,6 +5,7 @@
 /.idea/
 /.claude/
 /.vscode-test-web/
+/.vscode-test/
 /web-test-workspace/
 /launch-web.js
 /tsconfig.web.json

@@ -2,6 +2,12 @@ import * as vscode from 'vscode';
 
 export const control_attribute = [
     {
+        label: 'follow',
+        detail: 'Tooltip 根控件是否跟随鼠标，默认 true',
+        insertText: 'follow: ${1|true,false|}',
+        kind: vscode.CompletionItemKind.Property,
+    },
+    {
         label: 'enable',
         detail: '是否开启[默认: true] - 关闭后交互性触发器不会触发，影响子组件',
         insertText: 'enable: true',
@@ -599,8 +605,8 @@ export const control_attribute = [
     // ========== BossBar 独有 ==========
     {
         label: 'textures',
-        detail: '血条纹理列表 (BossBar独有) - 格式: ~[tex1.png,tex2.png]',
-        insertText: 'textures: ~[${1:texture1.png,texture2.png}]',
+        detail: '血条纹理列表，每个 YAML 列表项对应一层 (BossBar独有)',
+        insertText: 'textures:\n  - ~${1:190,58,70}\n  - ~${2:215,145,62}',
         kind: vscode.CompletionItemKind.Property
     },
     {

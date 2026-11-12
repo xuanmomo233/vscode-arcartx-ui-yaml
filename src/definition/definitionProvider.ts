@@ -46,7 +46,7 @@ export class DefinitionProvider implements vscode.DefinitionProvider {
         varName: string
     ): vscode.Location | undefined {
         const text = document.getText();
-        const regex = new RegExp(`(${scope}\\.${varName})\\s*=`, 'g');
+        const regex = new RegExp(`(?<![\\w.])${scope}\\.${varName}\\s*(?:~=|=(?!=))`, 'g');
         let match;
         while ((match = regex.exec(text)) !== null) {
             const pos = document.positionAt(match.index);

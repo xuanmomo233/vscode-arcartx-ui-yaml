@@ -9,7 +9,6 @@ export class VariableCompletionProvider implements vscode.CompletionItemProvider
         position: vscode.Position
     ): vscode.CompletionItem[] {
         
-        this.collectVariables(document);
         
         const line = document.lineAt(position).text;
         const linePrefix = line.substring(0, position.character);
@@ -19,6 +18,7 @@ export class VariableCompletionProvider implements vscode.CompletionItemProvider
             return [];
         }
 
+        this.collectVariables(document);
         const scope = scopeMatch[1];
         const variables = this.declaredVariables.get(scope) || new Set();
         const suggestions: vscode.CompletionItem[] = [];
@@ -37,7 +37,7 @@ export class VariableCompletionProvider implements vscode.CompletionItemProvider
         this.declaredVariables.clear();
         const text = document.getText();
         
-        const scopedVariableRegex = /(var|val|global|client|server)\.(\w+)\s*=/g;
+        const scopedVariableRegex = /(?<![\w.])(var|val|global|client|server)\.(\w+)\s*(?:~=|=(?!=))/g;
         let match;
 
         while ((match = scopedVariableRegex.exec(text)) !== null) {

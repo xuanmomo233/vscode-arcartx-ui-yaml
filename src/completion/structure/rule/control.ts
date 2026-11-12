@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { repeatGridTypeSnippet } from './repeatGrid';
 
 
 const texture = {
@@ -25,18 +26,17 @@ const text = {
         '  type: Text',
         '  attribute:',
         '    texts: ~${2:&f文本}',
-        '    fontSize: ${3:49}',
+        '    fontSize: ${3:24}',
         '    point: ~${4:top_left}',
         '    x: ${5:0}',
         '    y: ${6:0}',
-        '    center: true',
         '    shadow: true',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
 const _9sliceTexture = {
     label: '9SliceTexture',
-    detail: '创建九宫格纹理控件',
+    detail: '九宫格纹理，填写贴图路径、原图尺寸和切边尺寸',
     insertText: [
         '${1:nineSliceTexture_}:',
         '  type: 9SliceTexture',
@@ -44,7 +44,7 @@ const _9sliceTexture = {
         '    width: ${2:100}',
         '    height: ${3:100}',
         '    point: ~${4:middle_center}',
-        '    normal: ~${5:resourcePath}',
+        '    normal: ~${5:ui/panel.png}',
         '    textureWidth: ${6:256}',
         '    textureHeight: ${7:256}',
         '    left: ${8:16}',
@@ -109,8 +109,8 @@ const slot =  {
         '  attribute:',
         '    width: ${2:80}',
         '    height: ${3:80}',
-        '    normal: ~${4:inventory/item.png}',
-        '    hover: ~${5:inventory/item_.png}',
+        '    normal: ~${4:35,47,67,230}',
+        '    hover: ~${5:72,93,126,255}',
         '    slotType: ~${6|Backpack,Container,Extra,Icon,Hover|}',
         '    itemScale: ${7:0.8}',
         '    id: ${8:0}'
@@ -206,139 +206,107 @@ const vStack = {
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 };
-const scroll_full = {
-    label: 'scroll-full',
-    detail: '创建完整滚动栏组件(包含垂直、水平滑块)',
+const scrollViewport = {
+    label: 'Scroll',
+    detail: '滚动视口，内含一个画布子控件',
     insertText: [
-        '${1:scroll_}:',
-        '  type: Canvas',
+        '${1:viewport}:',
+        '  type: Scroll',
         '  attribute:',
-        '    width: ${2:800}',
-        '    height: ${3:500}',
-        '    point: ~${4:middle_center}',
+        '    width: ${2:640}',
+        '    height: ${3:360}',
+        '    moveX: ${4:0}',
+        '    moveY: ${5:0}',
         '  children:',
-        '    vButton:',
+        '    content:',
+        '      type: Canvas',
+        '      attribute:',
+        '        width: self.parent.width',
+        '        height: self.parent.height + ${6:320}',
+    ].join('\n'),
+    kind: vscode.CompletionItemKind.Snippet,
+};
+
+function scrollPreset(label: string, detail: string, vertical: boolean, horizontal: boolean) {
+    const thumbSize = 16;
+    const verticalThumb = [
+        '    verticalThumb:',
         '      type: Texture',
         '      attribute:',
         '        point: ~top_right',
-        '        width: 25',
-        '        height: 80',
-        '        normal: ~255,255,255',
-        '        maxDragY: |',
-        '          self.parent.height - self.height',
-        '    hButton:',
+        '        width: ' + thumbSize,
+        '        height: 64',
+        '        normal: ~112,148,210,255',
+        '        hover: ~156,189,238,255',
+        '        maxDragY: self.parent.height - self.height' + (horizontal ? ' - ' + thumbSize : ''),
+    ];
+    const horizontalThumb = [
+        '    horizontalThumb:',
         '      type: Texture',
         '      attribute:',
         '        point: ~bottom_left',
-        '        width: 80',
-        '        height: 25',
-        '        normal: ~255,255,255',
-        '        maxDragX: |',
-        '          self.parent.width - self.width',
-        '    scroll:',
-        '      type: Scroll',
-        '      attribute:',
-        '        width: |',
-        '          self.parent.width - self.parent[\'vButton\'].width',
-        '        height: |',
-        '          self.parent.height - self.parent[\'hButton\'].height',
-        '        moveY: |',
-        '          self.parent[\'vButton\'].getDragYRatio()',
-        '        moveX: |',
-        '          self.parent[\'hButton\'].getDragXRatio()',
-        '      children:',
-        '        container:',
-        '          type: ${5:Canvas}',
-        '          attribute:',
-        '            width: ${6:1270}',
-        '            height: ${7:1000}',
-        '          children:',
-        '            ${8:# 在这里添加滚动内容}'
-    ].join('\n'),
-    kind: vscode.CompletionItemKind.Snippet
+        '        width: 100',
+        '        height: ' + thumbSize,
+        '        normal: ~112,148,210,255',
+        '        hover: ~156,189,238,255',
+        '        maxDragX: self.parent.width - self.width' + (vertical ? ' - ' + thumbSize : ''),
+    ];
+
+    return {
+        label, detail,
+        insertText: [
+            '${1:scrollPanel}:',
+            '  type: Canvas',
+            '  attribute:',
+            '    width: ${2:640}',
+            '    height: ${3:360}',
+            '    point: ~${4:middle_center}',
+            '  children:',
+            ...(vertical ? verticalThumb : []),
+            ...(horizontal ? horizontalThumb : []),
+            '    viewport:',
+            '      type: Scroll',
+            '      attribute:',
+            '        width: self.parent.width' + (vertical ? ' - ' + thumbSize : ''),
+            '        height: self.parent.height' + (horizontal ? ' - ' + thumbSize : ''),
+            ...(vertical ? ["        moveY: self.parent['verticalThumb'].getDragYRatio()"] : []),
+            ...(horizontal ? ["        moveX: self.parent['horizontalThumb'].getDragXRatio()"] : []),
+            '      children:',
+            '        content:',
+            '          type: Canvas',
+            '          attribute:',
+            '            width: self.parent.width' + (horizontal ? ' + ${5:360}' : ''),
+            '            height: self.parent.height' + (vertical ? ' + ${6:320}' : ''),
+            '          children:',
+            '            background:',
+            '              type: Texture',
+            '              attribute:',
+            '                point: ~stretch_all',
+            '                normal: ~31,40,59,235',
+            '            start:',
+            '              type: Text',
+            '              attribute:',
+            '                point: ~top_left',
+            '                x: 16',
+            '                y: 16',
+            '                texts: ~拖动滑块查看其余内容',
+            '                fontSize: 24',
+            '            end:',
+            '              type: Text',
+            '              attribute:',
+            '                point: ~bottom_right',
+            '                x: -16',
+            '                y: -16',
+            '                texts: ~内容末尾',
+            '                fontSize: 24',
+        ].join('\n'),
+        kind: vscode.CompletionItemKind.Snippet,
+    };
 }
-const scroll_v = {
-    label: 'scroll-v',
-    detail: '创建完整滚动栏组件(仅垂直滚动)',
-    insertText: [
-        '${1:scroll_}:',
-        '  type: Canvas',
-        '  attribute:',
-        '    width: ${2:800}',
-        '    height: ${3:500}',
-        '    point: ~${4:middle_center}',
-        '  children:',
-        '    vButton:',
-        '      type: Texture',
-        '      attribute:',
-        '        point: ~top_right',
-        '        width: 25',
-        '        height: 80',
-        '        normal: ~255,255,255',
-        '        maxDragY: |',
-        '          self.parent.height - self.height',
-        '    scroll:',
-        '      type: Scroll',
-        '      attribute:',
-        '        width: |',
-        '          self.parent.width - self.parent[\'vButton\'].width',
-        '        height: |',
-        '          self.parent.height',
-        '        moveY: |',
-        '          self.parent[\'vButton\'].getDragYRatio()',
-        '      children:',
-        '        container:',
-        '          type: ${5:Canvas}',
-        '          attribute:',
-        '            width: |',
-        '              self.parent.width',
-        '            height: ${6:1000}',
-        '          children:',
-        '            ${7:# 在这里添加滚动内容}'
-    ].join('\n'),
-    kind: vscode.CompletionItemKind.Snippet
-}
-const scroll_h = {
-    label: 'scroll-h',
-    detail: '创建完整滚动栏组件(仅水平滚动)',
-    insertText: [
-        '${1:scroll_}:',
-        '  type: Canvas',
-        '  attribute:',
-        '    width: ${2:800}',
-        '    height: ${3:500}',
-        '    point: ~${4:middle_center}',
-        '  children:',
-        '    hButton:',
-        '      type: Texture',
-        '      attribute:',
-        '        point: ~bottom_center',
-        '        width: 80',
-        '        height: 25',
-        '        normal: ~255,255,255',
-        '        maxDragX: |',
-        '          self.parent.width - self.width',
-        '    scroll:',
-        '      type: Scroll',
-        '      attribute:',
-        '        width: |',
-        '          self.parent.width',
-        '        height: |',
-        '          self.parent.height - self.parent[\'hButton\'].height',
-        '        moveX: |',
-        '          self.parent[\'hButton\'].getDragXRatio()',
-        '      children:',
-        '        container:',
-        '          type: ${5:Canvas}',
-        '          attribute:',
-        '            width: ${6:1000}',
-        '            height: |',
-        '              self.parent.height',
-        '          children:',
-        '            ${7:# 在这里添加滚动内容}'
-    ].join('\n'),
-    kind: vscode.CompletionItemKind.Snippet
-}
+const scroll_full = scrollPreset('scroll-full', '双向滚动，带横纵滑块和示例内容', true, true);
+const scroll_v = scrollPreset('scroll-v', '纵向滚动，带纵向滑块和示例内容', true, false);
+const scroll_h = scrollPreset('scroll-h', '横向滚动，带横向滑块和示例内容', false, true);
+
 const button = {
     label: 'fast-button',
     detail: '快速创建按钮',
@@ -385,13 +353,13 @@ const inv_slots = {
         '${1:inventory_slots_}:',
         '  type: HGrid',
         '  attribute:',
-        '    spaceBetweenY: ${2:60}',
-        '    spaceBetweenX: ${3:10}',
+        '    spaceBetweenY: ${2:4}',
+        '    spaceBetweenX: ${3:4}',
         '    column: 9',
         '  action:',
         '    create: |-',
-        '      for(i in range(1,26)){',
-        '        self[\'slot0\'].copy(\"slot{i.round(0)}\").id += i ',
+        '      for (i in range(1, 26)) {',
+        '        self[\'slot0\'].copy(\"slot{i.toInt()}\").id = 9 + i',
         '      }',
         '  children:',
         '    slot0:',
@@ -399,8 +367,8 @@ const inv_slots = {
         '      attribute:',
         '        width: ${4:80}',
         '        height: ${5:80}',
-        '        normal: ~${6:inventory/item.png}',
-        '        hover: ~${7:inventory/item_.png}',
+        '        normal: ~${6:35,47,67,230}',
+        '        hover: ~${7:72,93,126,255}',
         '        slotType: ~Backpack',
         '        itemScale: ${8:0.8}',
         '        id: 9'
@@ -414,11 +382,11 @@ const hotbar_slots = {
         '${1:hotbar_slots_}:',
         '  type: HStack',
         '  attribute:',
-        '    spaceBetween: ${2:40}',
+        '    spaceBetween: ${2:4}',
         '  action:',
         '    create: |-',
-        '      for(i in range(1,9)){',
-        '        self[\'slot0\'].copy(\"slot{i.round(0)}\").id += i ',
+        '      for (i in range(1, 8)) {',
+        '        self[\'slot0\'].copy(\"slot{i.toInt()}\").id = 36 + i',
         '      }',
         '  children:',
         '    slot0:',
@@ -426,8 +394,9 @@ const hotbar_slots = {
         '      attribute:',
         '        width: ${3:80}',
         '        height: ${4:80}',
-        '        normal: ~${5:inventory/item.png}',
-        '        hover: ~${6:inventory/item_.png}',
+        '        normal: ~${5:35,47,67,230}',
+        '        hover: ~${6:72,93,126,255}',
+        '        slotType: ~Backpack',
         '        itemScale: ${7:0.8}',
         '        id: 36'
     ].join('\n'),
@@ -452,14 +421,17 @@ const model = {
 }
 const bossBar = {
     label: 'BossBar',
-    detail: '创建多层血条控件',
+    detail: '多层血条，用于 boss_bar 配置的控件树',
     insertText: [
         '${1:bossBar_}:',
         '  type: BossBar',
         '  attribute:',
-        '    textures: ~[${2:texture1.png,texture2.png}]',
-        '    transitionTime: ${3:500}',
-        '    point: ~${4:middle_center}'
+        '    width: ${2:360}',
+        '    height: ${3:16}',
+        '    textures:',
+        '      - ~${4:190,58,70}',
+        '      - ~${5:215,145,62}',
+        '    transitionTime: ${6:500}'
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 }
@@ -598,23 +570,65 @@ const bossBars = {
     kind: vscode.CompletionItemKind.Snippet
 }
 
-export const controls = [
+const repeatGrid = {
+    label: 'RepeatGrid',
+    detail: '数据网格，按原版 Tab 顺序显示在线玩家',
+    insertText: '${1:playerList}:\n  type: ' + repeatGridTypeSnippet.replace(/\n/g, '\n  '),
+    kind: vscode.CompletionItemKind.Snippet,
+};
+
+const repeatGridData = {
+    label: 'repeat-grid-data',
+    detail: '静态数据网格，按行渲染字典列表',
+    insertText: [
+        '${1:materials}:',
+        '  type: RepeatGrid',
+        '  attribute:',
+        `    items: "[{'id': 'wood', 'name': '木材'}, {'id': 'stone', 'name': '石料'}, {'id': 'iron', 'name': '铁锭'}]"`,
+        '    key: ~id',
+        '    flow: ~row',
+        '    column: ${2:2}',
+        '    spaceBetweenX: 8',
+        '    spaceBetweenY: 8',
+        '  children:',
+        '    card:',
+        '      type: Texture',
+        '      attribute:',
+        '        width: ${3:136}',
+        '        height: ${4:36}',
+        '        normal: ~35,47,67,230',
+        '        hover: ~72,93,126,255',
+        `        texts: "self.item['name']"`,
+        '        fontSize: 22',
+        '        center: true',
+    ].join('\n'),
+    kind: vscode.CompletionItemKind.Snippet,
+};
+
+const standardControls = [
     // 基础显示
     texture, text, _9sliceTexture,
     // 输入
-    textInput, passwordInput,
+    textInput,
     // 游戏内容显示
     entity, slot, model, bossBar,
     // 布局型
-    canvas, adaptive, hGrid, vGrid, hStack, vStack,
-    // 滚动
-    scroll_full, scroll_v, scroll_h,
+    canvas, adaptive, hGrid, vGrid, repeatGrid, hStack, vStack, scrollViewport,
     // 特殊控件
     compass, progress, _import, observer,
     // 聊天相关
     chatTextBox, suggestion, chat,
     bossBars,
-    // 快捷模板
-    button, button_text,
-    inv_slots, hotbar_slots
-]
+];
+
+export const controls = [
+    ...standardControls,
+    passwordInput, repeatGridData, scroll_full, scroll_v, scroll_h,
+    button, button_text, inv_slots, hotbar_slots,
+];
+
+// Both insertion paths use the same attributes and children. The first line is the control name.
+export const controlTypeBodies = new Map(standardControls.map(template => {
+    const [, typeLine, ...body] = template.insertText.split('\n');
+    return [typeLine.slice('  type: '.length).toLowerCase(), body.map(line => line.slice(2)).join('\n')];
+}));

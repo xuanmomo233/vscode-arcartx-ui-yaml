@@ -1,6 +1,6 @@
 # ArcartX Aria UI
 
-![Version](https://img.shields.io/badge/version-0.0.68-blue.svg)
+![Version](https://img.shields.io/badge/version-0.0.72-blue.svg)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)
 ![VSCode](https://img.shields.io/badge/VSCode-%3E%3D1.100.0-007ACC.svg)
 
@@ -11,7 +11,8 @@ ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在�
 ## 功能特点
 
 ### 语法高亮
-- ✨ YAML + Aria 脚本混合语法高亮，在 `|-` / `|` 代码块中自动切换 Aria 语法
+- ✨ 在 UI YAML 的脚本块和独立 `.aria` 文件中高亮 Aria，支持 `match`、异常处理、类、模块语法、`await`、`?.`、`??`、展开运算符和字符串插值
+- Aria 代码片段可在两种语言模式中使用，例如 `match`、`fn`、`try`、`importfrom` 和 `nullish`
 - 🎨 内置 Aria 语义着色主题（变量、函数、关键字、字符串、数字等独立颜色）
 
 ### 智能补全
@@ -24,9 +25,9 @@ ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在�
   - `children:` 下：子控件模板
   - `tasks` 下：定时任务模板与属性
 - 📝 **Aria 脚本补全** — 在 `|-` / `|` 代码块中提供 Aria 函数、对象补全
-  - `self.` / `val.` / `var.` 后自动弹出上下文相关函数列表
+  - `self.` 与 `Player.` 等对象补全成员，`val.` / `var.` 等作用域补全文档中的变量
   - UI 级别与控件级别自动区分，显示不同的 self 函数
-- 🔄 **智能类型模板** — 输入 `type:` 选择控件类型后，自动生成 `attribute` 块并预填专属属性
+- 🔄 **智能类型模板** — 控件还没有 `attribute` 和 `children` 时，从空白的 `type:` 行选择类型可插入模板。编辑带引号或行尾注释的类型时，仅替换类型值
 - 🎨 **控件结构模板化** — 完整控件模板（含控件名、type、attribute、默认值），一键插入
 
 ### 触发方式
@@ -39,7 +40,7 @@ ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在�
 
 ### 开发辅助
 - 💡 **悬停文档** — 鼠标悬停在控件类型、属性名、属性值（锚点、形状、对齐等）、Aria 函数上显示详细文档和示例
-- 🔧 **签名提示** — 输入 Aria 函数调用时弹出参数提示，显示参数名和类型
+- 🔧 **签名提示** — 显示 Aria 函数参数名和当前参数位置，支持多行调用和嵌套调用
 - 🩺 **代码诊断** — 自动检测无效控件类型、混合缩进、未闭合代码块等常见错误
 - 🔗 **跳转定义** — `Ctrl+点击` 变量名、控件名、模板 ID 快速跳转到声明位置
 
@@ -57,10 +58,12 @@ ArcartX Aria UI 是一个为 ArcartX 开发者设计的 VSCode 扩展，旨在�
   - **文字颜色** — 选择颜色后插入 `§#RRGGBB` 格式码
   - **渐变色** — 双色选择器，预览渐变效果，插入 `§~RRGGBB-RRGGBB` 格式码
   - **色板** — 预设常用颜色快速选取
-  - **控件模板** — 浏览并插入完整控件模板（Texture、Text、Slot、Grid 等）
-  - **特效模板** — 浏览并插入控件特效模板（Neon、Shadow 等）
-  - **UI 模板** — 浏览并插入 UI 配置模板（完整 UI、基础设定、控件结构等）
+  - **控件模板** — 在 `controls` 或 `children` 下插入控件。可用 `repeat-grid-data` 预填静态数据网格，或选用带示例内容的横向、纵向和双向滚动区
+  - **特效模板** — 在控件的 `effect` 下插入特效，可通过选项切换渐变、流光和能量图案
+  - **UI 模板** — 包含可交互菜单、Tooltip、BossBar 配置和定时任务，卡片会提示插入位置
   - **自定义模板** — 用户自建模板，支持添加 / 删除 / 复制 / 插入 / 预览，持久化存储
+
+内置模板的「插入」会按当前缩进放置内容。用 Tab 切换可编辑字段。「复制」与「预览」显示填入默认值后的 YAML。
 
 ## 安装方法
 
@@ -103,6 +106,7 @@ codeMultiple: |-
 | `Text` | 文本控件 |
 | `9SliceTexture` | 九宫格图片（可拉伸） |
 | `TextBox` | 文本输入框 |
+| `RepeatGrid` | 按列表顺序创建、复用和排列子控件 |
 | `Entity` | 实体渲染控件 |
 | `Model` | 模型渲染控件（支持部位裁剪） |
 | `Slot` | 物品槽位 |
@@ -120,6 +124,16 @@ codeMultiple: |-
 | `Import` | 跨 UI 导入控件 |
 | `Card` | 聊天卡片根控件 |
 | `BossBars` | 血条排列器 |
+
+### 用 RepeatGrid 渲染玩家列表
+
+在 `controls` 或 `children` 中选择 `RepeatGrid` 模板，即可插入原版 Tab 玩家列表示例。模板也可从工具箱插入。
+
+- `items: Player.getTabPlayers()` 读取原版 Tab 的有序玩家数据，`key: ~uuid` 让同一个玩家在顺序变化后仍使用原来的控件。
+- `flow: ~column` 按列填充，以 `row` 控制每列行数。使用 `flow: ~row` 时，以 `column` 控制每行列数。
+- 在 `children` 下放一个直接子控件作为模板。在模板根控件的脚本中输入 `self.` 可补全 `item`、`key`、`index`、`row` 和 `column`。它的直接子控件通过 `self.parent.item` 访问当前数据，使用 `self.parent().` 时也可以补全这些字段。
+
+[控件类型文档](https://wiki.arcartx.com/docs/arcartx_v2/8_ui/8_controls_type) · [玩家 API 文档](https://wiki.arcartx.com/docs/arcartx_v2/777_client_aria/1_functions/12_player) · [Aria 语言参考](https://wiki.arcartx.com/docs/aria)
 
 ## 致谢
 

@@ -25,8 +25,8 @@
     ["\"\"\"", "\"\"\""]
   ],
   "indentationRules": {
-    "increaseIndentPattern": "^.*\\{[^}\"']*$|^\\s*(case|default)\\s*:(?!\\s*break\\b)|^\\s*(if|while|else|elif|for)\\b(?!.*[;{}]\\s*$)",
-    "decreaseIndentPattern": "^\\s*}|^\\s*(case|default)\\s*:"
+    "increaseIndentPattern": "^.*\\{[^}\"']*$",
+    "decreaseIndentPattern": "^\\s*}"
   },
   "folding": {
     "markers": {

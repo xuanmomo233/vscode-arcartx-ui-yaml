@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { type_values } from '../completion/structure/rule/controlAttributeValue';
+import { MappingEntry, directControlType, indentation, isAriaBlock, isControlPath, isMappingBlock, mappingEntry, scalarValue } from '../yamlContext';
+import { AriaPunctuation } from '../aria/punctuation';
 
 const VALID_CONTROL_TYPES = new Set(type_values.map(v => v.label.toLowerCase()));
 
@@ -63,107 +65,105 @@ export class DiagnosticProvider {
 
     private updateDiagnostics(document: vscode.TextDocument) {
         const diagnostics: vscode.Diagnostic[] = [];
-        const text = document.getText();
-        const lines = text.split('\n');
+        const parents: MappingEntry[] = [];
+        let aria: { start: MappingEntry; braces: number; punctuation: AriaPunctuation } | undefined;
 
-        let inAriaBlock = false;
-        let ariaBlockIndent = 0;
-        let ariaBlockStartLine = -1;
-        let braceDepth = 0;
-
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            const trimmed = line.trim();
-
-            if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
-
-            const indent = this.getIndent(line);
-
-            // 混合缩进检测
-            if (line.includes('\t') && line.includes(' ') && !line.trim().startsWith('#')) {
-                const leadingWhitespace = line.match(/^\s*/)?.[0] || '';
-                if (leadingWhitespace.includes('\t') && leadingWhitespace.includes(' ')) {
-                    diagnostics.push(new vscode.Diagnostic(
-                        new vscode.Range(i, 0, i, leadingWhitespace.length),
-                        '混合使用 Tab 和空格缩进，建议统一使用空格',
-                        vscode.DiagnosticSeverity.Warning
-                    ));
-                }
+        const finishBlock = (endLine: number) => {
+            if (aria && aria.braces > 0) {
+                diagnostics.push(new vscode.Diagnostic(
+                    new vscode.Range(aria.start.line, aria.start.valueStart, endLine, 0),
+                    'Aria 代码块中花括号未闭合（缺少 ' + aria.braces + " 个 '}'）",
+                    vscode.DiagnosticSeverity.Error
+                ));
             }
+        };
 
-            // Aria 脚本块检测
-            if (trimmed.match(/^\w+:\s*\|?-?$/)) {
-                if (trimmed.endsWith('|-') || trimmed.endsWith('|')) {
-                    inAriaBlock = true;
-                    ariaBlockIndent = indent;
-                    ariaBlockStartLine = i;
-                    braceDepth = 0;
+        for (let i = 0; i < document.lineCount; i++) {
+            const line = document.lineAt(i).text;
+            const trimmed = line.trim();
+            if (!trimmed) {
+                continue;
+            }
+            const indent = indentation(line);
+            if (aria && indent <= aria.start.indent) {
+                finishBlock(i);
+                aria = undefined;
+            }
+            const leadingWhitespace = line.match(/^[ \t]*/)?.[0] ?? '';
+            if (leadingWhitespace.includes('\t') && leadingWhitespace.includes(' ')) {
+                diagnostics.push(new vscode.Diagnostic(
+                    new vscode.Range(i, 0, i, leadingWhitespace.length),
+                    '混合使用 Tab 和空格缩进，建议统一使用空格',
+                    vscode.DiagnosticSeverity.Warning
+                ));
+            }
+            if (aria) {
+                const block = aria;
+                let hasCode = false;
+                block.punctuation.scan(line, symbol => {
+                    hasCode = true;
+                    if (symbol === '{') {
+                        block.braces++;
+                    } else if (symbol === '}' && block.braces > 0) {
+                        block.braces--;
+                    }
+                });
+                if (hasCode) {
+                    this.checkRangeFloatTrap(trimmed, line, i, diagnostics);
                 }
                 continue;
             }
-
-            if (inAriaBlock) {
-                if (indent > ariaBlockIndent || trimmed === '') {
-                    const openBraces = (trimmed.match(/{/g) || []).length;
-                    const closeBraces = (trimmed.match(/}/g) || []).length;
-                    braceDepth += openBraces - closeBraces;
-
-                    // range() 浮点数陷阱检测
-                    this.checkRangeFloatTrap(trimmed, line, i, diagnostics);
-                    continue;
-                } else {
-                    if (braceDepth > 0) {
-                        diagnostics.push(new vscode.Diagnostic(
-                            new vscode.Range(ariaBlockStartLine, 0, i, 0),
-                            `Aria 代码块中花括号未闭合（缺少 ${braceDepth} 个 '}'）`,
-                            vscode.DiagnosticSeverity.Error
-                        ));
-                    }
-                    inAriaBlock = false;
-                }
+            if (trimmed.startsWith('#') || trimmed.startsWith('//')) {
+                continue;
+            }
+            while (parents.length && parents[parents.length - 1].indent >= indent) {
+                parents.pop();
+            }
+            const entry = mappingEntry(line, i);
+            if (!entry) {
+                continue;
+            }
+            if (isAriaBlock(entry)) {
+                aria = { start: entry, braces: 0, punctuation: new AriaPunctuation() };
+                continue;
+            }
+            if (isMappingBlock(entry)) {
+                parents.push(entry);
+                continue;
             }
 
-            const yamlKeyMatch = trimmed.match(/^(\w+):\s*(.*)$/);
-            if (yamlKeyMatch) {
-                const key = yamlKeyMatch[1];
-                const value = yamlKeyMatch[2];
+            const path = parents.map(parent => parent.key);
+            const value = scalarValue(entry.value);
+            const range = new vscode.Range(i, entry.valueStart, i, entry.valueStart + entry.value.length);
+            if (entry.key === 'type' && isControlPath(path) && /^[\w-]+$/.test(value) && !/^\d+$/.test(value) &&
+                !VALID_CONTROL_TYPES.has(value.toLowerCase())) {
+                diagnostics.push(new vscode.Diagnostic(
+                    range, '无效的控件类型: "' + value + '"', vscode.DiagnosticSeverity.Warning
+                ));
+            }
 
-                // 控件类型检测
-                if (key === 'type' && value && !value.startsWith('${') && isNaN(Number(value.trim().replace(/['"]/g, '')))) {
-                    const typeValue = value.trim().replace(/['"]/g, '');
-                    if (!VALID_CONTROL_TYPES.has(typeValue.toLowerCase()) && typeValue !== '') {
-                        diagnostics.push(new vscode.Diagnostic(
-                            new vscode.Range(i, line.indexOf(value), i, line.indexOf(value) + value.length),
-                            `无效的控件类型: "${typeValue}"`,
-                            vscode.DiagnosticSeverity.Warning
-                        ));
-                    }
-                }
-
-                // ~ 前缀缺失检测（仅在非脚本块内、attribute 块下的属性值）
-                if (!inAriaBlock && value && TILDE_REQUIRED_ATTRS.has(key)) {
-                    this.checkTildePrefix(key, value, line, i, diagnostics);
-                }
-
-                // 缩进检测
-                if (indent > 0 && indent % 2 !== 0) {
+            if (path[path.length - 1] === 'attribute' && isControlPath(path.slice(0, -1))) {
+                if (TILDE_REQUIRED_ATTRS.has(entry.key)) {
+                    this.checkTildePrefix(entry.key, value, range, diagnostics);
+                } else if (entry.key === 'flow' && (value === 'row' || value === 'column') &&
+                    directControlType(document, parents[parents.length - 2])?.toLowerCase() === 'repeatgrid') {
                     diagnostics.push(new vscode.Diagnostic(
-                        new vscode.Range(i, 0, i, indent),
-                        `缩进为 ${indent} 个空格，建议使用 2 的倍数`,
+                        range, '固定排列方向可写为 ~' + value + '。',
                         vscode.DiagnosticSeverity.Information
                     ));
                 }
             }
+
+            if (indent % 2 !== 0) {
+                diagnostics.push(new vscode.Diagnostic(
+                    new vscode.Range(i, 0, i, leadingWhitespace.length),
+                    '缩进为 ' + indent + ' 个空格，建议使用 2 的倍数',
+                    vscode.DiagnosticSeverity.Information
+                ));
+            }
         }
 
-        if (inAriaBlock && braceDepth > 0) {
-            diagnostics.push(new vscode.Diagnostic(
-                new vscode.Range(ariaBlockStartLine, 0, lines.length - 1, 0),
-                `Aria 代码块中花括号未闭合（缺少 ${braceDepth} 个 '}'）`,
-                vscode.DiagnosticSeverity.Error
-            ));
-        }
-
+        finishBlock(document.lineCount - 1);
         this.diagnosticCollection.set(document.uri, diagnostics);
     }
 
@@ -172,9 +172,7 @@ export class DiagnosticProvider {
      * 颜色值（r,g,b 或 r,g,b,a）、路径值（xxx.png）、锚点枚举、slotType 枚举、shape 枚举
      * 这些值如果不加 ~ 前缀，会被当作脚本表达式编译，导致报错或值为空
      */
-    private checkTildePrefix(key: string, value: string, line: string, lineNum: number, diagnostics: vscode.Diagnostic[]) {
-        const cleanValue = value.trim().replace(/^['"]|['"]$/g, '');
-
+    private checkTildePrefix(key: string, cleanValue: string, range: vscode.Range, diagnostics: vscode.Diagnostic[]) {
         // 已经有 ~ 前缀，OK
         if (cleanValue.startsWith('~')) return;
 
@@ -232,9 +230,8 @@ export class DiagnosticProvider {
         }
 
         if (needsTilde) {
-            const valueStartCol = line.indexOf(value);
             diagnostics.push(new vscode.Diagnostic(
-                new vscode.Range(lineNum, valueStartCol, lineNum, valueStartCol + value.length),
+                range,
                 `${hint}（应为 ~${cleanValue}）`,
                 vscode.DiagnosticSeverity.Warning
             ));
@@ -268,13 +265,4 @@ export class DiagnosticProvider {
         }
     }
 
-    private getIndent(line: string): number {
-        let indent = 0;
-        for (const char of line) {
-            if (char === ' ') indent++;
-            else if (char === '\t') indent += 4;
-            else break;
-        }
-        return indent;
-    }
 }

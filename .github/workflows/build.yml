@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - run: npm install
 
@@ -42,6 +42,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: '*.vsix'
+          overwrite_files: false
           draft: false
           prerelease: false
         env:

@@ -13,6 +13,9 @@ import { task_settings } from '../completion/structure/rule/uiTaskSettings';
 import { hud_names, match_values } from '../completion/structure/rule/uiValue';
 import { self_functions } from '../completion/structure/rule/uiSelf';
 import { control_self_functions } from '../completion/structure/rule/controlSelf';
+import { ariaContext, isControlPath, isTaskPath, mappingEntry, positionIndent, scalarValue, yamlAncestors } from '../yamlContext';
+import { detectControlType } from '../completion/structure/rule/controlTypeAttributes';
+import { isRepeatGridItem, repeatGridAttributes, repeatGridFlowValues, repeatGridItemProperties, selfParentDepth } from '../completion/structure/rule/repeatGrid';
 
 interface DocItem {
     label: string;
@@ -151,25 +154,6 @@ export class HoverProvider implements vscode.HoverProvider {
         return false;
     }
 
-    /**
-     * 判断光标是否在脚本上下文中（|- 或 | 代码块内）
-     */
-    private isScriptContext(document: vscode.TextDocument, position: vscode.Position): boolean {
-        // 向上查找最近的 |- 或 | 行
-        for (let i = position.line; i >= 0; i--) {
-            const lineText = document.lineAt(i).text;
-            // 匹配 "xxx: |-" 或 "xxx: |" 模式
-            if (/^\s*\w+:\s*\|-?\s*$/.test(lineText)) {
-                return true;
-            }
-            // 如果遇到非缩进行（顶层 YAML 键），停止查找
-            if (i < position.line && /^\S/.test(lineText)) {
-                break;
-            }
-        }
-        return false;
-    }
-
     private ariaKeywords = new Set(['self', 'val', 'var']);
 
     provideHover(
@@ -192,7 +176,8 @@ export class HoverProvider implements vscode.HoverProvider {
         if (segments.length === 0) return undefined;
 
         // 确定光标所在段索引
-        const cursorOffset = position.character - range.start.character;
+        const wordStart = range.start.character + rawWord.indexOf(cleanWord);
+        const cursorOffset = position.character - wordStart;
         let cursorSegIndex = 0;
         let accumLen = 0;
         for (let i = 0; i < segments.length; i++) {
@@ -213,7 +198,7 @@ export class HoverProvider implements vscode.HoverProvider {
         if (this.ariaKeywords.has(cursorSeg)) return undefined;
 
         // 光标段的精确 range（只覆盖当前段，不覆盖整个 dotted 路径）
-        let segStartChar = range.start.character;
+        let segStartChar = wordStart;
         for (let i = 0; i < cursorSegIndex; i++) {
             segStartChar += segments[i].length + 1; // +1 for dot
         }
@@ -232,14 +217,35 @@ export class HoverProvider implements vscode.HoverProvider {
 
         // 判断上下文
         const isYamlKey = this.isYamlKeyContext(line, range);
-        const isScript = this.isScriptContext(document, position);
-
+        const parents = yamlAncestors(document, position.line, positionIndent(document, position));
+        const isScript = ariaContext(document, position, parents);
         let docItem: DocItem | undefined;
+        const entry = mappingEntry(line, position.line);
+        if (!isScript && entry?.key === 'type' && segStartChar >= entry.valueStart &&
+            cursorSeg === scalarValue(entry.value).toLowerCase()) {
+            const path = parents.map(parent => parent.key);
+            if (isTaskPath(path)) {
+                docItem = task_type_values.find(option => option.label.toLowerCase() === cursorSeg);
+            } else if (isControlPath(path) || path.length === 0) {
+                docItem = type_values.find(option => option.label.toLowerCase() === cursorSeg);
+            }
+        }
+        if (parents[parents.length - 1]?.key === 'attribute' &&
+            detectControlType(document, parents)?.toLowerCase() === 'repeatgrid') {
+            if (/^\s*flow\s*:\s*['"]?~/.test(line) && cursorSeg !== 'flow') {
+                docItem = repeatGridFlowValues.find(option => option.label === cursorSeg);
+            } else if (!isScript && isYamlKey) {
+                docItem = repeatGridAttributes.find(attribute => attribute.label.toLowerCase() === cursorSeg);
+            }
+        }
+        if (isScript === 'control' && isRepeatGridItem(document, parents, selfParentDepth(line.slice(0, segStartChar)))) {
+            docItem = repeatGridItemProperties.find(property => property.label === cursorSeg);
+        }
 
-        if (isYamlKey && !isScript) {
+        if (!docItem && isYamlKey && !isScript) {
             // YAML 键上下文：只查 yamlMap
             docItem = this.yamlMap.get(prefixPath) || this.yamlMap.get(cursorSeg);
-        } else if (isScript) {
+        } else if (!docItem && isScript) {
             // 脚本上下文：
             // 0. 如果光标在第一段（对象名），优先查 objectMap 显示对象介绍
             if (cursorSegIndex === 0 && this.objectMap.has(cursorSeg)) {
@@ -264,7 +270,7 @@ export class HoverProvider implements vscode.HoverProvider {
             if (!docItem) {
                 docItem = this.scriptMap.get(cursorSeg);
             }
-        } else {
+        } else if (!docItem) {
             // 模糊上下文：yamlMap 优先
             docItem = this.yamlMap.get(prefixPath) || this.yamlMap.get(cursorSeg);
             if (!docItem) {

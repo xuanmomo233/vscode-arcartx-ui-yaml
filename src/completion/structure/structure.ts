@@ -1,387 +1,153 @@
 import * as vscode from 'vscode';
-import { completionConfigs, CompletionConfig, attributeValueMap } from './rule'
-import { self_functions } from './rule/uiSelf'
-import { control_self_functions } from './rule/controlSelf'
-import { builtin_functions, builtin_objects } from './rule/ariaBuiltin'
-import { task_type_values } from './rule/uiTaskTypeValues'
-import { getAttributesByType, detectControlType, getSmartTypeSnippet, hasSmartTemplate } from './rule/controlTypeAttributes'
+import { completionConfigs, CompletionConfig, attributeValueMap } from './rule';
+import { self_functions } from './rule/uiSelf';
+import { control_self_functions } from './rule/controlSelf';
+import { builtin_functions, builtin_objects } from './rule/ariaBuiltin';
+import { task_type_values } from './rule/uiTaskTypeValues';
+import { getAttributesByType, detectControlType, getSmartTypeSnippet } from './rule/controlTypeAttributes';
+import { isRepeatGridItem, repeatGridFlowValues, repeatGridItemProperties, selfParentDepth } from './rule/repeatGrid';
+import { ariaContext, isAriaBlock, isControlPath, isTaskPath, mappingEntry, positionIndent, yamlAncestors, directMappings } from '../../yamlContext';
+
+type Completion = CompletionConfig['completions'][number];
 
 export class StructureCompletionProvider implements vscode.CompletionItemProvider {
-
-    provideCompletionItems(
-        document: vscode.TextDocument,
-        position: vscode.Position,
-        token: vscode.CancellationToken,
-        context: vscode.CompletionContext
-    ): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList> {
-
-        const currentLine = document.lineAt(position.line).text;
-        const linePrefix = currentLine.substring(0, position.character);
-        const currentLineIndent = currentLine.match(/^\s*/)?.[0] || '';
-
-        // 1. 检测 self. 或内置对象函数补全
-        const selfMatch = linePrefix.match(/(\w+)\.$/);
-        if (selfMatch) {
-            const prefix = selfMatch[1];
-            if (prefix === 'self' || prefix === 'val' || prefix === 'var' || builtin_objects.includes(prefix)) {
-                // 判断是 UI 级别的 self 还是控件级别的 self
-                let functions = builtin_functions;
-                if (prefix === 'self') {
-                    // 获取当前路径，判断是否在 UI 级别
-                    const currentPath = this.getCurrentPath(document, position);
-                    const pathStr = currentPath.join('.');
-                    // 检查是否在 UI 的 action/packetHandler 中，或者路径中包含 ui
-                    const isInUiLevel = currentPath.includes('ui') ||
-                                          pathStr.includes('ui.action') ||
-                                          pathStr.includes('ui.packetHandler');
-                    // 在 UI 级别使用 UI 函数，否则使用控件函数
-                    functions = isInUiLevel ? self_functions : control_self_functions;
-                } else if (prefix === 'val' || prefix === 'var') {
-                    functions = builtin_functions;
-                } else {
-                    // builtin_objects
-                    functions = builtin_functions.filter(f => f.label.startsWith(prefix + '.'));
-                }
-                return functions.map(completion => {
-                    const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
-                    item.detail = completion.detail || '';
-                    item.insertText = new vscode.SnippetString(completion.insertText);
-                    item.documentation = completion.documentation;
-                    item.sortText = `0${completion.label}`;
-                    return item;
-                });
-            }
+    provideCompletionItems(document: vscode.TextDocument, position: vscode.Position): vscode.CompletionItem[] {
+        const text = document.lineAt(position.line).text;
+        const prefix = text.slice(0, position.character);
+        const parents = yamlAncestors(document, position.line, positionIndent(document, position));
+        const path = parents.map(entry => entry.key);
+        const script = ariaContext(document, position, parents);
+        const trigger = /[/?]$/.test(prefix) ? prefix.slice(-1) : '';
+        if (script && parents.some(isAriaBlock)) {
+            return this.completeAria(document, position, prefix, parents, script);
         }
 
-        // 1.5 检测链式访问后的函数补全
-        // 匹配 self 链式访问并以 ] 或 ) 后的点号结尾，例如：
-        //   self.parent['竖向滑块'].   (索引访问子控件)
-        //   self.parent.get(0).       (get 函数获取子控件)
-        //   self.parent().            (parent() 返回父控件)
-        // 这些场景访问的都是控件对象，返回控件函数集
-        const chainMatch = linePrefix.match(/(^|[^\w.])self\b[\w\[\]'"\-(),\s]*[)\]]\.(\w*)$/);
-        if (chainMatch) {
-            return control_self_functions.map(completion => {
-                const item = new vscode.CompletionItem(completion.label, completion.kind || vscode.CompletionItemKind.Property);
-                item.detail = completion.detail || '';
-                item.insertText = new vscode.SnippetString(completion.insertText);
-                item.documentation = completion.documentation;
-                item.sortText = `0${completion.label}`;
-                return item;
-            });
-        }
-
-        // 2. 检测属性值补全（如 point: ~xxx）
-        // 注意：只有输入了部分内容时才显示补全，使用触发字符（/ 或 ?）时交给第2.5节处理
-        const lastChar = linePrefix.charAt(linePrefix.length - 1);
-
-        // 提前获取当前路径，用于上下文检测
-        const currentPath = this.getCurrentPath(document, position);
-        const pathStr = currentPath.join('.');
-        const isInTasksContext = currentPath.includes('tasks');
-
-        if (lastChar !== '/' && lastChar !== '?') {
-            const attrValueMatch = linePrefix.match(/(\w+):(\s*)(~?)(\w*)$/);
-            if (attrValueMatch) {
-            const attrName = attrValueMatch[1];
-            const colonSpace = attrValueMatch[2] || '';
-            const tildePrefix = attrValueMatch[3] || '';
-            const partialInput = attrValueMatch[4] || '';
-
-            // 属性值补全：输入属性名: 后即显示全部选项，输入部分字符时过滤
-            // 在 tasks 上下文中，type 属性使用任务类型值
-            let valueOptions = attributeValueMap.get(attrName);
-            if (attrName === 'type' && isInTasksContext) {
-                valueOptions = task_type_values;
-            }
-
-            if (!valueOptions) {
-                // 无属性值补全的属性分两类：
-                // 1. 块级关键字（action/attribute/children）: 落入 section 3，通过路径匹配显示块内容（触发器/属性/控件模板）
-                // 2. 其他普通属性（x/y/width/123 等）: 直接返回 []，避免无关补全
-                const blockKeys = ['action', 'attribute', 'children', 'effect'];
-                if (!blockKeys.includes(attrName)) {
-                    return [];
-                }
-                // blockKeys 落到这里继续执行 section 3
+        const valueMatch = prefix.match(/^\s*(\w+)[ \t]*:([ \t]*)(['"]?)(~?)([\w-]*)([/?]?)$/);
+        if (valueMatch) {
+            const [, key, space, quote, tilde, partial, manualTrigger] = valueMatch;
+            const controlOwner = isControlPath(path) ? parents[parents.length - 1] : undefined;
+            const repeatFlow = key === 'flow' && path[path.length - 1] === 'attribute' &&
+                detectControlType(document, parents)?.toLowerCase() === 'repeatgrid';
+            let options: Completion[] | undefined;
+            if (key === 'type') {
+                options = isTaskPath(path) ? task_type_values :
+                    controlOwner || path.length === 0 ? attributeValueMap.get(key) : undefined;
             } else {
-                // partialInput 有值时过滤，为空时显示全部
-                const filteredOptions = partialInput
-                    ? valueOptions.filter(opt => {
-                        const label = opt.label.toLowerCase();
-                        const input = partialInput.toLowerCase();
-                        return label.includes(input);
-                    })
-                    : valueOptions;
-
-                // 检测是否是控件 type 属性（非 tasks 上下文），使用智能模板
-                const isControlType = attrName === 'type' && !isInTasksContext;
-
-                return filteredOptions.map(completion => {
-                    const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
-                    const item = new vscode.CompletionItem(displayLabel, completion.kind || vscode.CompletionItemKind.Property);
-                    item.filterText = completion.label;
-                    item.detail = completion.detail;
-                    let insertText = completion.insertText;
-
-                    // 智能模板：type 值 + attribute 块
-                    if (isControlType && hasSmartTemplate(completion.label)) {
-                        // 冒号后已有空格则不再添加，避免双空格
-                        const leadingSpace = colonSpace.length > 0 ? '' : ' ';
-                        // baseIndent 传空串：VSCode auto-indent 会自动补基础缩进
-                        insertText = leadingSpace + getSmartTypeSnippet(completion.label);
-                        // 设置 range 替换用户已输入的 partialInput，避免重复
-                        const replaceStart = position.translate(0, -partialInput.length);
-                        item.range = new vscode.Range(replaceStart, position);
-                        item.insertText = new vscode.SnippetString(insertText);
-                        item.documentation = completion.documentation;
-                        item.sortText = `0${completion.label}`;
-                        return item;
-                    }
-
-                    // 冒号后无空格时，给 insertText 前面补空格
-                    if (colonSpace.length === 0 && !insertText.startsWith(' ')) {
-                        insertText = ' ' + insertText;
-                    }
-                    if (tildePrefix === '~' && insertText.startsWith(' ~')) {
-                        insertText = insertText.substring(2);
-                    } else if (tildePrefix === '~' && insertText.startsWith('~')) {
-                        insertText = insertText.substring(1);
-                    }
-                    if (partialInput && insertText.startsWith('~' + partialInput)) {
-                        insertText = '~' + insertText.substring(partialInput.length + 1);
-                    } else if (partialInput && insertText.startsWith(' ~' + partialInput)) {
-                        insertText = ' ~' + insertText.substring(partialInput.length + 2);
-                    } else if (partialInput && insertText.startsWith(partialInput)) {
-                        insertText = insertText.substring(partialInput.length);
-                    }
-                    item.insertText = new vscode.SnippetString(insertText);
-                    item.documentation = completion.documentation;
-                    item.sortText = `0${completion.label}`;
-                    return item;
-                });
+                options = repeatFlow ? repeatGridFlowValues : attributeValueMap.get(key);
             }
-        }
-        }
-
-        // 2.5. 检测属性值补全（使用触发字符 / 或 ?）
-        // 当用户输入 point: ~/ 或 slotType: ~? 时，使用此节触发补全
-        if (lastChar === '/' || lastChar === '?') {
-            // 修改正则：匹配属性名、可选的 ~ 前缀、以及触发字符前的内容
-            // 例如: point: ~/ -> attrName=point, tildePrefix=~
-            const attrMatch = linePrefix.match(/(\w+):(\s*)(~?|)[\w|/|?]*$/);
-            if (attrMatch) {
-                const attrName = attrMatch[1];
-                const colonSpace = attrMatch[2] || '';
-                // 检查是否有 ~ 前缀（通过检查 linePrefix 中是否包含 ~）
-                const tildeMatch = linePrefix.match(/(\w+):\s*(~)/);
-                const tildePrefix = tildeMatch ? tildeMatch[2] : '';
-                // 在 tasks 上下文中，type 属性使用任务类型值
-                let valueOptions = attributeValueMap.get(attrName);
-                if (attrName === 'type' && isInTasksContext) {
-                    valueOptions = task_type_values;
-                }
-
-                if (valueOptions && valueOptions.length > 0) {
-                    // 检测是否是控件 type 属性（非 tasks 上下文），使用智能模板
-                    const isControlType = attrName === 'type' && !isInTasksContext;
-
-                    return valueOptions.map(completion => {
-                        const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
-                        const item = new vscode.CompletionItem(displayLabel, completion.kind || vscode.CompletionItemKind.Property);
-                        item.filterText = completion.label;
-                        item.detail = completion.detail;
-                        let insertText = completion.insertText;
-
-                        // 智能模板：type 值 + attribute 块
-                        if (isControlType && hasSmartTemplate(completion.label)) {
-                            // baseIndent 传空串：VSCode auto-indent 会自动补基础缩进
-                            insertText = getSmartTypeSnippet(completion.label);
-                        } else if (tildePrefix === '~' && insertText.startsWith('~')) {
-                            insertText = insertText.substring(1);
-                        }
-
-                        // 冒号后无空格时，给 insertText 前面补空格
-                        if (colonSpace.length === 0 && !insertText.startsWith(' ')) {
-                            insertText = ' ' + insertText;
-                        }
-
-                        item.insertText = new vscode.SnippetString(insertText);
-                        item.documentation = completion.documentation;
-                        item.filterText = lastChar + completion.label;
-                        item.additionalTextEdits = [
-                            vscode.TextEdit.delete(new vscode.Range(
-                                new vscode.Position(position.line, position.character - 1),
-                                position
-                            ))
-                        ];
-                        item.sortText = `0${completion.label}`;
+            if (options) {
+                const tail = text.slice(position.character);
+                const suffixLength = tail.match(/^[\w-]*/)?.[0].length ?? 0;
+                const hasClosingQuote = quote !== '' && tail[suffixLength] === quote;
+                const end = position.translate(0, suffixLength + Number(hasClosingQuote));
+                const start = position.translate(0, -(quote.length + tilde.length + partial.length + manualTrigger.length));
+                // Keep the rest of the type line in place, including a trailing YAML comment.
+                const canInsertTemplate = key === 'type' && quote === '' && text.slice(end.character).trim() === '' &&
+                    controlOwner && !Array.from(directMappings(document, controlOwner))
+                        .some(entry => entry.key === 'attribute' || entry.key === 'children');
+                return options
+                    .filter(option => (option.label !== 'Tip' || (path.length === 1 && controlOwner?.key === 'root_control')) &&
+                        option.label.replace(/^~/, '').toLowerCase().includes(partial.toLowerCase()))
+                    .map(option => {
+                        const template = canInsertTemplate ? getSmartTypeSnippet(option.label) : undefined;
+                        const snippet = template ?? option.insertText.trimStart();
+                        const item = this.completionItem(option, (space ? '' : ' ') + quote + snippet + quote);
+                        item.range = new vscode.Range(start, end);
+                        item.filterText = quote + tilde + (manualTrigger ? partial + manualTrigger : '') + option.label.replace(/^~/, '');
                         return item;
                     });
-                }
             }
         }
 
-        // 3. 查找匹配配置
-        const matchingConfig = this.findMatchingConfig(currentPath);
+        if (script) {
+            return this.completeAria(document, position, prefix, parents, script);
+        }
 
-        if (!matchingConfig) {
+        const header = mappingEntry(trigger ? prefix.slice(0, -1) : prefix, position.line);
+        const onBlockHeader = header?.value === '' &&
+            ['ui', 'action', 'attribute', 'children', 'effect', 'controls', 'template', 'tasks'].includes(header.key);
+        if (onBlockHeader) {
+            path.push(header.key);
+            parents.push(header);
+        } else if (valueMatch) {
             return [];
         }
 
-        // 4. 处理触发字符（/ 或 ?）
-        const isTriggerChar = lastChar === '?' || lastChar === '/';
-
-        // 4.5 如果当前路径以 attribute 结尾，根据控件 type 过滤属性
-        let completionsToUse = matchingConfig.completions;
-        if (currentPath[currentPath.length - 1] === 'attribute') {
-            const controlType = detectControlType(document, position);
-            if (controlType) {
-                completionsToUse = getAttributesByType(controlType);
+        const config = this.findMatchingConfig(path);
+        const type = path[path.length - 1] === 'attribute' ? detectControlType(document, parents) : undefined;
+        const entries = type ? getAttributesByType(type) : config?.completions ?? [];
+        return entries.map(entry => {
+            const snippet = onBlockHeader ? '\n' + entry.insertText.replace(/^/gm, '  ') : entry.insertText;
+            const item = this.completionItem(entry, snippet);
+            if (trigger) {
+                item.range = new vscode.Range(position.translate(0, -1), position);
+                item.filterText = trigger + entry.label;
             }
-        }
-
-        // 检测当前是否在块头行（action:/attribute:/children:）
-        const isOnBlockHeader = linePrefix.match(/^(\s*)(action|attribute|children|effect):\s*$/) !== null;
-        // 块头子项缩进：仅 2 空格相对缩进，VSCode auto-indent 会自动补上当前行的基础缩进
-        const blockChildIndent = isOnBlockHeader ? '  ' : '';
-
-        return completionsToUse.map(completion => {
-            const displayLabel = completion.detail ? `${completion.label} — ${completion.detail}` : completion.label;
-            const item = new vscode.CompletionItem(displayLabel, completion.kind || vscode.CompletionItemKind.Property);
-            item.filterText = completion.label;
-            item.detail = completion.detail;
-
-            // 对含换行的 insertText，不再手动添加 currentLineIndent
-            // VSCode auto-indent 会自动为新行补上当前行的基础缩进
-            let insertText = completion.insertText;
-
-            // 当前行是块头（如 action:），让子项从下一行开始并加子缩进
-            if (isOnBlockHeader) {
-                insertText = '\n' + insertText.replace(/^/gm, blockChildIndent);
-            }
-
-            item.insertText = new vscode.SnippetString(insertText);
-            item.documentation = completion.documentation || new vscode.MarkdownString(completion.detail);
-
-            if (isTriggerChar) {
-                item.filterText = lastChar + completion.label;
-                item.additionalTextEdits = [
-                    vscode.TextEdit.delete(new vscode.Range(
-                        new vscode.Position(position.line, position.character - 1),
-                        position
-                    ))
-                ];
-            }
-
-            item.sortText = `0${completion.label}`;
             return item;
         });
     }
 
-    /**
-     * 获取当前位置的路径
-     * 例如：controls -> 遮罩 -> attribute -> ['controls', '遮罩', 'attribute']
-     */
-    private getCurrentPath(document: vscode.TextDocument, position: vscode.Position): string[] {
-        const path: string[] = [];
-        const currentLineText = document.lineAt(position.line).text;
-
-        // 计算当前行的缩进
-        let currentIndent = 0;
-        if (!currentLineText.trim() || currentLineText.trim().startsWith('//') || currentLineText.trim().startsWith('#')) {
-            // 空行或注释行，使用光标位置作为缩进
-            currentIndent = position.character;
-        } else {
-            currentIndent = this.getIndentLevel(currentLineText);
-        }
-        // 检测当前行是否在属性值行（key: value 中的 value 部分）
-        const currentLineTrimmed = currentLineText.trim();
-        if (currentLineTrimmed.includes(':')) {
-            const colonIndex = currentLineTrimmed.indexOf(':');
-            const beforeColon = currentLineTrimmed.substring(0, colonIndex).trim();
-            if (beforeColon && !beforeColon.includes(' ') && position.character > currentLineText.indexOf(':')) {
-                path.unshift(beforeColon);
+    private completeAria(
+        document: vscode.TextDocument,
+        position: vscode.Position,
+        prefix: string,
+        parents: ReturnType<typeof yamlAncestors>,
+        script: 'ui' | 'control'
+    ): vscode.CompletionItem[] {
+        const member = prefix.match(/\.(\w*)$/);
+        if (member) {
+            const partial = member[1];
+            const beforeMember = prefix.slice(0, prefix.length - partial.length);
+            const receiver = beforeMember.match(/(?:^|[^\p{L}\p{N}_.])([A-Za-z_]\w*)\??\.$/u)?.[1];
+            const parentDepth = selfParentDepth(beforeMember);
+            const controlChain = /(?:^|[^\w.])self\b[\w.[\]'"\-(),\s]*[)\]]\??\.$/.test(beforeMember);
+            let entries: Completion[];
+            if (receiver === 'self' && script === 'ui') {
+                entries = self_functions;
+            } else if (parentDepth !== undefined || controlChain) {
+                entries = script === 'control' && isRepeatGridItem(document, parents, parentDepth)
+                    ? [...repeatGridItemProperties, ...control_self_functions]
+                    : control_self_functions;
+            } else if (receiver === 'args') {
+                entries = [{ label: 'length', detail: '参数数量', insertText: 'length', kind: vscode.CompletionItemKind.Property }];
+            } else {
+                entries = receiver && builtin_objects.includes(receiver)
+                    ? builtin_functions.filter(fn => fn.label.startsWith(receiver + '.'))
+                    : [];
             }
-        }
-
-        // 检测当前行所在的块（attribute:, children:, action:）
-        // 需要记录块所在的行号，避免向上遍历时重复添加
-        let blockLineNum = -1;
-        if (path.length === 0 || !currentLineTrimmed.includes(':')) {
-            let currentBlockKey: string | null = null;
-            for (let lineNum = position.line - 1; lineNum >= 0; lineNum--) {
-                const line = document.lineAt(lineNum);
-                const lineText = line.text.trim();
-                if (!lineText || lineText.startsWith('#') || lineText.startsWith('//')) continue;
-
-                const lineIndent = this.getIndentLevel(line.text);
-                if (lineIndent < currentIndent) {
-                    // 移除注释
-                    let actualContent = lineText;
-                    const hashIndex = lineText.indexOf('#');
-                    if (hashIndex !== -1) actualContent = lineText.substring(0, hashIndex).trim();
-                    const slashIndex = lineText.indexOf('//');
-                    if (slashIndex !== -1) actualContent = lineText.substring(0, slashIndex).trim();
-
-                    // 检查是否是容器关键字
-                    if (actualContent.endsWith(':')) {
-                        const key = actualContent.replace(':', '').trim();
-                        const containerKeys = ['attribute', 'children', 'action', 'controls', 'ui', 'root_control', 'packetHandler', 'effect'];
-                        if (containerKeys.includes(key)) {
-                            currentBlockKey = key;
-                            blockLineNum = lineNum;
-                            currentIndent = lineIndent;  // 更新缩进，避免重复添加
-                        }
-                    }
-                    break;
-                }
-            }
-            if (currentBlockKey) {
-                path.unshift(currentBlockKey);
-            }
+            const tail = document.lineAt(position.line).text.slice(position.character);
+            const suffixLength = tail.match(/^\w*/)?.[0].length ?? 0;
+            const range = new vscode.Range(position.translate(0, -partial.length), position.translate(0, suffixLength));
+            const hasArguments = /^[ \t]*\(/.test(tail.slice(suffixLength));
+            return entries.map(entry => {
+                const insertText = hasArguments && entry.kind === vscode.CompletionItemKind.Function
+                    ? entry.insertText.split('(')[0] : entry.insertText;
+                const item = this.completionItem(entry, insertText);
+                item.range = range;
+                item.filterText = entry.label.replace(/^[^.]+\./, '');
+                return item;
+            });
         }
 
-        // 向上遍历，构建路径（跳过已处理的块行）
-        for (let lineNum = position.line - 1; lineNum >= 0; lineNum--) {
-            // 跳过已处理的块行
-            if (lineNum === blockLineNum) continue;
-            const line = document.lineAt(lineNum);
-            const lineText = line.text.trim();
-            if (!lineText || lineText.startsWith('#') || lineText.startsWith('//')) continue;
-
-            const lineIndent = this.getIndentLevel(line.text);
-
-            // 移除注释
-            let actualContent = lineText;
-            const hashIndex = lineText.indexOf('#');
-            if (hashIndex !== -1) actualContent = lineText.substring(0, hashIndex).trim();
-            const slashIndex = lineText.indexOf('//');
-            if (slashIndex !== -1) actualContent = lineText.substring(0, slashIndex).trim();
-
-            // 检查是否以冒号结尾
-            if (actualContent.endsWith(':')) {
-                const key = actualContent.replace(':', '').trim();
-
-                // 只有缩进更小的才是父级，缩进相同的是同级，不应该加入路径
-                if (lineIndent < currentIndent) {
-                    path.unshift(key);
-                    currentIndent = lineIndent;
-                }
+        const trigger = /(?:^|\s)[/?]$/.test(prefix) ? prefix.slice(-1) : '';
+        return builtin_functions.map(entry => {
+            const qualifier = entry.label.match(/^\w+\./)?.[0] ?? '';
+            const item = this.completionItem(entry, qualifier + entry.insertText);
+            if (trigger) {
+                item.range = new vscode.Range(position.translate(0, -1), position);
+                item.filterText = trigger + entry.label;
             }
-        }
-
-        return path;
+            return item;
+        });
     }
 
-    private getIndentLevel(line: string): number {
-        let indent = 0;
-        for (const char of line) {
-            if (char === ' ') indent++;
-            else if (char === '\t') indent += 4;
-            else break;
-        }
-        return indent;
+    private completionItem(entry: Completion, insertText = entry.insertText): vscode.CompletionItem {
+        const item = new vscode.CompletionItem(entry.label, entry.kind ?? vscode.CompletionItemKind.Property);
+        item.detail = entry.detail;
+        item.insertText = new vscode.SnippetString(insertText);
+        item.documentation = entry.documentation ?? new vscode.MarkdownString(entry.detail);
+        item.sortText = '0' + entry.label;
+        return item;
     }
 
     /**
@@ -400,9 +166,8 @@ export class StructureCompletionProvider implements vscode.CompletionItemProvide
 
         // 2. 尝试前缀匹配（如果配置路径是当前路径的前缀）
         // 例如：当前路径 ['ui', 'controls', '遮罩', 'attribute'] 可以匹配配置 ['controls', '*', 'attribute']
-        // 注意：需要找到最长匹配路径，因为空路径 [] 会匹配所有路径
         const prefixMatches = completionConfigs.filter(config => {
-            return this.isPrefixMatch(config.path, currentPath);
+            return config.path.length > 0 && this.isPrefixMatch(config.path, currentPath);
         });
 
         if (prefixMatches.length > 0) {

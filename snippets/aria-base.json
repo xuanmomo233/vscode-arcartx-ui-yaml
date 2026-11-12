@@ -6,12 +6,12 @@
     ],
     "description": "可变变量"
   },
-  "基础: 不可变量": {
+  "基础: 宿主注入值": {
     "prefix": ["val."],
     "body": [
       "val"
     ],
-    "description": "不可变变量"
+    "description": "读取宿主注入的只读值"
   },
   "基础: 全局变量": {
     "prefix": ["global."],
@@ -41,19 +41,17 @@
     ],
     "description": "当前对象"
   },
-  "通讯处理器: 包": {
-    "prefix": ["packet"],
-    "body": [
-      "packet"
-    ],
-    "description": "包"
-  },
   "基础: 参数": {
     "prefix": ["args"],
     "body": [
       "args[${1:index}]"
     ],
     "description": "参数"
+  },
+  "基础: 参数数量": {
+    "prefix": "args.length",
+    "body": ["args.length"],
+    "description": "获取函数参数数量"
   },
   "基础: 条件语句": {
     "prefix": "if",
@@ -116,6 +114,65 @@
     ],
     "description": "case分支"
   },
+  "基础: match 分支": {
+    "prefix": "match",
+    "body": [
+      "match (${1:expression}) {",
+      "\tcase ${2:value} {",
+      "\t\t$3",
+      "\t}",
+      "\telse {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "执行第一个匹配的分支"
+  },
+  "基础: 箭头函数": {
+    "prefix": "fn",
+    "body": [
+      "var.${1:name} = -> {",
+      "\t$0",
+      "}"
+    ],
+    "description": "定义函数，使用 args[index] 读取参数"
+  },
+  "基础: 异常处理": {
+    "prefix": "try",
+    "body": [
+      "try {",
+      "\t$1",
+      "} catch (${2:error}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "捕获异常，可按需添加 finally"
+  },
+  "基础: 类声明": {
+    "prefix": "class",
+    "body": [
+      "class ${1:ClassName} {",
+      "\tnew = -> {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "声明 Aria 类及其构造函数"
+  },
+  "模块: 命名导入": {
+    "prefix": "importfrom",
+    "body": ["import { ${1:symbol} } from '${2:module}'"],
+    "description": "从 Aria 模块导入指定符号"
+  },
+  "模块: 导出函数": {
+    "prefix": "exportfn",
+    "body": [
+      "export var.${1:name} = -> {",
+      "\t$0",
+      "}"
+    ],
+    "description": "导出 Aria 模块函数"
+  },
   "基础: 异步代码块": {
     "prefix": "async",
     "body": [
@@ -124,6 +181,16 @@
       "}"
     ],
     "description": "异步代码块"
+  },
+  "基础: 等待异步结果": {
+    "prefix": "await",
+    "body": ["await ${1:promise}"],
+    "description": "等待 async 返回的 Promise"
+  },
+  "基础: 可选链和空值合并": {
+    "prefix": "nullish",
+    "body": ["${1:object}?.${2:field} ?? ${3:fallback}"],
+    "description": "安全访问成员并在结果为 none 时使用默认值"
   },
   "基础: 创建数字范围": {
     "prefix": "range",

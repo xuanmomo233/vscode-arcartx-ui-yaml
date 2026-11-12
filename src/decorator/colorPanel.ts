@@ -1,7 +1,22 @@
 import * as vscode from 'vscode';
 import { controls } from '../completion/structure/rule/control';
 import { control_effects } from '../completion/structure/rule/controlEffect';
-import * as root from '../completion/structure/rule/root';
+import { rootTemplates } from '../completion/structure/rule/root';
+import { task_templates } from '../completion/structure/rule/uiTaskSettings';
+import { snippetDefaults } from './snippetDefaults';
+
+function panelTemplate(template: { label: string; detail: string; insertText: string }, usage?: string) {
+    return {
+        label: template.label,
+        detail: usage ? template.detail + '。插入位置：' + usage : template.detail,
+        insertText: template.insertText,
+        preview: snippetDefaults(template.insertText),
+    };
+}
+
+function scriptData(value: unknown): string {
+    return JSON.stringify(value).replace(/</g, '\\u003c');
+}
 
 /**
  * 侧边栏面板 — 颜色选择器 + 颜色展示 + 控件模板 + Effect 模板 + UI 模板
@@ -38,6 +53,15 @@ export class ColorPanelProvider implements vscode.WebviewViewProvider {
         if (!message.command) return;
 
         switch (message.command) {
+            case 'insertTemplate': {
+                const editor = vscode.window.activeTextEditor;
+                if (!editor) {
+                    vscode.window.showWarningMessage('请先打开要插入模板的文件');
+                } else if (typeof message.text === 'string') {
+                    void editor.insertSnippet(new vscode.SnippetString(message.text), editor.selection);
+                }
+                break;
+            }
             case 'insertText': {
                 const editor = vscode.window.activeTextEditor;
                 if (editor) {
@@ -109,16 +133,11 @@ export class ColorPanelProvider implements vscode.WebviewViewProvider {
     }
 
     private getHtml(webview: vscode.Webview): string {
-        const controlTemplates = controls.map(c => ({ label: c.label, detail: c.detail, insertText: c.insertText }));
-        const effectTemplates = control_effects.map(e => ({ label: e.label, detail: e.detail, insertText: e.insertText }));
+        const controlTemplates = controls.map(template => panelTemplate(template, 'controls 或 children 下'));
+        const effectTemplates = control_effects.map(template => panelTemplate(template, '控件的 effect 下'));
         const uiTemplates = [
-            { label: 'ui-full', detail: '完整UI配置模板(含所有配置项)', insertText: root.ui_full.insertText },
-            { label: 'ui-base', detail: 'UI基础设定', insertText: root.ui_base.insertText },
-            { label: 'controls-empty', detail: '空控件列表', insertText: root.controls_empty.insertText },
-            { label: 'controls-with-adaptive', detail: '自适应布局控件结构', insertText: root.controls_with_adaptive.insertText },
-            { label: 'tip-base', detail: '基础Tip配置模板', insertText: root.tips_base.insertText },
-            { label: 'tip-adaptive', detail: '自适应Tip配置模板', insertText: root.tips_adaptive.insertText },
-            { label: 'entity-model', detail: '实体模型渲染配置', insertText: root.entity_model_base.insertText },
+            ...rootTemplates.map(template => panelTemplate(template, '文件顶层')),
+            ...task_templates.map(template => panelTemplate(template, 'tasks 下')),
         ];
         const presetColors = [
             { name: '白色', rgba: '255,255,255,255', hex: '#FFFFFF' },
@@ -698,6 +717,7 @@ select {
 
 <!-- Tab 7: UI 模板 -->
 <div id="tab-ui" class="tab-content">
+    <div class="search-box"><input type="search" id="uiSearch" placeholder="搜索 UI、Tooltip 或任务模板" aria-label="搜索 UI 模板"></div>
     <div class="template-list" id="uiList"></div>
 </div>
 
@@ -1043,30 +1063,24 @@ function copyText(inputId) {
 function insertRaw(text) { vscode.postMessage({ command: 'insertText', text }); }
 function copyRaw(text) { vscode.postMessage({ command: 'copyToClipboard', text }); }
 
-function stripSnippetSyntax(text) {
-    return text
-        .replace(/\\$\{(\\d+):([^}]*)\}/g, '$2')
-        .replace(/\\$\{(\\d+)\|([^|}]*)\|[^}]*\}/g, '$2')
-        .replace(/\\$\{(\\d+)\}/g, '')
-        .replace(/\\$\\d+/g, '');
-}
-
 function makeTemplateItem(t) {
     const item = document.createElement('div');
     item.className = 'template-item';
-    item.innerHTML = '<div class="template-item-label">' + t.label + '</div>' +
-        '<div class="template-item-detail">' + t.detail + '</div>' +
+    item.innerHTML = '<div class="template-item-label"></div>' +
+        '<div class="template-item-detail"></div>' +
         '<div class="template-item-actions">' +
         '<button class="btn btn-sm">复制</button>' +
         '<button class="btn btn-sm">插入</button>' +
         '<button class="btn btn-sm">预览</button></div>' +
         '<div class="template-item-preview" style="display:none"></div>';
+    item.querySelector('.template-item-label').textContent = t.label;
+    item.querySelector('.template-item-detail').textContent = t.detail;
     const btns = item.querySelectorAll('button');
-    btns[0].addEventListener('click', () => copyRaw(stripSnippetSyntax(t.insertText)));
-    btns[1].addEventListener('click', () => insertRaw(stripSnippetSyntax(t.insertText)));
+    btns[0].addEventListener('click', () => copyRaw(t.preview));
+    btns[1].addEventListener('click', () => vscode.postMessage({ command: 'insertTemplate', text: t.insertText }));
     btns[2].addEventListener('click', () => {
         const pre = item.querySelector('.template-item-preview');
-        if (pre.style.display === 'none') { pre.textContent = stripSnippetSyntax(t.insertText); pre.style.display = 'block'; btns[2].textContent = '隐藏'; }
+        if (pre.style.display === 'none') { pre.textContent = t.preview; pre.style.display = 'block'; btns[2].textContent = '隐藏'; }
         else { pre.style.display = 'none'; btns[2].textContent = '预览'; }
     });
     return item;
@@ -1094,25 +1108,26 @@ presetColors.forEach(c => {
 });
 
 // ===== Tab 5: 控件模板 =====
-const controlTemplates = ${JSON.stringify(controlTemplates)};
-function renderControls(filter) {
-    const list = document.getElementById('controlList');
-    list.innerHTML = '';
-    controlTemplates.filter(t => !filter || t.label.toLowerCase().includes(filter.toLowerCase()) || t.detail.includes(filter))
-        .forEach(t => list.appendChild(makeTemplateItem(t)));
+function bindTemplateSearch(templates, listId, searchId) {
+    const list = document.getElementById(listId);
+    const search = document.getElementById(searchId);
+    const render = () => {
+        const query = search.value.trim().toLowerCase();
+        const matching = templates.filter(t => (t.label + ' ' + t.detail).toLowerCase().includes(query));
+        list.replaceChildren(...matching.map(makeTemplateItem));
+    };
+    search.addEventListener('input', render);
+    render();
 }
-renderControls('');
-document.getElementById('controlSearch').addEventListener('input', (e) => renderControls(e.target.value));
+bindTemplateSearch(${scriptData(controlTemplates)}, 'controlList', 'controlSearch');
 
 // ===== Tab 6: 特效模板 =====
-const effectTemplates = ${JSON.stringify(effectTemplates)};
+const effectTemplates = ${scriptData(effectTemplates)};
 const effectList = document.getElementById('effectList');
 effectTemplates.forEach(t => effectList.appendChild(makeTemplateItem(t)));
 
 // ===== Tab 7: UI 模板 =====
-const uiTemplates = ${JSON.stringify(uiTemplates)};
-const uiList = document.getElementById('uiList');
-uiTemplates.forEach(t => uiList.appendChild(makeTemplateItem(t)));
+bindTemplateSearch(${scriptData(uiTemplates)}, 'uiList', 'uiSearch');
 
 // ===== Tab 8: 自定义模板 =====
 function makeCustomTemplateItem(t) {

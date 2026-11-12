@@ -36,7 +36,7 @@ export const control_effects = [
     {
         label: 'neon',
         detail: '霓虹 - 辉光效果',
-        insertText: 'neon:\n  color: ~${1:0,0,100}\n  size: ${2:8}\n  intensity: ${3:1}\n  animated: false',
+        insertText: 'neon:\n  color: ~${1:78,153,255}\n  size: ${2:8}\n  intensity: ${3:1}\n  animated: ${4|false,true|}',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             '## 霓虹 (neon)\n\n' +
@@ -44,10 +44,10 @@ export const control_effects = [
             '**参数**:\n' +
             '| 参数 | 说明 | 默认值 |\n' +
             '|------|------|--------|\n' +
-            '| `color` | 发光颜色 | `~0,0,100` |\n' +
+            '| `color` | 发光颜色 | `~78,153,255` |\n' +
             '| `size` | 发光尺寸 | `8` |\n' +
             '| `intensity` | 强度 | `1` |\n' +
-            '| `animated` | 是否动态闪烁 | `true` |'
+            '| `animated` | 是否启用呼吸动画 | `false` |'
         )
     },
     {
@@ -69,7 +69,7 @@ export const control_effects = [
     {
         label: 'gradient',
         detail: '渐变 - 填充渐变色彩',
-        insertText: 'gradient:\n  color1: ~${1:255,0,0,100}\n  color2: ~${2:0,0,255,50}\n  type: ${3:1}\n  angleDeg: ${4:90}',
+        insertText: 'gradient:\n  color1: ~${1:255,0,0,100}\n  color2: ~${2:0,0,255,50}\n  type: ${3|0,1,2,3|}\n  angleDeg: ${4:90}',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             '## 渐变 (gradient)\n\n' +
@@ -79,7 +79,7 @@ export const control_effects = [
             '|------|------|--------|\n' +
             '| `color1` | 起始颜色 | `~255,0,0,100` |\n' +
             '| `color2` | 结束颜色 | `~0,0,255,50` |\n' +
-            '| `type` | 渐变类型 | `1` |\n' +
+            '| `type` | 渐变类型 | `0` |\n' +
             '| `angleDeg` | 渐变角度 | `90` |\n\n' +
             '**type 选项**: `0` 线性、`1` 径向、`2` 角度、`3` 菱形'
         )
@@ -87,7 +87,7 @@ export const control_effects = [
     {
         label: 'flow',
         detail: '流光 - 流动光效',
-        insertText: 'flow:\n  color: ~${1:255,255,255}\n  speed: ${2:1}\n  width: ${3:0.1}\n  angleDeg: ${4:60}\n  mode: ${5:0}',
+        insertText: 'flow:\n  color: ~${1:255,255,255}\n  speed: ${2:1}\n  width: ${3:0.1}\n  angleDeg: ${4:60}\n  mode: ${5|0,1,2|}',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             '## 流光 (flow)\n\n' +
@@ -106,7 +106,7 @@ export const control_effects = [
     {
         label: 'energy',
         detail: '能量 - 能量场特效',
-        insertText: 'energy:\n  color: ~${1:0,0,255}\n  intensity: ${2:1}\n  frequency: ${3:1}\n  speed: ${4:1}\n  pattern: ${5:2}',
+        insertText: 'energy:\n  color: ~${1:0,0,255}\n  intensity: ${2:1}\n  frequency: ${3:1}\n  speed: ${4:1}\n  pattern: ${5|2,0,1,3|}',
         kind: vscode.CompletionItemKind.Property,
         documentation: new vscode.MarkdownString(
             '## 能量 (energy)\n\n' +

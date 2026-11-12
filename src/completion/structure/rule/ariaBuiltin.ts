@@ -468,7 +468,17 @@ export const builtin_functions = [
     // === Player 玩家 ===
     { label: 'Player.getName()', detail: '获取玩家名称', insertText: 'getName()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取玩家名称**\n\n**参数**: 无\n\n**返回值**: 字符串类型\n\n**示例**: `Player.getName()` → `"Steve"`') },
     { label: 'Player.getUUID()', detail: '获取玩家UUID', insertText: 'getUUID()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取玩家UUID**\n\n**参数**: 无\n\n**返回值**: 字符串类型\n\n**示例**: `Player.getUUID()` → `"550e8400-e29b-41d4-a716-446655440000"`') },
-    { label: 'Player.getOnlinePlayersDict()', detail: '获取在线玩家列表', insertText: 'getOnlinePlayersDict()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取在线玩家列表**\n\n**参数**: 无\n\n**返回值**: 字典类型（Key为玩家名，Value为UUID）\n\n**示例**: `Player.getOnlinePlayersDict()` → `{"Steve": "uuid1", "Alex": "uuid2"}`') },
+    {
+        label: 'Player.getTabPlayers()', detail: '获取原版 Tab 的有序玩家列表', insertText: 'getTabPlayers()',
+        kind: vscode.CompletionItemKind.Function,
+        documentation: new vscode.MarkdownString([
+            '沿用原版 Tab 的筛选和排序，最多返回 80 条玩家数据。',
+            '每条数据包含 `uuid`、`name`、`displayName`、`latency`（毫秒）、`gameMode`、`spectator`、`team`、`listOrder` 和 `self`。',
+            '可作为 RepeatGrid 的 `items`，并以 `uuid` 作为稳定键。',
+            '[玩家 API 文档](https://wiki.arcartx.com/docs/arcartx_v2/777_client_aria/1_functions/12_player)',
+        ].join('\n\n'))
+    },
+    { label: 'Player.getOnlinePlayersDict()', detail: '获取在线玩家字典（旧接口）', insertText: 'getOnlinePlayersDict()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('返回以玩家名为键、UUID 为值的字典。需要原版 Tab 顺序或延迟等字段时，使用 `Player.getTabPlayers()`。') },
     { label: 'Player.getHealth()', detail: '获取玩家生命值', insertText: 'getHealth()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取玩家当前生命值**\n\n**参数**: 无\n\n**返回值**: 浮点数类型\n\n**示例**: `Player.getHealth()` → `20.0`') },
     { label: 'Player.getMaxHealth()', detail: '获取玩家最大生命值', insertText: 'getMaxHealth()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取玩家最大生命值**\n\n**参数**: 无\n\n**返回值**: 浮点数类型\n\n**示例**: `Player.getMaxHealth()` → `20.0`') },
     { label: 'Player.getLevel()', detail: '获取玩家等级', insertText: 'getLevel()', kind: vscode.CompletionItemKind.Function, documentation: new vscode.MarkdownString('**获取玩家等级**\n\n**参数**: 无\n\n**返回值**: 整数类型\n\n**示例**: `Player.getLevel()` → `30`') },

@@ -1,4 +1,9 @@
 {
+  "通讯处理器: 包": {
+    "prefix": "packet",
+    "body": ["packet"],
+    "description": "读取 ArcartX 通讯处理器中的包"
+  },
   "函数: 转换为布尔值": {
     "prefix": "Cast.toBoolean",
     "body": [
@@ -389,7 +394,12 @@
     "body": [
       "Player.getOnlinePlayersDict()"
     ],
-    "description": "获取在线玩家列表"
+    "description": "获取在线玩家字典（旧接口）"
+  },
+  "ArcartX: 原版 Tab 玩家列表": {
+    "prefix": "Player.getTabPlayers",
+    "body": ["Player.getTabPlayers()"],
+    "description": "按原版 Tab 顺序获取玩家数据列表，适用于 RepeatGrid"
   },
   "函数: 获取玩家生命值": {
     "prefix": "Player.getHealth",

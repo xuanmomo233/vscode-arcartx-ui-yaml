@@ -3,29 +3,28 @@ import * as vscode from 'vscode';
 // ========== 任务模板 ==========
 const delayTask = {
     label: 'delay-task',
-    detail: '创建延迟任务',
+    detail: '延迟任务，示例在指定时间后设置就绪标记',
     insertText: [
-        '${1:任务名称}:',
+        '${1:延迟初始化}:',
         '  type: delay',
         '  time: ${2:5000}',
         '  run: |-',
-        '    ${3:// 5秒后执行一次}',
-        '    Message.chat("延迟任务执行了")'
+        '    var.${3:ready} = true',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 };
 
 const loopTask = {
     label: 'loop-task',
-    detail: '创建循环任务',
+    detail: '循环任务，示例按周期更新计数',
     insertText: [
-        '${1:任务名称}:',
+        '${1:循环计数}:',
         '  type: loop',
         '  time: ${2:3000}',
         '  cycle: ${3:1000}',
         '  run: |-',
-        '    ${4:// 3秒后开始，每1秒循环执行}',
-        '    Message.chat("循环任务执行中...")'
+        '    var.${4:taskTicks} ~= 0',
+        '    var.$4 += 1',
     ].join('\n'),
     kind: vscode.CompletionItemKind.Snippet
 };
